@@ -5,33 +5,36 @@ import math
 import numpy as np
 import random
 
-class Motor():
-    FL = "FL"
-    FR = "FR"
-    BL = "BL" #Backleft
-    BR = "BR"
-
 class Action():
     ASSUMED_MAX_THRUST : np.double = 4.18  # Newtons
-    def __init__(
-            self,
-            motor_thrusts: dict = {Motor.FL: np.double(0), Motor.FR: np.double(0), Motor.BL: np.double(0), Motor.BR: np.double(0)},
-            ):
-        self.motor_thrusts = motor_thrusts #Newtons
-        for motor in self.motor_thrusts:
-            if self.motor_thrusts[motor] < 0:
-                self.motor_thrusts[motor] = 0
-            if self.motor_thrusts[motor] > Action.ASSUMED_MAX_THRUST:
-                self.motor_thrusts[motor] = Action.ASSUMED_MAX_THRUST
-    def to_string(self):
+    FL = 0
+    FR = 1
+    BL = 2
+    BR = 3
+    @staticmethod
+    def generate( motor_thrusts = np.array([
+                    np.double(0.0),
+                    np.double(0.0),
+                    np.double(0.0),
+                    np.double(0.0)
+                ],dtype=np.double)) -> np.ndarray:
+        for i in range(len(motor_thrusts)):
+            if motor_thrusts[i] < 0:
+                motor_thrusts[i] = 0
+            if motor_thrusts[i] > Action.ASSUMED_MAX_THRUST:
+                motor_thrusts[i] = Action.ASSUMED_MAX_THRUST
+        return motor_thrusts
+    @staticmethod
+    def to_string(motor_thrusts) -> str:
         return (
-            f"motor_thrusts=({self.motor_thrusts[Motor.FL]:+7.3f}, {self.motor_thrusts[Motor.FR]:+7.3f}, " +
-            f"{self.motor_thrusts[Motor.BL]:+7.3f}, {self.motor_thrusts[Motor.BR]:+7.3f})"
+            f"motor_thrusts=({motor_thrusts[Action.FL]:+7.3f}, {motor_thrusts[Action.FR]:+7.3f}, " +
+            f"{motor_thrusts[Action.BL]:+7.3f}, {motor_thrusts[Action.BR]:+7.3f})"
         )
-    def get_normalized(self) ->None:
-        thrusts = self.motor_thrusts.copy()
-        for motor in self.motor_thrusts:
-            thrusts[motor] = min(max(thrusts[motor] / Action.ASSUMED_MAX_THRUST, 0.0), 1.0)
+    @staticmethod
+    def get_normalized(motor_thrusts) -> np.ndarray:
+        thrusts = motor_thrusts.copy()
+        for i in range(len(thrusts)):
+            thrusts[i] = min(max(thrusts[i] / Action.ASSUMED_MAX_THRUST, 0.0), 1.0)
         return thrusts
 
 class ActionSequence():
@@ -50,7 +53,7 @@ class ActionSequence():
             f"{time_stamp:+7.3f}: {action.to_string()}"
             for action, time_stamp in zip(self.actions, self.time_stamps)
         )
-    def get_action(self, time_stamp: float) -> Action | None:
+    def get_action(self, time_stamp: float) -> np.ndarray | None:
         if not self.time_stamps:
             return None
 
@@ -58,7 +61,7 @@ class ActionSequence():
         index = round((time_stamp - start_time) * ActionSequence.CONTROL_FREQUENCY)
 
         if 0 <= index < len(self.actions):
-            return self.actions[index]
+            return self.actions[index].copy()
 
         return None
 
@@ -79,13 +82,13 @@ class ActionSequence():
 
         for i, row in enumerate(df.itertuples(index=False)):
 
-            action = Action(
-                motor_thrusts={
-                    Motor.FL: float(row.FL),
-                    Motor.FR: float(row.FR),
-                    Motor.BL: float(row.BL),
-                    Motor.BR: float(row.BR),
-                }
+            action = Action.generate(
+                motor_thrusts=np.array([
+                    np.double(row.FL),
+                    np.double(row.FR),
+                    np.double(row.BL),
+                    np.double(row.BR),
+                ],dtype=np.double)
             )
 
             sequence.append(
@@ -125,21 +128,21 @@ class ActionSequence():
 
             # Generate a new action only when entering a new interval
             if change_index != previous_change_index:
-                current_action = Action(
-                    motor_thrusts={
-                        Motor.FL: random.uniform(
+                current_action = Action.generate(
+                    motor_thrusts=np.array([
+                        np.double(random.uniform(
                             0, Action.ASSUMED_MAX_THRUST
-                        ),
-                        Motor.FR: random.uniform(
+                        )),
+                        np.double(random.uniform(
                             0, Action.ASSUMED_MAX_THRUST
-                        ),
-                        Motor.BL: random.uniform(
+                        )),
+                        np.double(random.uniform(
                             0, Action.ASSUMED_MAX_THRUST
-                        ),
-                        Motor.BR: random.uniform(
+                        )),
+                        np.double(random.uniform(
                             0, Action.ASSUMED_MAX_THRUST
-                        ),
-                    }
+                        )),
+                    ],dtype=np.double)
                 )
 
                 previous_change_index = change_index

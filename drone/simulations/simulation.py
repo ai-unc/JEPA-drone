@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from Subsystems.flight_controller import FlightController, quaternion_to_rotation_matrix
-from Subsystems.action import Action, Motor
+from Subsystems.action import Action
 from Subsystems.state import State
 import numpy as np
 from pathlib import Path
@@ -13,10 +13,10 @@ from projectairsim import Drone, ProjectAirSimClient, World
 class ProjectAirSimSimulation(FlightController):
 
     MOTOR_TO_ACTUATOR = {
-        Motor.FL: "Prop_FL_actuator",
-        Motor.FR: "Prop_FR_actuator",
-        Motor.BL: "Prop_RL_actuator",
-        Motor.BR: "Prop_RR_actuator",
+        Action.FL: "Prop_FL_actuator",
+        Action.FR: "Prop_FR_actuator",
+        Action.BL: "Prop_RL_actuator",
+        Action.BR: "Prop_RR_actuator",
     }
     SCENE = "scene_basic_drone.jsonc"
     DEFAULT_DRONE_NAME = "Drone1"
@@ -52,7 +52,7 @@ class ProjectAirSimSimulation(FlightController):
         )
 
     @override
-    def read(self) -> tuple[State, np.double]:
+    def read(self) -> tuple[np.ndarray, np.double]:
         assert self.drone is not None
 
         kinematics = self.drone.get_ground_truth_kinematics()
@@ -65,47 +65,47 @@ class ProjectAirSimSimulation(FlightController):
 
         time_stamp= self.world.get_sim_time() / FlightController.NANO_SECOND
 
-        state = State(
-            rotation=quaternion_to_rotation_matrix(
-                float(orientation["w"]),
-                float(orientation["x"]),
-                float(orientation["y"]),
-                float(orientation["z"]),
-            ),
+        state = State.generate(
             position=np.array([
-                float(position["x"]),
-                float(position["y"]),
-                float(position["z"]),
-            ], dtype=float),
+                np.double(position["x"]),
+                np.double(position["y"]),
+                np.double(position["z"]),
+            ]),
+            rotation=quaternion_to_rotation_matrix(
+                        float(orientation["w"]),
+                        float(orientation["x"]),
+                        float(orientation["y"]),
+                        float(orientation["z"]),
+                    ),
             velocity=np.array([
-                float(twist["linear"]["x"]),
-                float(twist["linear"]["y"]),
-                float(twist["linear"]["z"]),
-            ], dtype=float),
+                np.double(twist["linear"]["x"]),
+                np.double(twist["linear"]["y"]),
+                np.double(twist["linear"]["z"]),
+            ]),
             angular_velocity=np.array([
-                float(twist["angular"]["x"]),
-                float(twist["angular"]["y"]),
-                float(twist["angular"]["z"]),
-            ], dtype=float)
+                np.double(twist["angular"]["x"]),
+                np.double(twist["angular"]["y"]),
+                np.double(twist["angular"]["z"]),
+            ])
         )
 
         return state,time_stamp
     @override
-    def send(self, actions: Action) -> None:
+    def send(self, actions: np.ndarray) -> None:
 
-        thrusts = actions.get_normalized()
+        thrusts = Action.get_normalized(actions)
 
         assert self.drone is not None
 
         control_signals = {}
         for motor_name, actuator_name in self.MOTOR_TO_ACTUATOR.items():
-            control_signals[actuator_name] = float(thrusts[motor_name])
+            control_signals[actuator_name] = thrusts[motor_name]
 
         self.drone.set_control_signals(control_signals)
     @override
     def step(
         self,
-        action: Action | None = None) -> tuple[State, np.double]:
+        action: np.ndarray | None = None) -> tuple[np.ndarray, np.double]:
 
         assert self.world is not None
 

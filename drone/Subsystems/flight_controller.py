@@ -2,7 +2,7 @@ from enum import Enum
 
 import numpy as np
 import csv
-from Subsystems.action import Action, Motor
+from Subsystems.action import Action
 from Subsystems.state import State
 def quaternion_to_rotation_matrix(w, x, y, z):
     norm = np.sqrt(w*w + x*x + y*y + z*z)
@@ -41,8 +41,8 @@ class FlightController():
     CONTROL_STEPS_PER_MILLISECOND : int = CONTROL_NS // MILLI_SECOND
     DATA_PATH = "flight_logs/"
     def __init__(self) -> None:
-        self.action_data = []
-        self.state_data = []
+        self.action_data : list[np.ndarray] = []
+        self.state_data : list[np.ndarray] = []
         self.time_data = []
         self.log_data = False
         self.data_name = FlightController.DATA_PATH + "temp.csv"
@@ -54,12 +54,12 @@ class FlightController():
         if (self.log_data):
             self.data_name = input("Name the data log file: (ex. temp.csv):\n")
             self.data_name = FlightController.DATA_PATH + self.data_name
-    def send(self,action : Action) -> None:
+    def send(self,action : np.ndarray) -> None:
         pass
     def read(self) -> tuple[State, float]:
         #Returns the current state and the timestamp.
         pass
-    def step(self,action: Action | None = None) -> tuple[State, np.double]:
+    def step(self,action: np.ndarray | None = None) -> tuple[State, np.double]:
         #Steps the flight controller and returns the current state and timestamp.
         pass
     def close(self) -> None:
@@ -100,33 +100,33 @@ class FlightController():
                 writer.writerow([
                     time_stamp,
 
-                    action.motor_thrusts[Motor.FL],
-                    action.motor_thrusts[Motor.FR],
-                    action.motor_thrusts[Motor.BL],
-                    action.motor_thrusts[Motor.BR],
+                    action[Action.FL],
+                    action[Action.FR],
+                    action[Action.BL],
+                    action[Action.BR],
 
-                    state.position[0],
-                    state.position[1],
-                    state.position[2],
+                    state[State.PX],
+                    state[State.PY],
+                    state[State.PZ],
 
-                    state.velocity[0],
-                    state.velocity[1],
-                    state.velocity[2],
+                    state[State.VX],
+                    state[State.VY],
+                    state[State.VZ],
 
-                    state.rotation[0, 0],
-                    state.rotation[0, 1],
-                    state.rotation[0, 2],
+                    state[State.R1x],
+                    state[State.R1y],
+                    state[State.R1z],
 
-                    state.rotation[1, 0],
-                    state.rotation[1, 1],
-                    state.rotation[1, 2],
+                    state[State.R2x],
+                    state[State.R2y],
+                    state[State.R2z],
 
-                    state.rotation[2, 0],
-                    state.rotation[2, 1],
-                    state.rotation[2, 2],
+                    state[State.R3x],
+                    state[State.R3y],
+                    state[State.R3z],
 
-                    state.angular_velocity[0],
-                    state.angular_velocity[1],
-                    state.angular_velocity[2],
+                    state[State.WX],
+                    state[State.WY],
+                    state[State.WZ],
                 ])
 

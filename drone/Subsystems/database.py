@@ -11,11 +11,11 @@ class Database:
 
     def __init__(self) -> None:
         self.step = 0
-        self.action_history : list[Action] = []
-        self.state_history : list[State] = []
+        self.action_history : list[np.ndarray] = []
+        self.state_history : list[np.ndarray] = []
         self.time_history : list[np.double] = []
 
-    def update_history(self, state: State, action: Action, time_stamp: np.double, display : bool):
+    def update_history(self, state: np.ndarray, action: np.ndarray, time_stamp: np.double, display : bool):
         #Make sure enough time has passed to update the state history
         if (self.step > 0 and self.time_history[self.step - 1] is not None and time_stamp - self.time_history[self.step - 1] < self.SAVE_PERIOD):
             return
@@ -43,8 +43,8 @@ class Database:
             i = self.step - 1
         return (
             f"Step: {i+1}\n" +
-            f"Action: {self.action_history[i].to_string()}\n" +
-            f"State: {self.state_history[i].to_string()}\n" +
+            f"Action: {Action.to_string(self.action_history[i])}\n" +
+            f"State: {State.to_string(self.state_history[i])}\n" +
             f"Time Step: {self.time_history[i]}"
         )
     def to_string(self) -> str:

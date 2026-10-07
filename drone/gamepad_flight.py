@@ -2,9 +2,10 @@ import inputs
 import asyncio
 from Subsystems.Gamepad import Gamepad
 
-from Subsystems.drone import Drone, State
-from Subsystems.action import Action, Motor
+from Subsystems.drone import Drone
+from Subsystems.action import Action
 import numpy as np
+from drone.Subsystems.state import State
 from simulations.simulation import ProjectAirSimSimulation
 from Subsystems.PID import PID
 
@@ -62,7 +63,7 @@ def controller_to_action(
     roll_pid: PID,
     pitch_pid: PID,
     yaw_pid: PID
-):
+) -> np.ndarray:
     # Maximum commanded rotational velocities in rad/s
     MAX_ROLL_RATE = 2.0
     MAX_PITCH_RATE = 2.0
@@ -135,13 +136,14 @@ def controller_to_action(
         max_thrust
     )
 
-    return Action(
-        motor_thrusts={
-            Motor.FL: float(fl),
-            Motor.FR: float(fr),
-            Motor.BL: float(bl),
-            Motor.BR: float(br),
-        }
+    return Action.generate(
+        np.array([
+            np.double(fl),
+            np.double(fr),
+            np.double(bl),
+            np.double(br),
+        ],
+        dtype=np.double)
     )
 
 async def main():
@@ -169,7 +171,7 @@ async def main():
         )
 
         pitch_pid = PID(
-            kp=-0.25,
+            kp=-0.2,
             ki=0,
             kd=0.000,
             output_limit=2,
@@ -177,7 +179,7 @@ async def main():
         )
 
         yaw_pid = PID(
-            kp=1,
+            kp=0.8,
             ki=0.00,
             kd=0.0,
             output_limit=2,
@@ -201,12 +203,13 @@ async def main():
                 pitch = 0.0
             if abs(yaw) < THRESHOLD:
                 yaw = 0.0
+            angular_velocity = State.get_angular_velocity(drone.state)
             action = controller_to_action(
                 throttle,
                 roll,
                 pitch,
                 yaw,
-                drone.state.angular_velocity,
+                angular_velocity,
                 drone.flight_controller.CONTROL_PERIOD,
                 roll_pid,
                 pitch_pid,

@@ -5,8 +5,7 @@ from Subsystems.drone import Drone
 import asyncio
 
 from simulations.simulation import ProjectAirSimSimulation
-from Subsystems.action import Action, Motor, ActionSequence
-from Subsystems.state import State
+from Subsystems.action import ActionSequence
 
 async def main() -> None:
     simulation = ProjectAirSimSimulation()
