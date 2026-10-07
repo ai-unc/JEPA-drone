@@ -2,9 +2,8 @@ from pickletools import dis
 from time import time
 import numpy as np
 import asyncio
-from Subsystems import action
 from Subsystems.flight_controller import FlightController, State
-from Subsystems.action import Action, ActionSequence
+from Subsystems.action import ActionSequence
 from Subsystems.database import Database
 
 
@@ -14,7 +13,7 @@ class Drone():
         self.flight_controller = flight_controller
         self.database = Database()
         self.time_stamp = 0
-        self.update_frequency : float = FlightController.CONTROL_PERIOD
+        self.update_frequency : float = FlightController.CONTROL_HZ
         self.action_sequence = action_sequence
         if self.flight_controller is None:
             raise ValueError("A flight controller must be provided.")

@@ -186,7 +186,7 @@ async def main():
             integral_limit=1.0
         )
 
-        while (drone.time_stamp < max_time and gamepad.connected):
+        while (drone.time_stamp < max_time):
             throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)
             roll     = gamepad.get_joystick(Gamepad.Inputs.LEFT_X)
             pitch    = gamepad.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1

@@ -8,6 +8,8 @@ dependencies = [
     "numpy>=1.26",
     "torch>=2.2",
     "matplotlib>=3.8",
+    "pandas>=3.0.6",
+    "projectairsim==1.0.2",
 ]
 
 [build-system]
