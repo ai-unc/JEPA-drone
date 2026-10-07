@@ -7,9 +7,12 @@ import asyncio
 from simulations.simulation import ProjectAirSimSimulation
 from Subsystems.action import ActionSequence
 
+#Plays back csv flights from action_sequences
+#this can later be used for training
 async def main() -> None:
     simulation = ProjectAirSimSimulation()
     drone = Drone(flight_controller=simulation)
+    drone.prompt_update_frequency()
     action_sequence = ActionSequence.generate_from_csv()
 
     drone.action_sequence = action_sequence
