@@ -1,13 +1,14 @@
 from __future__ import annotations
+import math
 
 from Subsystems.flight_controller import FlightController, quaternion_to_rotation_matrix
 from Subsystems.action import Action
 from Subsystems.state import State
 import numpy as np
 from pathlib import Path
-from typing import Any, Callable, Dict, override
+from typing import override
 
-from projectairsim import Drone, ProjectAirSimClient, World
+from projectairsim import Drone, ProjectAirSimClient, World, types
 
 
 class ProjectAirSimSimulation(FlightController):
@@ -23,6 +24,28 @@ class ProjectAirSimSimulation(FlightController):
     SIMULATION_FOLDER = Path(__file__).resolve().parent
     SIM_CONFIG_PATH = SIMULATION_FOLDER / "sim_config"
     LOAD_DELAY = 2
+
+    SKY_POSE_Z = -80
+    SPAWN_POSE_VARIATION = 100
+
+    def set_pose_to_random_in_sky(self):
+        assert self.drone is not None
+        import random
+        position = {
+            "x": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
+            "y": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
+            "z": self.SKY_POSE_Z,
+        }
+        orientation = {
+            "w": 1.0,
+            "x": random.uniform(-math.pi, math.pi),
+            "y": random.uniform(-math.pi, math.pi),
+            "z": random.uniform(-math.pi, math.pi),
+        }
+        self.drone.set_pose(types.Transform({
+            "translation": position,
+            "rotation": orientation,
+        }))
     @override
     def __init__(
         self,

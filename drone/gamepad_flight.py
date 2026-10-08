@@ -3,7 +3,7 @@ import asyncio
 from Subsystems.Gamepad import Gamepad
 
 from Subsystems.drone import Drone
-from Subsystems.action import Action
+from Subsystems.action import Action, ActionSequence
 import numpy as np
 from drone.Subsystems.state import State
 from simulations.simulation import ProjectAirSimSimulation
@@ -161,6 +161,7 @@ async def main():
     #Right Stick x is yaw
     try:
         simulation.start()
+        simulation.set_pose_to_random_in_sky()
 
         roll_pid = PID(
             kp=-0.13,
@@ -185,6 +186,8 @@ async def main():
             output_limit=2,
             integral_limit=1.0
         )
+        
+        drone.action_sequence = None
 
         while (drone.time_stamp < max_time):
             throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)
