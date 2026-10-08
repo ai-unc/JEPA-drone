@@ -5,6 +5,9 @@ import math
 import numpy as np
 import random
 
+from drone.Subsystems.state import State
+
+
 class Action():
     ASSUMED_MAX_THRUST : np.double = 4.18  # Newtons
     FL = 0
@@ -69,7 +72,7 @@ class ActionSequence():
     def generate_from_csv(
         file_name: str | None = None,
         start_time: float = 0,
-    ) -> "ActionSequence":
+    ) -> tuple["ActionSequence", np.ndarray]:
 
         if file_name is None:
             file_name = input("Enter the action sequence file name (ex. gamepad_flight1.csv): \n")
@@ -77,6 +80,7 @@ class ActionSequence():
         df = pd.read_csv(file_path)
 
         sequence = ActionSequence()
+        initial_state = None
 
         dt = 1.0 / ActionSequence.CONTROL_FREQUENCY
 
@@ -90,13 +94,39 @@ class ActionSequence():
                     np.double(row.BR),
                 ],dtype=np.double)
             )
+            if (i == 0):
+                initial_state = np.array([
+                    np.double(row.x),
+                    np.double(row.y),
+                    np.double(row.z),
+
+                    np.double(row.vx),
+                    np.double(row.vy),
+                    np.double(row.vz),
+
+                    np.double(row.r1x),
+                    np.double(row.r1y),
+                    np.double(row.r1z),
+                    np.double(row.r2x),
+                    np.double(row.r2y),
+                    np.double(row.r2z),
+                    np.double(row.r3x),
+                    np.double(row.r3y),
+                    np.double(row.r3z),
+
+                    np.double(row.wx),
+                    np.double(row.wy),
+                    np.double(row.wz)
+                ],dtype=np.double)
 
             sequence.append(
                 action,
                 start_time + i * dt
             )
 
-        return sequence
+         
+
+        return sequence, initial_state
 
     @staticmethod
     def generate_random_sequence(

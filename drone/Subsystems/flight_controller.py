@@ -2,33 +2,10 @@ from enum import Enum
 
 import numpy as np
 import csv
+from scipy.spatial.transform import Rotation
 from Subsystems.action import Action
 from Subsystems.state import State
-def quaternion_to_rotation_matrix(w, x, y, z):
-    norm = np.sqrt(w*w + x*x + y*y + z*z)
 
-    w /= norm
-    x /= norm
-    y /= norm
-    z /= norm
-
-    return np.array([
-        [
-            1 - 2*(y*y + z*z),
-            2*(x*y - w*z),
-            2*(x*z + w*y)
-        ],
-        [
-            2*(x*y + w*z),
-            1 - 2*(x*x + z*z),
-            2*(y*z - w*x)
-        ],
-        [
-            2*(x*z - w*y),
-            2*(y*z + w*x),
-            1 - 2*(x*x + y*y)
-        ]
-    ])
 
 
 #Generic Flight Controller Template, assuming using pyserial or something similiar
@@ -46,7 +23,7 @@ class FlightController():
         self.time_data = []
         self.log_data = False
         self.data_name = FlightController.DATA_PATH + "temp.csv"
-    def start(self) -> None:
+    def start(self,initial_state : np.ndarray | None = None) -> None:
         pass
     #Prompts the user if they want to log data and what to name said data
     def log_prompt(self) -> None:
@@ -63,6 +40,8 @@ class FlightController():
         #Steps the flight controller and returns the current state and timestamp.
         pass
     def close(self) -> None:
+        pass
+    def set_state(self, state: np.ndarray) -> None:
         pass
     def write_data_log(self):
         if not self.log_data:

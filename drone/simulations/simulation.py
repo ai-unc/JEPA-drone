@@ -1,7 +1,9 @@
 from __future__ import annotations
 import math
 
-from Subsystems.flight_controller import FlightController, quaternion_to_rotation_matrix
+from sympy import Quaternion
+
+from Subsystems.flight_controller import FlightController, Rotation
 from Subsystems.action import Action
 from Subsystems.state import State
 import numpy as np
@@ -36,11 +38,12 @@ class ProjectAirSimSimulation(FlightController):
             "y": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
             "z": self.SKY_POSE_Z,
         }
+        x, y, z, w = Rotation.random().as_quat()
         orientation = {
-            "w": 1.0,
-            "x": random.uniform(-math.pi, math.pi),
-            "y": random.uniform(-math.pi, math.pi),
-            "z": random.uniform(-math.pi, math.pi),
+            "w": float(w),
+            "x": float(x),
+            "y": float(y),
+            "z": float(z),
         }
         self.drone.set_pose(types.Transform({
             "translation": position,
@@ -56,7 +59,7 @@ class ProjectAirSimSimulation(FlightController):
         self.drone: Drone | None = None
 
     @override
-    def start(self) -> None:
+    def start(self, initial_state: np.ndarray | None = None) -> None:
         self.client = ProjectAirSimClient()
         self.client.connect()
 
@@ -73,7 +76,56 @@ class ProjectAirSimSimulation(FlightController):
             self.world,
             self.DEFAULT_DRONE_NAME,
         )
-
+        if initial_state is not None:
+            self.set_state(initial_state, time=0)
+    @override
+    def set_state(self, state: np.ndarray,time : np.double = 0) -> None:
+        rotation_matrix = state[State.R1x:State.R3z+1].reshape(3,3)
+        x, y, z, w = Rotation.from_matrix(rotation_matrix).as_quat()
+        self.drone.set_ground_truth_kinematics(
+            {
+                "time_stamp" : time,
+                "pose" : {
+                    "position": types.Vector3({
+                        "x" : state[State.PX],
+                        "y" : state[State.PY],
+                        "z" : state[State.PZ],
+                    }
+                    ),
+                    "orientation": types.Quaternion({
+                        "w": w,
+                        "x": x,
+                        "y": y,
+                        "z": z,
+                    })
+                },
+                "twist" : {
+                    "linear": types.Vector3({
+                        "x" : state[State.VX],
+                        "y" : state[State.VY],
+                        "z" : state[State.VZ],
+                    }
+                    ),
+                    "angular": types.Vector3({
+                        "x" : state[State.WX],
+                        "y" : state[State.WY],
+                        "z" : state[State.WZ],
+                    })
+                },
+                "accels" : {
+                    "linear": types.Vector3({
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0,
+                    }),
+                    "angular": types.Vector3({
+                        "x" : 0,
+                        "y" : 0,
+                        "z" : 0,
+                    })
+                }
+            }
+        )
     @override
     def read(self) -> tuple[np.ndarray, np.double]:
         assert self.drone is not None
@@ -94,12 +146,12 @@ class ProjectAirSimSimulation(FlightController):
                 np.double(position["y"]),
                 np.double(position["z"]),
             ]),
-            rotation=quaternion_to_rotation_matrix(
-                        float(orientation["w"]),
-                        float(orientation["x"]),
-                        float(orientation["y"]),
-                        float(orientation["z"]),
-                    ),
+            rotation=Rotation.from_quat([
+                np.double(orientation["w"]),
+                np.double(orientation["x"]),
+                np.double(orientation["y"]),
+                np.double(orientation["z"])
+            ], scalar_first=True).as_matrix(),
             velocity=np.array([
                 np.double(twist["linear"]["x"]),
                 np.double(twist["linear"]["y"]),
@@ -131,19 +183,18 @@ class ProjectAirSimSimulation(FlightController):
         action: np.ndarray | None = None) -> tuple[np.ndarray, np.double]:
 
         assert self.world is not None
-
+        prev_state,prev_time_stamp = self.read()
         if (action is not None):
             self.send(actions=action)
         self.world.continue_for_n_steps(
             FlightController.CONTROL_STEPS_PER_MILLISECOND,
             wait_until_complete=True,
         )
-        state,time_stamp = self.read()
         if self.log_data:
             self.action_data.append(action)
-            self.state_data.append(state)
-            self.time_data.append(time_stamp)
-        return state, time_stamp
+            self.state_data.append(prev_state)
+            self.time_data.append(prev_time_stamp)
+        return self.read()
     @override
     def close(self) -> None:
         self.write_data_log()

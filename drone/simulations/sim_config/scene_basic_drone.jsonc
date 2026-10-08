@@ -14,7 +14,7 @@
   "clock": {
     "type": "steppable",
     "step-ns": 1000000,
-    "real-time-update-rate": 3000000,
+    "real-time-update-rate": 1000000,
     "pause-on-start": true
   },
   "home-geo-point": {
