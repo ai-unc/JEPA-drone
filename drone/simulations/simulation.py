@@ -30,12 +30,6 @@ class ProjectAirSimSimulation(FlightController):
     SKY_POSE_Z = -80
     SPAWN_POSE_VARIATION = 100
 
-    @staticmethod
-    def prompt_for_iterations() -> tuple[int, int]:
-        iteration = int(input("Enter the starting iteration: "))
-        iterations = int(input("How many times do you want to run this sequence? "))
-        return iteration, iteration + iterations
-
     def set_pose_to_random_in_sky(self, height = SKY_POSE_Z):
         assert self.drone is not None
         import random

@@ -132,7 +132,8 @@ class ActionSequence():
     def generate_random_sequence(
         time: float,
         frequency: float,
-        start_time: float = 0
+        start_time: float = 0,
+        thrust_variance: tuple[float, float] = (0, Action.ASSUMED_MAX_THRUST)
     ) -> "ActionSequence":
 
         if frequency <= 0:
@@ -161,16 +162,16 @@ class ActionSequence():
                 current_action = Action.generate(
                     motor_thrusts=np.array([
                         np.double(random.uniform(
-                            0, Action.ASSUMED_MAX_THRUST
+                            thrust_variance[0], thrust_variance[1]
                         )),
                         np.double(random.uniform(
-                            0, Action.ASSUMED_MAX_THRUST
+                            thrust_variance[0], thrust_variance[1]
                         )),
                         np.double(random.uniform(
-                            0, Action.ASSUMED_MAX_THRUST
+                            thrust_variance[0], thrust_variance[1]
                         )),
                         np.double(random.uniform(
-                            0, Action.ASSUMED_MAX_THRUST
+                            thrust_variance[0], thrust_variance[1]
                         )),
                     ],dtype=np.double)
                 )

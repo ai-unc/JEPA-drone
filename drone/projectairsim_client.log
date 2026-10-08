@@ -1,1161 +1,1323 @@
-12:10:49:270 [INFO] Connecting to simulation server at 127.0.0.1
-12:10:49:288 [INFO] Connection opened.
-12:10:49:289 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:10:50:766 [INFO] Getting the list of available topic info from the sim server...
-12:10:50:779 [INFO] Successfully received topic info list.
-12:10:52:780 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:10:52:781 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:10:52:782 [INFO] Initalizing Drone 'Drone1'...
-12:10:52:782 [INFO] -------------------------------------------------
-12:10:52:783 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:10:52:783 [INFO]     sensors["Chase"]["scene_camera"]
-12:10:52:783 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:10:52:784 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:10:52:784 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:10:52:784 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:10:52:785 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:10:52:785 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:10:52:785 [INFO]     sensors["GPS"]["gps"]
-12:10:52:786 [INFO]     sensors["Barometer"]["barometer"]
-12:10:52:786 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:10:52:787 [INFO]     robot_info["actual_pose"]
-12:10:52:787 [INFO]     robot_info["collision_info"]
-12:10:52:787 [INFO]     robot_info["rotor_info"]
-12:10:52:787 [INFO] -------------------------------------------------
-12:10:52:788 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:11:07:790 [INFO] Disconnecting from simulation server...
-12:11:07:919 [INFO] Disconnected.
-12:11:07:921 [INFO] Connecting to simulation server at 127.0.0.1
-12:11:07:925 [INFO] Connection opened.
-12:11:07:926 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:11:09:310 [INFO] Getting the list of available topic info from the sim server...
-12:11:09:322 [INFO] Successfully received topic info list.
-12:11:11:324 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:11:11:326 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:11:11:326 [INFO] Initalizing Drone 'Drone1'...
-12:11:11:327 [INFO] -------------------------------------------------
-12:11:11:327 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:11:11:327 [INFO]     sensors["Chase"]["scene_camera"]
-12:11:11:328 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:11:11:328 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:11:11:328 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:11:11:328 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:11:11:328 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:11:11:329 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:11:11:329 [INFO]     sensors["GPS"]["gps"]
-12:11:11:330 [INFO]     sensors["Barometer"]["barometer"]
-12:11:11:330 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:11:11:330 [INFO]     robot_info["actual_pose"]
-12:11:11:331 [INFO]     robot_info["collision_info"]
-12:11:11:331 [INFO]     robot_info["rotor_info"]
-12:11:11:331 [INFO] -------------------------------------------------
-12:11:11:332 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:11:26:426 [INFO] Disconnecting from simulation server...
-12:11:26:516 [INFO] Disconnected.
-12:11:26:518 [INFO] Connecting to simulation server at 127.0.0.1
-12:11:26:521 [INFO] Connection opened.
-12:11:26:522 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:11:28:079 [INFO] Getting the list of available topic info from the sim server...
-12:11:28:091 [INFO] Successfully received topic info list.
-12:11:30:093 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:11:30:095 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:11:30:095 [INFO] Initalizing Drone 'Drone1'...
-12:11:30:096 [INFO] -------------------------------------------------
-12:11:30:096 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:11:30:097 [INFO]     sensors["Chase"]["scene_camera"]
-12:11:30:098 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:11:30:098 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:11:30:099 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:11:30:099 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:11:30:099 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:11:30:100 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:11:30:100 [INFO]     sensors["GPS"]["gps"]
-12:11:30:100 [INFO]     sensors["Barometer"]["barometer"]
-12:11:30:101 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:11:30:101 [INFO]     robot_info["actual_pose"]
-12:11:30:102 [INFO]     robot_info["collision_info"]
-12:11:30:102 [INFO]     robot_info["rotor_info"]
-12:11:30:102 [INFO] -------------------------------------------------
-12:11:30:103 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:11:44:915 [INFO] Disconnecting from simulation server...
-12:11:45:028 [INFO] Disconnected.
-12:11:45:031 [INFO] Connecting to simulation server at 127.0.0.1
-12:11:45:035 [INFO] Connection opened.
-12:11:45:036 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:11:46:500 [INFO] Getting the list of available topic info from the sim server...
-12:11:46:512 [INFO] Successfully received topic info list.
-12:11:48:513 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:11:48:515 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:11:48:516 [INFO] Initalizing Drone 'Drone1'...
-12:11:48:517 [INFO] -------------------------------------------------
-12:11:48:517 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:11:48:517 [INFO]     sensors["Chase"]["scene_camera"]
-12:11:48:518 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:11:48:518 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:11:48:518 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:11:48:519 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:11:48:519 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:11:48:520 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:11:48:520 [INFO]     sensors["GPS"]["gps"]
-12:11:48:521 [INFO]     sensors["Barometer"]["barometer"]
-12:11:48:521 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:11:48:521 [INFO]     robot_info["actual_pose"]
-12:11:48:522 [INFO]     robot_info["collision_info"]
-12:11:48:522 [INFO]     robot_info["rotor_info"]
-12:11:48:523 [INFO] -------------------------------------------------
-12:11:48:523 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:12:03:555 [INFO] Disconnecting from simulation server...
-12:12:03:648 [INFO] Disconnected.
-12:12:03:650 [INFO] Connecting to simulation server at 127.0.0.1
-12:12:03:654 [INFO] Connection opened.
-12:12:03:654 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:12:04:993 [INFO] Getting the list of available topic info from the sim server...
-12:12:05:005 [INFO] Successfully received topic info list.
-12:12:07:006 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:12:07:008 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:12:07:009 [INFO] Initalizing Drone 'Drone1'...
-12:12:07:010 [INFO] -------------------------------------------------
-12:12:07:010 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:12:07:010 [INFO]     sensors["Chase"]["scene_camera"]
-12:12:07:011 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:12:07:011 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:12:07:011 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:12:07:012 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:12:07:012 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:12:07:012 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:12:07:012 [INFO]     sensors["GPS"]["gps"]
-12:12:07:013 [INFO]     sensors["Barometer"]["barometer"]
-12:12:07:013 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:12:07:013 [INFO]     robot_info["actual_pose"]
-12:12:07:013 [INFO]     robot_info["collision_info"]
-12:12:07:013 [INFO]     robot_info["rotor_info"]
-12:12:07:014 [INFO] -------------------------------------------------
-12:12:07:014 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:12:21:923 [INFO] Disconnecting from simulation server...
-12:12:22:007 [INFO] Disconnected.
-12:12:22:010 [INFO] Connecting to simulation server at 127.0.0.1
-12:12:22:013 [INFO] Connection opened.
-12:12:22:014 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:12:23:548 [INFO] Getting the list of available topic info from the sim server...
-12:12:23:560 [INFO] Successfully received topic info list.
-12:12:25:563 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:12:25:565 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:12:25:565 [INFO] Initalizing Drone 'Drone1'...
-12:12:25:566 [INFO] -------------------------------------------------
-12:12:25:566 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:12:25:566 [INFO]     sensors["Chase"]["scene_camera"]
-12:12:25:567 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:12:25:567 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:12:25:568 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:12:25:569 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:12:25:569 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:12:25:570 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:12:25:570 [INFO]     sensors["GPS"]["gps"]
-12:12:25:570 [INFO]     sensors["Barometer"]["barometer"]
-12:12:25:571 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:12:25:571 [INFO]     robot_info["actual_pose"]
-12:12:25:571 [INFO]     robot_info["collision_info"]
-12:12:25:572 [INFO]     robot_info["rotor_info"]
-12:12:25:572 [INFO] -------------------------------------------------
-12:12:25:572 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:12:40:620 [INFO] Disconnecting from simulation server...
-12:12:40:767 [INFO] Disconnected.
-12:12:40:770 [INFO] Connecting to simulation server at 127.0.0.1
-12:12:40:773 [INFO] Connection opened.
-12:12:40:773 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:12:42:287 [INFO] Getting the list of available topic info from the sim server...
-12:12:42:300 [INFO] Successfully received topic info list.
-12:12:44:303 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:12:44:306 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:12:44:306 [INFO] Initalizing Drone 'Drone1'...
-12:12:44:307 [INFO] -------------------------------------------------
-12:12:44:307 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:12:44:307 [INFO]     sensors["Chase"]["scene_camera"]
-12:12:44:308 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:12:44:308 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:12:44:308 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:12:44:309 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:12:44:310 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:12:44:310 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:12:44:310 [INFO]     sensors["GPS"]["gps"]
-12:12:44:311 [INFO]     sensors["Barometer"]["barometer"]
-12:12:44:311 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:12:44:311 [INFO]     robot_info["actual_pose"]
-12:12:44:311 [INFO]     robot_info["collision_info"]
-12:12:44:312 [INFO]     robot_info["rotor_info"]
-12:12:44:312 [INFO] -------------------------------------------------
-12:12:44:312 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:12:59:358 [INFO] Disconnecting from simulation server...
-12:12:59:404 [INFO] Disconnected.
-12:12:59:406 [INFO] Connecting to simulation server at 127.0.0.1
-12:12:59:410 [INFO] Connection opened.
-12:12:59:410 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:13:00:968 [INFO] Getting the list of available topic info from the sim server...
-12:13:00:980 [INFO] Successfully received topic info list.
-12:13:02:981 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:13:02:984 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:13:02:985 [INFO] Initalizing Drone 'Drone1'...
-12:13:02:985 [INFO] -------------------------------------------------
-12:13:02:985 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:13:02:986 [INFO]     sensors["Chase"]["scene_camera"]
-12:13:02:986 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:13:02:986 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:13:02:987 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:13:02:987 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:13:02:988 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:13:02:988 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:13:02:988 [INFO]     sensors["GPS"]["gps"]
-12:13:02:989 [INFO]     sensors["Barometer"]["barometer"]
-12:13:02:989 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:13:02:990 [INFO]     robot_info["actual_pose"]
-12:13:02:990 [INFO]     robot_info["collision_info"]
-12:13:02:990 [INFO]     robot_info["rotor_info"]
-12:13:02:991 [INFO] -------------------------------------------------
-12:13:02:991 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:13:18:083 [INFO] Disconnecting from simulation server...
-12:13:18:197 [INFO] Disconnected.
-12:13:18:199 [INFO] Connecting to simulation server at 127.0.0.1
-12:13:18:203 [INFO] Connection opened.
-12:13:18:203 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:13:19:550 [INFO] Getting the list of available topic info from the sim server...
-12:13:19:562 [INFO] Successfully received topic info list.
-12:13:21:563 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:13:21:566 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:13:21:566 [INFO] Initalizing Drone 'Drone1'...
-12:13:21:567 [INFO] -------------------------------------------------
-12:13:21:567 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:13:21:568 [INFO]     sensors["Chase"]["scene_camera"]
-12:13:21:569 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:13:21:569 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:13:21:570 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:13:21:571 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:13:21:571 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:13:21:572 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:13:21:572 [INFO]     sensors["GPS"]["gps"]
-12:13:21:573 [INFO]     sensors["Barometer"]["barometer"]
-12:13:21:573 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:13:21:573 [INFO]     robot_info["actual_pose"]
-12:13:21:574 [INFO]     robot_info["collision_info"]
-12:13:21:574 [INFO]     robot_info["rotor_info"]
-12:13:21:574 [INFO] -------------------------------------------------
-12:13:21:575 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:13:36:541 [INFO] Disconnecting from simulation server...
-12:13:36:611 [INFO] Disconnected.
-12:13:36:613 [INFO] Connecting to simulation server at 127.0.0.1
-12:13:36:617 [INFO] Connection opened.
-12:13:36:617 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:13:38:074 [INFO] Getting the list of available topic info from the sim server...
-12:13:38:087 [INFO] Successfully received topic info list.
-12:13:40:088 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:13:40:090 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:13:40:091 [INFO] Initalizing Drone 'Drone1'...
-12:13:40:092 [INFO] -------------------------------------------------
-12:13:40:092 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:13:40:093 [INFO]     sensors["Chase"]["scene_camera"]
-12:13:40:093 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:13:40:094 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:13:40:094 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:13:40:095 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:13:40:095 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:13:40:096 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:13:40:096 [INFO]     sensors["GPS"]["gps"]
-12:13:40:096 [INFO]     sensors["Barometer"]["barometer"]
-12:13:40:097 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:13:40:097 [INFO]     robot_info["actual_pose"]
-12:13:40:097 [INFO]     robot_info["collision_info"]
-12:13:40:098 [INFO]     robot_info["rotor_info"]
-12:13:40:098 [INFO] -------------------------------------------------
-12:13:40:098 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:13:54:929 [INFO] Disconnecting from simulation server...
-12:13:55:064 [INFO] Disconnected.
-12:13:55:066 [INFO] Connecting to simulation server at 127.0.0.1
-12:13:55:070 [INFO] Connection opened.
-12:13:55:070 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:13:56:494 [INFO] Getting the list of available topic info from the sim server...
-12:13:56:506 [INFO] Successfully received topic info list.
-12:13:58:507 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:13:58:509 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:13:58:510 [INFO] Initalizing Drone 'Drone1'...
-12:13:58:510 [INFO] -------------------------------------------------
-12:13:58:511 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:13:58:511 [INFO]     sensors["Chase"]["scene_camera"]
-12:13:58:512 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:13:58:512 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:13:58:512 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:13:58:513 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:13:58:513 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:13:58:513 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:13:58:513 [INFO]     sensors["GPS"]["gps"]
-12:13:58:514 [INFO]     sensors["Barometer"]["barometer"]
-12:13:58:514 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:13:58:514 [INFO]     robot_info["actual_pose"]
-12:13:58:514 [INFO]     robot_info["collision_info"]
-12:13:58:515 [INFO]     robot_info["rotor_info"]
-12:13:58:515 [INFO] -------------------------------------------------
-12:13:58:515 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:14:13:587 [INFO] Disconnecting from simulation server...
-12:14:13:678 [INFO] Disconnected.
-12:14:13:680 [INFO] Connecting to simulation server at 127.0.0.1
-12:14:13:683 [INFO] Connection opened.
-12:14:13:684 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:14:15:079 [INFO] Getting the list of available topic info from the sim server...
-12:14:15:091 [INFO] Successfully received topic info list.
-12:14:17:092 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:14:17:094 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:14:17:095 [INFO] Initalizing Drone 'Drone1'...
-12:14:17:095 [INFO] -------------------------------------------------
-12:14:17:095 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:14:17:096 [INFO]     sensors["Chase"]["scene_camera"]
-12:14:17:096 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:14:17:097 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:14:17:097 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:14:17:097 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:14:17:098 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:14:17:098 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:14:17:098 [INFO]     sensors["GPS"]["gps"]
-12:14:17:099 [INFO]     sensors["Barometer"]["barometer"]
-12:14:17:099 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:14:17:099 [INFO]     robot_info["actual_pose"]
-12:14:17:100 [INFO]     robot_info["collision_info"]
-12:14:17:100 [INFO]     robot_info["rotor_info"]
-12:14:17:100 [INFO] -------------------------------------------------
-12:14:17:101 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:14:32:137 [INFO] Disconnecting from simulation server...
-12:14:32:251 [INFO] Disconnected.
-12:14:32:253 [INFO] Connecting to simulation server at 127.0.0.1
-12:14:32:256 [INFO] Connection opened.
-12:14:32:257 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:14:33:794 [INFO] Getting the list of available topic info from the sim server...
-12:14:33:806 [INFO] Successfully received topic info list.
-12:14:35:807 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:14:35:809 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:14:35:809 [INFO] Initalizing Drone 'Drone1'...
-12:14:35:809 [INFO] -------------------------------------------------
-12:14:35:810 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:14:35:810 [INFO]     sensors["Chase"]["scene_camera"]
-12:14:35:810 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:14:35:811 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:14:35:811 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:14:35:811 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:14:35:812 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:14:35:812 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:14:35:812 [INFO]     sensors["GPS"]["gps"]
-12:14:35:812 [INFO]     sensors["Barometer"]["barometer"]
-12:14:35:813 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:14:35:813 [INFO]     robot_info["actual_pose"]
-12:14:35:813 [INFO]     robot_info["collision_info"]
-12:14:35:813 [INFO]     robot_info["rotor_info"]
-12:14:35:814 [INFO] -------------------------------------------------
-12:14:35:814 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:14:50:892 [INFO] Disconnecting from simulation server...
-12:14:51:024 [INFO] Disconnected.
-12:14:51:027 [INFO] Connecting to simulation server at 127.0.0.1
-12:14:51:030 [INFO] Connection opened.
-12:14:51:030 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:14:52:496 [INFO] Getting the list of available topic info from the sim server...
-12:14:52:508 [INFO] Successfully received topic info list.
-12:14:54:510 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:14:54:512 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:14:54:512 [INFO] Initalizing Drone 'Drone1'...
-12:14:54:513 [INFO] -------------------------------------------------
-12:14:54:513 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:14:54:514 [INFO]     sensors["Chase"]["scene_camera"]
-12:14:54:514 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:14:54:514 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:14:54:515 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:14:54:515 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:14:54:515 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:14:54:515 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:14:54:516 [INFO]     sensors["GPS"]["gps"]
-12:14:54:516 [INFO]     sensors["Barometer"]["barometer"]
-12:14:54:517 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:14:54:517 [INFO]     robot_info["actual_pose"]
-12:14:54:517 [INFO]     robot_info["collision_info"]
-12:14:54:518 [INFO]     robot_info["rotor_info"]
-12:14:54:518 [INFO] -------------------------------------------------
-12:14:54:518 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:15:09:695 [INFO] Disconnecting from simulation server...
-12:15:09:754 [INFO] Disconnected.
-12:15:09:756 [INFO] Connecting to simulation server at 127.0.0.1
-12:15:09:759 [INFO] Connection opened.
-12:15:09:760 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:15:11:186 [INFO] Getting the list of available topic info from the sim server...
-12:15:11:198 [INFO] Successfully received topic info list.
-12:15:13:199 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:15:13:204 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:15:13:204 [INFO] Initalizing Drone 'Drone1'...
-12:15:13:205 [INFO] -------------------------------------------------
-12:15:13:205 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:15:13:206 [INFO]     sensors["Chase"]["scene_camera"]
-12:15:13:206 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:15:13:206 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:15:13:206 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:15:13:207 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:15:13:207 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:15:13:207 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:15:13:208 [INFO]     sensors["GPS"]["gps"]
-12:15:13:208 [INFO]     sensors["Barometer"]["barometer"]
-12:15:13:208 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:15:13:209 [INFO]     robot_info["actual_pose"]
-12:15:13:209 [INFO]     robot_info["collision_info"]
-12:15:13:209 [INFO]     robot_info["rotor_info"]
-12:15:13:210 [INFO] -------------------------------------------------
-12:15:13:210 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:15:28:280 [INFO] Disconnecting from simulation server...
-12:15:28:409 [INFO] Disconnected.
-12:15:28:412 [INFO] Connecting to simulation server at 127.0.0.1
-12:15:28:416 [INFO] Connection opened.
-12:15:28:416 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:15:29:960 [INFO] Getting the list of available topic info from the sim server...
-12:15:29:972 [INFO] Successfully received topic info list.
-12:15:31:973 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:15:31:975 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:15:31:976 [INFO] Initalizing Drone 'Drone1'...
-12:15:31:976 [INFO] -------------------------------------------------
-12:15:31:976 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:15:31:976 [INFO]     sensors["Chase"]["scene_camera"]
-12:15:31:977 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:15:31:977 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:15:31:977 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:15:31:978 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:15:31:978 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:15:31:978 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:15:31:979 [INFO]     sensors["GPS"]["gps"]
-12:15:31:979 [INFO]     sensors["Barometer"]["barometer"]
-12:15:31:979 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:15:31:980 [INFO]     robot_info["actual_pose"]
-12:15:31:980 [INFO]     robot_info["collision_info"]
-12:15:31:981 [INFO]     robot_info["rotor_info"]
-12:15:31:981 [INFO] -------------------------------------------------
-12:15:31:982 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:15:47:049 [INFO] Disconnecting from simulation server...
-12:15:47:098 [INFO] Disconnected.
-12:15:47:101 [INFO] Connecting to simulation server at 127.0.0.1
-12:15:47:105 [INFO] Connection opened.
-12:15:47:106 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:15:48:547 [INFO] Getting the list of available topic info from the sim server...
-12:15:48:558 [INFO] Successfully received topic info list.
-12:15:50:560 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:15:50:562 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:15:50:563 [INFO] Initalizing Drone 'Drone1'...
-12:15:50:563 [INFO] -------------------------------------------------
-12:15:50:564 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:15:50:564 [INFO]     sensors["Chase"]["scene_camera"]
-12:15:50:564 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:15:50:564 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:15:50:565 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:15:50:565 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:15:50:565 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:15:50:566 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:15:50:566 [INFO]     sensors["GPS"]["gps"]
-12:15:50:566 [INFO]     sensors["Barometer"]["barometer"]
-12:15:50:567 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:15:50:567 [INFO]     robot_info["actual_pose"]
-12:15:50:567 [INFO]     robot_info["collision_info"]
-12:15:50:567 [INFO]     robot_info["rotor_info"]
-12:15:50:568 [INFO] -------------------------------------------------
-12:15:50:568 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:16:05:539 [INFO] Disconnecting from simulation server...
-12:16:05:651 [INFO] Disconnected.
-12:16:05:653 [INFO] Connecting to simulation server at 127.0.0.1
-12:16:05:657 [INFO] Connection opened.
-12:16:05:658 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:16:07:281 [INFO] Getting the list of available topic info from the sim server...
-12:16:07:294 [INFO] Successfully received topic info list.
-12:16:09:295 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:16:09:296 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:16:09:297 [INFO] Initalizing Drone 'Drone1'...
-12:16:09:297 [INFO] -------------------------------------------------
-12:16:09:298 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:16:09:298 [INFO]     sensors["Chase"]["scene_camera"]
-12:16:09:298 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:16:09:298 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:16:09:299 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:16:09:299 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:16:09:299 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:16:09:299 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:16:09:300 [INFO]     sensors["GPS"]["gps"]
-12:16:09:300 [INFO]     sensors["Barometer"]["barometer"]
-12:16:09:300 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:16:09:300 [INFO]     robot_info["actual_pose"]
-12:16:09:301 [INFO]     robot_info["collision_info"]
-12:16:09:301 [INFO]     robot_info["rotor_info"]
-12:16:09:301 [INFO] -------------------------------------------------
-12:16:09:302 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:16:24:409 [INFO] Disconnecting from simulation server...
-12:16:24:547 [INFO] Disconnected.
-12:16:24:549 [INFO] Connecting to simulation server at 127.0.0.1
-12:16:24:555 [INFO] Connection opened.
-12:16:24:555 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:16:25:949 [INFO] Getting the list of available topic info from the sim server...
-12:16:25:961 [INFO] Successfully received topic info list.
-12:16:27:964 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:16:27:966 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:16:27:967 [INFO] Initalizing Drone 'Drone1'...
-12:16:27:967 [INFO] -------------------------------------------------
-12:16:27:967 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:16:27:968 [INFO]     sensors["Chase"]["scene_camera"]
-12:16:27:968 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:16:27:968 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:16:27:969 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:16:27:969 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:16:27:970 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:16:27:970 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:16:27:970 [INFO]     sensors["GPS"]["gps"]
-12:16:27:971 [INFO]     sensors["Barometer"]["barometer"]
-12:16:27:971 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:16:27:971 [INFO]     robot_info["actual_pose"]
-12:16:27:972 [INFO]     robot_info["collision_info"]
-12:16:27:972 [INFO]     robot_info["rotor_info"]
-12:16:27:972 [INFO] -------------------------------------------------
-12:16:27:973 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:16:43:161 [INFO] Disconnecting from simulation server...
-12:16:43:259 [INFO] Disconnected.
-12:16:43:261 [INFO] Connecting to simulation server at 127.0.0.1
-12:16:43:264 [INFO] Connection opened.
-12:16:43:265 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:16:44:656 [INFO] Getting the list of available topic info from the sim server...
-12:16:44:668 [INFO] Successfully received topic info list.
-12:16:46:669 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:16:46:671 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:16:46:671 [INFO] Initalizing Drone 'Drone1'...
-12:16:46:672 [INFO] -------------------------------------------------
-12:16:46:672 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:16:46:672 [INFO]     sensors["Chase"]["scene_camera"]
-12:16:46:673 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:16:46:673 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:16:46:673 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:16:46:673 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:16:46:674 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:16:46:674 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:16:46:674 [INFO]     sensors["GPS"]["gps"]
-12:16:46:674 [INFO]     sensors["Barometer"]["barometer"]
-12:16:46:676 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:16:46:676 [INFO]     robot_info["actual_pose"]
-12:16:46:677 [INFO]     robot_info["collision_info"]
-12:16:46:677 [INFO]     robot_info["rotor_info"]
-12:16:46:677 [INFO] -------------------------------------------------
-12:16:46:678 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:17:01:698 [INFO] Disconnecting from simulation server...
-12:17:01:845 [INFO] Disconnected.
-12:17:01:848 [INFO] Connecting to simulation server at 127.0.0.1
-12:17:01:852 [INFO] Connection opened.
-12:17:01:853 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:17:03:448 [INFO] Getting the list of available topic info from the sim server...
-12:17:03:460 [INFO] Successfully received topic info list.
-12:17:05:461 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:17:05:464 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:17:05:464 [INFO] Initalizing Drone 'Drone1'...
-12:17:05:465 [INFO] -------------------------------------------------
-12:17:05:465 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:17:05:465 [INFO]     sensors["Chase"]["scene_camera"]
-12:17:05:466 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:17:05:466 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:17:05:467 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:17:05:467 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:17:05:467 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:17:05:467 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:17:05:468 [INFO]     sensors["GPS"]["gps"]
-12:17:05:468 [INFO]     sensors["Barometer"]["barometer"]
-12:17:05:468 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:17:05:469 [INFO]     robot_info["actual_pose"]
-12:17:05:469 [INFO]     robot_info["collision_info"]
-12:17:05:469 [INFO]     robot_info["rotor_info"]
-12:17:05:469 [INFO] -------------------------------------------------
-12:17:05:470 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:17:20:610 [INFO] Disconnecting from simulation server...
-12:17:20:668 [INFO] Disconnected.
-12:17:20:670 [INFO] Connecting to simulation server at 127.0.0.1
-12:17:20:673 [INFO] Connection opened.
-12:17:20:674 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:17:22:107 [INFO] Getting the list of available topic info from the sim server...
-12:17:22:119 [INFO] Successfully received topic info list.
-12:17:24:121 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:17:24:123 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:17:24:124 [INFO] Initalizing Drone 'Drone1'...
-12:17:24:124 [INFO] -------------------------------------------------
-12:17:24:124 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:17:24:125 [INFO]     sensors["Chase"]["scene_camera"]
-12:17:24:125 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:17:24:126 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:17:24:126 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:17:24:127 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:17:24:127 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:17:24:128 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:17:24:128 [INFO]     sensors["GPS"]["gps"]
-12:17:24:128 [INFO]     sensors["Barometer"]["barometer"]
-12:17:24:129 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:17:24:129 [INFO]     robot_info["actual_pose"]
-12:17:24:129 [INFO]     robot_info["collision_info"]
-12:17:24:130 [INFO]     robot_info["rotor_info"]
-12:17:24:130 [INFO] -------------------------------------------------
-12:17:24:130 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:17:39:390 [INFO] Disconnecting from simulation server...
-12:17:39:446 [INFO] Disconnected.
-12:17:39:448 [INFO] Connecting to simulation server at 127.0.0.1
-12:17:39:452 [INFO] Connection opened.
-12:17:39:452 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:17:41:110 [INFO] Getting the list of available topic info from the sim server...
-12:17:41:122 [INFO] Successfully received topic info list.
-12:17:43:123 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:17:43:125 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:17:43:126 [INFO] Initalizing Drone 'Drone1'...
-12:17:43:126 [INFO] -------------------------------------------------
-12:17:43:127 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:17:43:127 [INFO]     sensors["Chase"]["scene_camera"]
-12:17:43:128 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:17:43:128 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:17:43:129 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:17:43:129 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:17:43:130 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:17:43:130 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:17:43:131 [INFO]     sensors["GPS"]["gps"]
-12:17:43:131 [INFO]     sensors["Barometer"]["barometer"]
-12:17:43:131 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:17:43:132 [INFO]     robot_info["actual_pose"]
-12:17:43:132 [INFO]     robot_info["collision_info"]
-12:17:43:132 [INFO]     robot_info["rotor_info"]
-12:17:43:133 [INFO] -------------------------------------------------
-12:17:43:133 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:17:58:341 [INFO] Disconnecting from simulation server...
-12:17:58:472 [INFO] Disconnected.
-12:17:58:475 [INFO] Connecting to simulation server at 127.0.0.1
-12:17:58:480 [INFO] Connection opened.
-12:17:58:480 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:18:00:072 [INFO] Getting the list of available topic info from the sim server...
-12:18:00:085 [INFO] Successfully received topic info list.
-12:18:02:085 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:18:02:088 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:18:02:089 [INFO] Initalizing Drone 'Drone1'...
-12:18:02:090 [INFO] -------------------------------------------------
-12:18:02:090 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:18:02:090 [INFO]     sensors["Chase"]["scene_camera"]
-12:18:02:091 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:18:02:091 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:18:02:092 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:18:02:092 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:18:02:093 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:18:02:093 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:18:02:094 [INFO]     sensors["GPS"]["gps"]
-12:18:02:094 [INFO]     sensors["Barometer"]["barometer"]
-12:18:02:094 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:18:02:095 [INFO]     robot_info["actual_pose"]
-12:18:02:095 [INFO]     robot_info["collision_info"]
-12:18:02:095 [INFO]     robot_info["rotor_info"]
-12:18:02:096 [INFO] -------------------------------------------------
-12:18:02:096 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:18:17:216 [INFO] Disconnecting from simulation server...
-12:18:17:311 [INFO] Disconnected.
-12:18:17:313 [INFO] Connecting to simulation server at 127.0.0.1
-12:18:17:317 [INFO] Connection opened.
-12:18:17:317 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:18:18:907 [INFO] Getting the list of available topic info from the sim server...
-12:18:18:919 [INFO] Successfully received topic info list.
-12:18:20:920 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:18:20:922 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:18:20:923 [INFO] Initalizing Drone 'Drone1'...
-12:18:20:923 [INFO] -------------------------------------------------
-12:18:20:923 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:18:20:924 [INFO]     sensors["Chase"]["scene_camera"]
-12:18:20:924 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:18:20:924 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:18:20:925 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:18:20:925 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:18:20:925 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:18:20:925 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:18:20:926 [INFO]     sensors["GPS"]["gps"]
-12:18:20:926 [INFO]     sensors["Barometer"]["barometer"]
-12:18:20:926 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:18:20:927 [INFO]     robot_info["actual_pose"]
-12:18:20:927 [INFO]     robot_info["collision_info"]
-12:18:20:927 [INFO]     robot_info["rotor_info"]
-12:18:20:928 [INFO] -------------------------------------------------
-12:18:20:928 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:18:36:032 [INFO] Disconnecting from simulation server...
-12:18:36:073 [INFO] Disconnected.
-12:18:36:076 [INFO] Connecting to simulation server at 127.0.0.1
-12:18:36:080 [INFO] Connection opened.
-12:18:36:081 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:18:37:512 [INFO] Getting the list of available topic info from the sim server...
-12:18:37:525 [INFO] Successfully received topic info list.
-12:18:39:526 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:18:39:528 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:18:39:529 [INFO] Initalizing Drone 'Drone1'...
-12:18:39:529 [INFO] -------------------------------------------------
-12:18:39:530 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:18:39:530 [INFO]     sensors["Chase"]["scene_camera"]
-12:18:39:530 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:18:39:531 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:18:39:531 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:18:39:531 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:18:39:532 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:18:39:533 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:18:39:533 [INFO]     sensors["GPS"]["gps"]
-12:18:39:534 [INFO]     sensors["Barometer"]["barometer"]
-12:18:39:534 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:18:39:535 [INFO]     robot_info["actual_pose"]
-12:18:39:535 [INFO]     robot_info["collision_info"]
-12:18:39:536 [INFO]     robot_info["rotor_info"]
-12:18:39:536 [INFO] -------------------------------------------------
-12:18:39:537 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:18:54:214 [INFO] Disconnecting from simulation server...
-12:18:54:339 [INFO] Disconnected.
-12:18:54:341 [INFO] Connecting to simulation server at 127.0.0.1
-12:18:54:344 [INFO] Connection opened.
-12:18:54:344 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:18:55:827 [INFO] Getting the list of available topic info from the sim server...
-12:18:55:840 [INFO] Successfully received topic info list.
-12:18:57:842 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:18:57:843 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:18:57:844 [INFO] Initalizing Drone 'Drone1'...
-12:18:57:844 [INFO] -------------------------------------------------
-12:18:57:844 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:18:57:845 [INFO]     sensors["Chase"]["scene_camera"]
-12:18:57:845 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:18:57:845 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:18:57:846 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:18:57:846 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:18:57:846 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:18:57:847 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:18:57:847 [INFO]     sensors["GPS"]["gps"]
-12:18:57:848 [INFO]     sensors["Barometer"]["barometer"]
-12:18:57:848 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:18:57:848 [INFO]     robot_info["actual_pose"]
-12:18:57:849 [INFO]     robot_info["collision_info"]
-12:18:57:849 [INFO]     robot_info["rotor_info"]
-12:18:57:849 [INFO] -------------------------------------------------
-12:18:57:850 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:19:12:990 [INFO] Disconnecting from simulation server...
-12:19:13:107 [INFO] Disconnected.
-12:19:13:109 [INFO] Connecting to simulation server at 127.0.0.1
-12:19:13:113 [INFO] Connection opened.
-12:19:13:113 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:19:14:524 [INFO] Getting the list of available topic info from the sim server...
-12:19:14:536 [INFO] Successfully received topic info list.
-12:19:16:537 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:19:16:539 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:19:16:540 [INFO] Initalizing Drone 'Drone1'...
-12:19:16:540 [INFO] -------------------------------------------------
-12:19:16:540 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:19:16:541 [INFO]     sensors["Chase"]["scene_camera"]
-12:19:16:541 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:19:16:541 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:19:16:541 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:19:16:542 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:19:16:542 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:19:16:542 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:19:16:542 [INFO]     sensors["GPS"]["gps"]
-12:19:16:543 [INFO]     sensors["Barometer"]["barometer"]
-12:19:16:543 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:19:16:543 [INFO]     robot_info["actual_pose"]
-12:19:16:543 [INFO]     robot_info["collision_info"]
-12:19:16:544 [INFO]     robot_info["rotor_info"]
-12:19:16:544 [INFO] -------------------------------------------------
-12:19:16:544 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:19:31:721 [INFO] Disconnecting from simulation server...
-12:19:31:828 [INFO] Disconnected.
-12:19:31:831 [INFO] Connecting to simulation server at 127.0.0.1
-12:19:31:835 [INFO] Connection opened.
-12:19:31:835 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:19:33:336 [INFO] Getting the list of available topic info from the sim server...
-12:19:33:348 [INFO] Successfully received topic info list.
-12:19:35:350 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:19:35:352 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:19:35:353 [INFO] Initalizing Drone 'Drone1'...
-12:19:35:353 [INFO] -------------------------------------------------
-12:19:35:354 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:19:35:354 [INFO]     sensors["Chase"]["scene_camera"]
-12:19:35:354 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:19:35:354 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:19:35:355 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:19:35:356 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:19:35:356 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:19:35:357 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:19:35:357 [INFO]     sensors["GPS"]["gps"]
-12:19:35:357 [INFO]     sensors["Barometer"]["barometer"]
-12:19:35:358 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:19:35:358 [INFO]     robot_info["actual_pose"]
-12:19:35:359 [INFO]     robot_info["collision_info"]
-12:19:35:359 [INFO]     robot_info["rotor_info"]
-12:19:35:359 [INFO] -------------------------------------------------
-12:19:35:360 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:19:50:581 [INFO] Disconnecting from simulation server...
-12:19:50:683 [INFO] Disconnected.
-12:19:50:685 [INFO] Connecting to simulation server at 127.0.0.1
-12:19:50:689 [INFO] Connection opened.
-12:19:50:690 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:19:52:289 [INFO] Getting the list of available topic info from the sim server...
-12:19:52:302 [INFO] Successfully received topic info list.
-12:19:54:303 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:19:54:306 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:19:54:306 [INFO] Initalizing Drone 'Drone1'...
-12:19:54:307 [INFO] -------------------------------------------------
-12:19:54:307 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:19:54:308 [INFO]     sensors["Chase"]["scene_camera"]
-12:19:54:308 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:19:54:309 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:19:54:309 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:19:54:310 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:19:54:310 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:19:54:311 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:19:54:311 [INFO]     sensors["GPS"]["gps"]
-12:19:54:312 [INFO]     sensors["Barometer"]["barometer"]
-12:19:54:313 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:19:54:313 [INFO]     robot_info["actual_pose"]
-12:19:54:314 [INFO]     robot_info["collision_info"]
-12:19:54:314 [INFO]     robot_info["rotor_info"]
-12:19:54:314 [INFO] -------------------------------------------------
-12:19:54:315 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:20:09:581 [INFO] Disconnecting from simulation server...
-12:20:09:668 [INFO] Disconnected.
-12:20:09:670 [INFO] Connecting to simulation server at 127.0.0.1
-12:20:09:674 [INFO] Connection opened.
-12:20:09:674 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:20:11:328 [INFO] Getting the list of available topic info from the sim server...
-12:20:11:340 [INFO] Successfully received topic info list.
-12:20:13:341 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:20:13:343 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:20:13:344 [INFO] Initalizing Drone 'Drone1'...
-12:20:13:344 [INFO] -------------------------------------------------
-12:20:13:344 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:20:13:345 [INFO]     sensors["Chase"]["scene_camera"]
-12:20:13:345 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:20:13:346 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:20:13:346 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:20:13:346 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:20:13:347 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:20:13:347 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:20:13:347 [INFO]     sensors["GPS"]["gps"]
-12:20:13:348 [INFO]     sensors["Barometer"]["barometer"]
-12:20:13:348 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:20:13:349 [INFO]     robot_info["actual_pose"]
-12:20:13:349 [INFO]     robot_info["collision_info"]
-12:20:13:350 [INFO]     robot_info["rotor_info"]
-12:20:13:351 [INFO] -------------------------------------------------
-12:20:13:352 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:20:28:564 [INFO] Disconnecting from simulation server...
-12:20:28:649 [INFO] Disconnected.
-12:20:28:650 [INFO] Connecting to simulation server at 127.0.0.1
-12:20:28:654 [INFO] Connection opened.
-12:20:28:655 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:20:30:088 [INFO] Getting the list of available topic info from the sim server...
-12:20:30:100 [INFO] Successfully received topic info list.
-12:20:32:101 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:20:32:104 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:20:32:104 [INFO] Initalizing Drone 'Drone1'...
-12:20:32:104 [INFO] -------------------------------------------------
-12:20:32:105 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:20:32:105 [INFO]     sensors["Chase"]["scene_camera"]
-12:20:32:105 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:20:32:106 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:20:32:106 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:20:32:106 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:20:32:107 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:20:32:107 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:20:32:107 [INFO]     sensors["GPS"]["gps"]
-12:20:32:108 [INFO]     sensors["Barometer"]["barometer"]
-12:20:32:108 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:20:32:108 [INFO]     robot_info["actual_pose"]
-12:20:32:109 [INFO]     robot_info["collision_info"]
-12:20:32:109 [INFO]     robot_info["rotor_info"]
-12:20:32:110 [INFO] -------------------------------------------------
-12:20:32:110 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:20:47:381 [INFO] Disconnecting from simulation server...
-12:20:47:429 [INFO] Disconnected.
-12:20:47:432 [INFO] Connecting to simulation server at 127.0.0.1
-12:20:47:435 [INFO] Connection opened.
-12:20:47:436 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:20:49:058 [INFO] Getting the list of available topic info from the sim server...
-12:20:49:071 [INFO] Successfully received topic info list.
-12:20:51:073 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:20:51:075 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:20:51:076 [INFO] Initalizing Drone 'Drone1'...
-12:20:51:076 [INFO] -------------------------------------------------
-12:20:51:077 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:20:51:077 [INFO]     sensors["Chase"]["scene_camera"]
-12:20:51:077 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:20:51:078 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:20:51:078 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:20:51:078 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:20:51:079 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:20:51:079 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:20:51:079 [INFO]     sensors["GPS"]["gps"]
-12:20:51:079 [INFO]     sensors["Barometer"]["barometer"]
-12:20:51:079 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:20:51:080 [INFO]     robot_info["actual_pose"]
-12:20:51:080 [INFO]     robot_info["collision_info"]
-12:20:51:080 [INFO]     robot_info["rotor_info"]
-12:20:51:081 [INFO] -------------------------------------------------
-12:20:51:081 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:21:06:332 [INFO] Disconnecting from simulation server...
-12:21:06:365 [INFO] Disconnected.
-12:21:06:367 [INFO] Connecting to simulation server at 127.0.0.1
-12:21:06:371 [INFO] Connection opened.
-12:21:06:372 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:21:08:044 [INFO] Getting the list of available topic info from the sim server...
-12:21:08:056 [INFO] Successfully received topic info list.
-12:21:10:057 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:21:10:059 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:21:10:060 [INFO] Initalizing Drone 'Drone1'...
-12:21:10:060 [INFO] -------------------------------------------------
-12:21:10:060 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:21:10:061 [INFO]     sensors["Chase"]["scene_camera"]
-12:21:10:061 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:21:10:061 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:21:10:062 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:21:10:062 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:21:10:063 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:21:10:063 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:21:10:063 [INFO]     sensors["GPS"]["gps"]
-12:21:10:064 [INFO]     sensors["Barometer"]["barometer"]
-12:21:10:064 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:21:10:064 [INFO]     robot_info["actual_pose"]
-12:21:10:065 [INFO]     robot_info["collision_info"]
-12:21:10:065 [INFO]     robot_info["rotor_info"]
-12:21:10:065 [INFO] -------------------------------------------------
-12:21:10:066 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:21:25:011 [INFO] Disconnecting from simulation server...
-12:21:25:093 [INFO] Disconnected.
-12:21:25:095 [INFO] Connecting to simulation server at 127.0.0.1
-12:21:25:098 [INFO] Connection opened.
-12:21:25:099 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:21:26:358 [INFO] Getting the list of available topic info from the sim server...
-12:21:26:370 [INFO] Successfully received topic info list.
-12:21:28:371 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:21:28:373 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:21:28:373 [INFO] Initalizing Drone 'Drone1'...
-12:21:28:374 [INFO] -------------------------------------------------
-12:21:28:374 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:21:28:374 [INFO]     sensors["Chase"]["scene_camera"]
-12:21:28:374 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:21:28:375 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:21:28:375 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:21:28:375 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:21:28:376 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:21:28:376 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:21:28:376 [INFO]     sensors["GPS"]["gps"]
-12:21:28:377 [INFO]     sensors["Barometer"]["barometer"]
-12:21:28:377 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:21:28:377 [INFO]     robot_info["actual_pose"]
-12:21:28:377 [INFO]     robot_info["collision_info"]
-12:21:28:378 [INFO]     robot_info["rotor_info"]
-12:21:28:378 [INFO] -------------------------------------------------
-12:21:28:378 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:21:43:434 [INFO] Disconnecting from simulation server...
-12:21:43:526 [INFO] Disconnected.
-12:21:43:528 [INFO] Connecting to simulation server at 127.0.0.1
-12:21:43:531 [INFO] Connection opened.
-12:21:43:532 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:21:45:203 [INFO] Getting the list of available topic info from the sim server...
-12:21:45:215 [INFO] Successfully received topic info list.
-12:21:47:216 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:21:47:218 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:21:47:219 [INFO] Initalizing Drone 'Drone1'...
-12:21:47:220 [INFO] -------------------------------------------------
-12:21:47:221 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:21:47:222 [INFO]     sensors["Chase"]["scene_camera"]
-12:21:47:222 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:21:47:222 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:21:47:223 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:21:47:223 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:21:47:224 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:21:47:224 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:21:47:225 [INFO]     sensors["GPS"]["gps"]
-12:21:47:225 [INFO]     sensors["Barometer"]["barometer"]
-12:21:47:225 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:21:47:226 [INFO]     robot_info["actual_pose"]
-12:21:47:226 [INFO]     robot_info["collision_info"]
-12:21:47:226 [INFO]     robot_info["rotor_info"]
-12:21:47:227 [INFO] -------------------------------------------------
-12:21:47:227 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:22:02:478 [INFO] Disconnecting from simulation server...
-12:22:02:540 [INFO] Disconnected.
-12:22:02:543 [INFO] Connecting to simulation server at 127.0.0.1
-12:22:02:547 [INFO] Connection opened.
-12:22:02:548 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:22:04:002 [INFO] Getting the list of available topic info from the sim server...
-12:22:04:015 [INFO] Successfully received topic info list.
-12:22:06:016 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:22:06:018 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:22:06:018 [INFO] Initalizing Drone 'Drone1'...
-12:22:06:019 [INFO] -------------------------------------------------
-12:22:06:019 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:22:06:019 [INFO]     sensors["Chase"]["scene_camera"]
-12:22:06:019 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:22:06:020 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:22:06:020 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:22:06:020 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:22:06:021 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:22:06:021 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:22:06:021 [INFO]     sensors["GPS"]["gps"]
-12:22:06:021 [INFO]     sensors["Barometer"]["barometer"]
-12:22:06:022 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:22:06:022 [INFO]     robot_info["actual_pose"]
-12:22:06:022 [INFO]     robot_info["collision_info"]
-12:22:06:023 [INFO]     robot_info["rotor_info"]
-12:22:06:023 [INFO] -------------------------------------------------
-12:22:06:023 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:22:21:119 [INFO] Disconnecting from simulation server...
-12:22:21:164 [INFO] Disconnected.
-12:22:21:166 [INFO] Connecting to simulation server at 127.0.0.1
-12:22:21:168 [INFO] Connection opened.
-12:22:21:168 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:22:22:528 [INFO] Getting the list of available topic info from the sim server...
-12:22:22:540 [INFO] Successfully received topic info list.
-12:22:24:542 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:22:24:544 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:22:24:545 [INFO] Initalizing Drone 'Drone1'...
-12:22:24:546 [INFO] -------------------------------------------------
-12:22:24:546 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:22:24:547 [INFO]     sensors["Chase"]["scene_camera"]
-12:22:24:547 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:22:24:547 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:22:24:548 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:22:24:548 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:22:24:548 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:22:24:549 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:22:24:549 [INFO]     sensors["GPS"]["gps"]
-12:22:24:549 [INFO]     sensors["Barometer"]["barometer"]
-12:22:24:549 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:22:24:550 [INFO]     robot_info["actual_pose"]
-12:22:24:550 [INFO]     robot_info["collision_info"]
-12:22:24:550 [INFO]     robot_info["rotor_info"]
-12:22:24:551 [INFO] -------------------------------------------------
-12:22:24:551 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:22:39:371 [INFO] Disconnecting from simulation server...
-12:22:39:455 [INFO] Disconnected.
-12:22:39:457 [INFO] Connecting to simulation server at 127.0.0.1
-12:22:39:461 [INFO] Connection opened.
-12:22:39:461 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:22:41:143 [INFO] Getting the list of available topic info from the sim server...
-12:22:41:156 [INFO] Successfully received topic info list.
-12:22:43:157 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:22:43:158 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:22:43:159 [INFO] Initalizing Drone 'Drone1'...
-12:22:43:159 [INFO] -------------------------------------------------
-12:22:43:159 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:22:43:160 [INFO]     sensors["Chase"]["scene_camera"]
-12:22:43:160 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:22:43:160 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:22:43:161 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:22:43:161 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:22:43:161 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:22:43:162 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:22:43:162 [INFO]     sensors["GPS"]["gps"]
-12:22:43:162 [INFO]     sensors["Barometer"]["barometer"]
-12:22:43:162 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:22:43:163 [INFO]     robot_info["actual_pose"]
-12:22:43:163 [INFO]     robot_info["collision_info"]
-12:22:43:163 [INFO]     robot_info["rotor_info"]
-12:22:43:164 [INFO] -------------------------------------------------
-12:22:43:164 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:22:58:268 [INFO] Disconnecting from simulation server...
-12:22:58:387 [INFO] Disconnected.
-12:22:58:389 [INFO] Connecting to simulation server at 127.0.0.1
-12:22:58:394 [INFO] Connection opened.
-12:22:58:394 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:22:59:982 [INFO] Getting the list of available topic info from the sim server...
-12:22:59:994 [INFO] Successfully received topic info list.
-12:23:01:995 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:23:01:998 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:23:01:999 [INFO] Initalizing Drone 'Drone1'...
-12:23:01:999 [INFO] -------------------------------------------------
-12:23:01:999 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:23:02:000 [INFO]     sensors["Chase"]["scene_camera"]
-12:23:02:000 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:23:02:000 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:23:02:001 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:23:02:001 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:23:02:001 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:23:02:002 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:23:02:003 [INFO]     sensors["GPS"]["gps"]
-12:23:02:003 [INFO]     sensors["Barometer"]["barometer"]
-12:23:02:003 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:23:02:003 [INFO]     robot_info["actual_pose"]
-12:23:02:004 [INFO]     robot_info["collision_info"]
-12:23:02:004 [INFO]     robot_info["rotor_info"]
-12:23:02:004 [INFO] -------------------------------------------------
-12:23:02:005 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:23:17:123 [INFO] Disconnecting from simulation server...
-12:23:17:246 [INFO] Disconnected.
-12:23:17:248 [INFO] Connecting to simulation server at 127.0.0.1
-12:23:17:253 [INFO] Connection opened.
-12:23:17:253 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:23:18:954 [INFO] Getting the list of available topic info from the sim server...
-12:23:18:966 [INFO] Successfully received topic info list.
-12:23:20:967 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:23:20:970 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:23:20:970 [INFO] Initalizing Drone 'Drone1'...
-12:23:20:971 [INFO] -------------------------------------------------
-12:23:20:972 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:23:20:972 [INFO]     sensors["Chase"]["scene_camera"]
-12:23:20:973 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:23:20:973 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:23:20:973 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:23:20:974 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:23:20:975 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:23:20:975 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:23:20:976 [INFO]     sensors["GPS"]["gps"]
-12:23:20:976 [INFO]     sensors["Barometer"]["barometer"]
-12:23:20:976 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:23:20:977 [INFO]     robot_info["actual_pose"]
-12:23:20:977 [INFO]     robot_info["collision_info"]
-12:23:20:977 [INFO]     robot_info["rotor_info"]
-12:23:20:978 [INFO] -------------------------------------------------
-12:23:20:978 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:23:35:672 [INFO] Disconnecting from simulation server...
-12:23:35:725 [INFO] Disconnected.
-12:23:35:728 [INFO] Connecting to simulation server at 127.0.0.1
-12:23:35:730 [INFO] Connection opened.
-12:23:35:730 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:23:37:285 [INFO] Getting the list of available topic info from the sim server...
-12:23:37:298 [INFO] Successfully received topic info list.
-12:23:39:299 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:23:39:301 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:23:39:302 [INFO] Initalizing Drone 'Drone1'...
-12:23:39:302 [INFO] -------------------------------------------------
-12:23:39:302 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:23:39:303 [INFO]     sensors["Chase"]["scene_camera"]
-12:23:39:303 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:23:39:303 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:23:39:304 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:23:39:304 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:23:39:304 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:23:39:304 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:23:39:305 [INFO]     sensors["GPS"]["gps"]
-12:23:39:305 [INFO]     sensors["Barometer"]["barometer"]
-12:23:39:306 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:23:39:306 [INFO]     robot_info["actual_pose"]
-12:23:39:307 [INFO]     robot_info["collision_info"]
-12:23:39:307 [INFO]     robot_info["rotor_info"]
-12:23:39:308 [INFO] -------------------------------------------------
-12:23:39:309 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:23:54:198 [INFO] Disconnecting from simulation server...
-12:23:54:254 [INFO] Disconnected.
-12:23:54:257 [INFO] Connecting to simulation server at 127.0.0.1
-12:23:54:260 [INFO] Connection opened.
-12:23:54:261 [INFO] Loading scene config: scene_basic_drone.jsonc
-12:23:55:770 [INFO] Getting the list of available topic info from the sim server...
-12:23:55:782 [INFO] Successfully received topic info list.
-12:23:57:783 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-12:23:57:785 [INFO] Trajectory 'null_trajectory' imported successfully.
-12:23:57:786 [INFO] Initalizing Drone 'Drone1'...
-12:23:57:786 [INFO] -------------------------------------------------
-12:23:57:787 [INFO] The following topics can be subscribed to for robot 'Drone1':
-12:23:57:788 [INFO]     sensors["Chase"]["scene_camera"]
-12:23:57:788 [INFO]     sensors["Chase"]["scene_camera_info"]
-12:23:57:789 [INFO]     sensors["DownCamera"]["scene_camera"]
-12:23:57:789 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-12:23:57:790 [INFO]     sensors["DownCamera"]["depth_camera"]
-12:23:57:790 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-12:23:57:791 [INFO]     sensors["IMU1"]["imu_kinematics"]
-12:23:57:791 [INFO]     sensors["GPS"]["gps"]
-12:23:57:792 [INFO]     sensors["Barometer"]["barometer"]
-12:23:57:792 [INFO]     sensors["Magnetometer"]["magnetometer"]
-12:23:57:793 [INFO]     robot_info["actual_pose"]
-12:23:57:793 [INFO]     robot_info["collision_info"]
-12:23:57:794 [INFO]     robot_info["rotor_info"]
-12:23:57:794 [INFO] -------------------------------------------------
-12:23:57:795 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-12:24:12:945 [INFO] Disconnecting from simulation server...
-12:24:13:006 [INFO] Disconnected.
+14:01:44:231 [INFO] Connecting to simulation server at 127.0.0.1
+14:01:44:240 [INFO] Connection opened.
+14:01:44:240 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:01:45:764 [INFO] Getting the list of available topic info from the sim server...
+14:01:45:776 [INFO] Successfully received topic info list.
+14:01:47:777 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:01:47:780 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:01:47:780 [INFO] Initalizing Drone 'Drone1'...
+14:01:47:781 [INFO] -------------------------------------------------
+14:01:47:782 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:01:47:782 [INFO]     sensors["Chase"]["scene_camera"]
+14:01:47:782 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:01:47:783 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:01:47:783 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:01:47:784 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:01:47:784 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:01:47:784 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:01:47:784 [INFO]     sensors["GPS"]["gps"]
+14:01:47:785 [INFO]     sensors["Barometer"]["barometer"]
+14:01:47:785 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:01:47:785 [INFO]     robot_info["actual_pose"]
+14:01:47:785 [INFO]     robot_info["collision_info"]
+14:01:47:786 [INFO]     robot_info["rotor_info"]
+14:01:47:786 [INFO] -------------------------------------------------
+14:01:47:786 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:02:02:844 [INFO] Disconnecting from simulation server...
+14:02:02:897 [INFO] Disconnected.
+14:02:02:901 [INFO] Connecting to simulation server at 127.0.0.1
+14:02:02:915 [INFO] Connection opened.
+14:02:02:916 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:02:04:271 [INFO] Getting the list of available topic info from the sim server...
+14:02:04:283 [INFO] Successfully received topic info list.
+14:02:06:284 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:02:06:286 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:02:06:286 [INFO] Initalizing Drone 'Drone1'...
+14:02:06:286 [INFO] -------------------------------------------------
+14:02:06:287 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:02:06:287 [INFO]     sensors["Chase"]["scene_camera"]
+14:02:06:287 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:02:06:287 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:02:06:288 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:02:06:288 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:02:06:288 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:02:06:288 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:02:06:288 [INFO]     sensors["GPS"]["gps"]
+14:02:06:289 [INFO]     sensors["Barometer"]["barometer"]
+14:02:06:289 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:02:06:289 [INFO]     robot_info["actual_pose"]
+14:02:06:289 [INFO]     robot_info["collision_info"]
+14:02:06:289 [INFO]     robot_info["rotor_info"]
+14:02:06:290 [INFO] -------------------------------------------------
+14:02:06:290 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:02:21:344 [INFO] Disconnecting from simulation server...
+14:02:21:401 [INFO] Disconnected.
+14:02:21:403 [INFO] Connecting to simulation server at 127.0.0.1
+14:02:21:407 [INFO] Connection opened.
+14:02:21:407 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:02:22:966 [INFO] Getting the list of available topic info from the sim server...
+14:02:22:978 [INFO] Successfully received topic info list.
+14:02:24:980 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:02:24:982 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:02:24:983 [INFO] Initalizing Drone 'Drone1'...
+14:02:24:983 [INFO] -------------------------------------------------
+14:02:24:984 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:02:24:984 [INFO]     sensors["Chase"]["scene_camera"]
+14:02:24:984 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:02:24:985 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:02:24:985 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:02:24:986 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:02:24:986 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:02:24:986 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:02:24:987 [INFO]     sensors["GPS"]["gps"]
+14:02:24:987 [INFO]     sensors["Barometer"]["barometer"]
+14:02:24:987 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:02:24:988 [INFO]     robot_info["actual_pose"]
+14:02:24:988 [INFO]     robot_info["collision_info"]
+14:02:24:989 [INFO]     robot_info["rotor_info"]
+14:02:24:989 [INFO] -------------------------------------------------
+14:02:24:989 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:02:40:054 [INFO] Disconnecting from simulation server...
+14:02:40:159 [INFO] Disconnected.
+14:02:40:162 [INFO] Connecting to simulation server at 127.0.0.1
+14:02:40:165 [INFO] Connection opened.
+14:02:40:166 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:02:41:545 [INFO] Getting the list of available topic info from the sim server...
+14:02:41:558 [INFO] Successfully received topic info list.
+14:02:43:559 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:02:43:561 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:02:43:561 [INFO] Initalizing Drone 'Drone1'...
+14:02:43:562 [INFO] -------------------------------------------------
+14:02:43:562 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:02:43:563 [INFO]     sensors["Chase"]["scene_camera"]
+14:02:43:563 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:02:43:563 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:02:43:564 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:02:43:564 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:02:43:564 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:02:43:564 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:02:43:566 [INFO]     sensors["GPS"]["gps"]
+14:02:43:566 [INFO]     sensors["Barometer"]["barometer"]
+14:02:43:567 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:02:43:567 [INFO]     robot_info["actual_pose"]
+14:02:43:568 [INFO]     robot_info["collision_info"]
+14:02:43:568 [INFO]     robot_info["rotor_info"]
+14:02:43:569 [INFO] -------------------------------------------------
+14:02:43:569 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:02:58:890 [INFO] Disconnecting from simulation server...
+14:02:58:974 [INFO] Disconnected.
+14:02:58:977 [INFO] Connecting to simulation server at 127.0.0.1
+14:02:58:981 [INFO] Connection opened.
+14:02:58:981 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:03:00:421 [INFO] Getting the list of available topic info from the sim server...
+14:03:00:433 [INFO] Successfully received topic info list.
+14:03:02:434 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:03:02:436 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:03:02:436 [INFO] Initalizing Drone 'Drone1'...
+14:03:02:437 [INFO] -------------------------------------------------
+14:03:02:437 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:03:02:438 [INFO]     sensors["Chase"]["scene_camera"]
+14:03:02:438 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:03:02:439 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:03:02:439 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:03:02:440 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:03:02:440 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:03:02:440 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:03:02:441 [INFO]     sensors["GPS"]["gps"]
+14:03:02:441 [INFO]     sensors["Barometer"]["barometer"]
+14:03:02:441 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:03:02:442 [INFO]     robot_info["actual_pose"]
+14:03:02:442 [INFO]     robot_info["collision_info"]
+14:03:02:442 [INFO]     robot_info["rotor_info"]
+14:03:02:443 [INFO] -------------------------------------------------
+14:03:02:443 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:03:17:650 [INFO] Disconnecting from simulation server...
+14:03:17:711 [INFO] Disconnected.
+14:03:17:714 [INFO] Connecting to simulation server at 127.0.0.1
+14:03:17:717 [INFO] Connection opened.
+14:03:17:718 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:03:19:407 [INFO] Getting the list of available topic info from the sim server...
+14:03:19:420 [INFO] Successfully received topic info list.
+14:03:21:421 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:03:21:423 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:03:21:423 [INFO] Initalizing Drone 'Drone1'...
+14:03:21:424 [INFO] -------------------------------------------------
+14:03:21:424 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:03:21:424 [INFO]     sensors["Chase"]["scene_camera"]
+14:03:21:424 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:03:21:425 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:03:21:425 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:03:21:425 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:03:21:425 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:03:21:426 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:03:21:426 [INFO]     sensors["GPS"]["gps"]
+14:03:21:426 [INFO]     sensors["Barometer"]["barometer"]
+14:03:21:427 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:03:21:427 [INFO]     robot_info["actual_pose"]
+14:03:21:427 [INFO]     robot_info["collision_info"]
+14:03:21:427 [INFO]     robot_info["rotor_info"]
+14:03:21:428 [INFO] -------------------------------------------------
+14:03:21:428 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:03:36:670 [INFO] Disconnecting from simulation server...
+14:03:36:735 [INFO] Disconnected.
+14:03:36:737 [INFO] Connecting to simulation server at 127.0.0.1
+14:03:36:741 [INFO] Connection opened.
+14:03:36:742 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:03:38:195 [INFO] Getting the list of available topic info from the sim server...
+14:03:38:207 [INFO] Successfully received topic info list.
+14:03:40:208 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:03:40:211 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:03:40:211 [INFO] Initalizing Drone 'Drone1'...
+14:03:40:212 [INFO] -------------------------------------------------
+14:03:40:212 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:03:40:213 [INFO]     sensors["Chase"]["scene_camera"]
+14:03:40:213 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:03:40:214 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:03:40:214 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:03:40:215 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:03:40:215 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:03:40:216 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:03:40:216 [INFO]     sensors["GPS"]["gps"]
+14:03:40:217 [INFO]     sensors["Barometer"]["barometer"]
+14:03:40:217 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:03:40:217 [INFO]     robot_info["actual_pose"]
+14:03:40:217 [INFO]     robot_info["collision_info"]
+14:03:40:218 [INFO]     robot_info["rotor_info"]
+14:03:40:218 [INFO] -------------------------------------------------
+14:03:40:218 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:03:55:435 [INFO] Disconnecting from simulation server...
+14:03:55:510 [INFO] Disconnected.
+14:03:55:513 [INFO] Connecting to simulation server at 127.0.0.1
+14:03:55:516 [INFO] Connection opened.
+14:03:55:517 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:03:57:049 [INFO] Getting the list of available topic info from the sim server...
+14:03:57:061 [INFO] Successfully received topic info list.
+14:03:59:062 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:03:59:064 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:03:59:065 [INFO] Initalizing Drone 'Drone1'...
+14:03:59:065 [INFO] -------------------------------------------------
+14:03:59:066 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:03:59:066 [INFO]     sensors["Chase"]["scene_camera"]
+14:03:59:066 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:03:59:066 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:03:59:067 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:03:59:067 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:03:59:067 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:03:59:068 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:03:59:068 [INFO]     sensors["GPS"]["gps"]
+14:03:59:068 [INFO]     sensors["Barometer"]["barometer"]
+14:03:59:069 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:03:59:069 [INFO]     robot_info["actual_pose"]
+14:03:59:069 [INFO]     robot_info["collision_info"]
+14:03:59:070 [INFO]     robot_info["rotor_info"]
+14:03:59:070 [INFO] -------------------------------------------------
+14:03:59:071 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:04:14:157 [INFO] Disconnecting from simulation server...
+14:04:14:219 [INFO] Disconnected.
+14:04:14:222 [INFO] Connecting to simulation server at 127.0.0.1
+14:04:14:226 [INFO] Connection opened.
+14:04:14:226 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:04:15:645 [INFO] Getting the list of available topic info from the sim server...
+14:04:15:656 [INFO] Successfully received topic info list.
+14:04:17:657 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:04:17:659 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:04:17:660 [INFO] Initalizing Drone 'Drone1'...
+14:04:17:660 [INFO] -------------------------------------------------
+14:04:17:661 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:04:17:661 [INFO]     sensors["Chase"]["scene_camera"]
+14:04:17:661 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:04:17:662 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:04:17:662 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:04:17:662 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:04:17:662 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:04:17:663 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:04:17:663 [INFO]     sensors["GPS"]["gps"]
+14:04:17:663 [INFO]     sensors["Barometer"]["barometer"]
+14:04:17:664 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:04:17:664 [INFO]     robot_info["actual_pose"]
+14:04:17:664 [INFO]     robot_info["collision_info"]
+14:04:17:664 [INFO]     robot_info["rotor_info"]
+14:04:17:665 [INFO] -------------------------------------------------
+14:04:17:665 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:04:32:642 [INFO] Disconnecting from simulation server...
+14:04:32:730 [INFO] Disconnected.
+14:04:32:732 [INFO] Connecting to simulation server at 127.0.0.1
+14:04:32:736 [INFO] Connection opened.
+14:04:32:736 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:04:34:303 [INFO] Getting the list of available topic info from the sim server...
+14:04:34:315 [INFO] Successfully received topic info list.
+14:04:36:317 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:04:36:318 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:04:36:319 [INFO] Initalizing Drone 'Drone1'...
+14:04:36:319 [INFO] -------------------------------------------------
+14:04:36:319 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:04:36:319 [INFO]     sensors["Chase"]["scene_camera"]
+14:04:36:320 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:04:36:320 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:04:36:320 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:04:36:320 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:04:36:320 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:04:36:321 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:04:36:321 [INFO]     sensors["GPS"]["gps"]
+14:04:36:321 [INFO]     sensors["Barometer"]["barometer"]
+14:04:36:321 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:04:36:321 [INFO]     robot_info["actual_pose"]
+14:04:36:321 [INFO]     robot_info["collision_info"]
+14:04:36:321 [INFO]     robot_info["rotor_info"]
+14:04:36:322 [INFO] -------------------------------------------------
+14:04:36:322 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:04:51:207 [INFO] Disconnecting from simulation server...
+14:04:51:361 [INFO] Disconnected.
+14:04:51:363 [INFO] Connecting to simulation server at 127.0.0.1
+14:04:51:367 [INFO] Connection opened.
+14:04:51:367 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:04:53:031 [INFO] Getting the list of available topic info from the sim server...
+14:04:53:043 [INFO] Successfully received topic info list.
+14:04:55:043 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:04:55:045 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:04:55:045 [INFO] Initalizing Drone 'Drone1'...
+14:04:55:046 [INFO] -------------------------------------------------
+14:04:55:046 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:04:55:046 [INFO]     sensors["Chase"]["scene_camera"]
+14:04:55:046 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:04:55:047 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:04:55:047 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:04:55:047 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:04:55:048 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:04:55:048 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:04:55:049 [INFO]     sensors["GPS"]["gps"]
+14:04:55:049 [INFO]     sensors["Barometer"]["barometer"]
+14:04:55:050 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:04:55:050 [INFO]     robot_info["actual_pose"]
+14:04:55:050 [INFO]     robot_info["collision_info"]
+14:04:55:051 [INFO]     robot_info["rotor_info"]
+14:04:55:051 [INFO] -------------------------------------------------
+14:04:55:051 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:05:10:165 [INFO] Disconnecting from simulation server...
+14:05:10:218 [INFO] Disconnected.
+14:05:10:220 [INFO] Connecting to simulation server at 127.0.0.1
+14:05:10:224 [INFO] Connection opened.
+14:05:10:224 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:05:11:637 [INFO] Getting the list of available topic info from the sim server...
+14:05:11:649 [INFO] Successfully received topic info list.
+14:05:13:650 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:05:13:652 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:05:13:652 [INFO] Initalizing Drone 'Drone1'...
+14:05:13:652 [INFO] -------------------------------------------------
+14:05:13:653 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:05:13:653 [INFO]     sensors["Chase"]["scene_camera"]
+14:05:13:654 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:05:13:654 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:05:13:654 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:05:13:654 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:05:13:655 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:05:13:655 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:05:13:655 [INFO]     sensors["GPS"]["gps"]
+14:05:13:655 [INFO]     sensors["Barometer"]["barometer"]
+14:05:13:656 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:05:13:656 [INFO]     robot_info["actual_pose"]
+14:05:13:656 [INFO]     robot_info["collision_info"]
+14:05:13:657 [INFO]     robot_info["rotor_info"]
+14:05:13:657 [INFO] -------------------------------------------------
+14:05:13:657 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:05:28:684 [INFO] Disconnecting from simulation server...
+14:05:28:786 [INFO] Disconnected.
+14:05:28:788 [INFO] Connecting to simulation server at 127.0.0.1
+14:05:28:792 [INFO] Connection opened.
+14:05:28:793 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:05:30:440 [INFO] Getting the list of available topic info from the sim server...
+14:05:30:452 [INFO] Successfully received topic info list.
+14:05:32:453 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:05:32:456 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:05:32:456 [INFO] Initalizing Drone 'Drone1'...
+14:05:32:457 [INFO] -------------------------------------------------
+14:05:32:457 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:05:32:457 [INFO]     sensors["Chase"]["scene_camera"]
+14:05:32:458 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:05:32:458 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:05:32:458 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:05:32:459 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:05:32:459 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:05:32:459 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:05:32:460 [INFO]     sensors["GPS"]["gps"]
+14:05:32:460 [INFO]     sensors["Barometer"]["barometer"]
+14:05:32:460 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:05:32:460 [INFO]     robot_info["actual_pose"]
+14:05:32:461 [INFO]     robot_info["collision_info"]
+14:05:32:461 [INFO]     robot_info["rotor_info"]
+14:05:32:461 [INFO] -------------------------------------------------
+14:05:32:461 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:05:47:530 [INFO] Disconnecting from simulation server...
+14:05:47:608 [INFO] Disconnected.
+14:05:47:610 [INFO] Connecting to simulation server at 127.0.0.1
+14:05:47:615 [INFO] Connection opened.
+14:05:47:616 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:05:48:954 [INFO] Getting the list of available topic info from the sim server...
+14:05:48:966 [INFO] Successfully received topic info list.
+14:05:50:967 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:05:50:969 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:05:50:970 [INFO] Initalizing Drone 'Drone1'...
+14:05:50:970 [INFO] -------------------------------------------------
+14:05:50:971 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:05:50:971 [INFO]     sensors["Chase"]["scene_camera"]
+14:05:50:972 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:05:50:972 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:05:50:972 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:05:50:973 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:05:50:973 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:05:50:973 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:05:50:974 [INFO]     sensors["GPS"]["gps"]
+14:05:50:974 [INFO]     sensors["Barometer"]["barometer"]
+14:05:50:975 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:05:50:975 [INFO]     robot_info["actual_pose"]
+14:05:50:975 [INFO]     robot_info["collision_info"]
+14:05:50:976 [INFO]     robot_info["rotor_info"]
+14:05:50:976 [INFO] -------------------------------------------------
+14:05:50:976 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:06:06:188 [INFO] Disconnecting from simulation server...
+14:06:06:294 [INFO] Disconnected.
+14:06:06:296 [INFO] Connecting to simulation server at 127.0.0.1
+14:06:06:300 [INFO] Connection opened.
+14:06:06:300 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:06:07:808 [INFO] Getting the list of available topic info from the sim server...
+14:06:07:820 [INFO] Successfully received topic info list.
+14:06:09:821 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:06:09:823 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:06:09:824 [INFO] Initalizing Drone 'Drone1'...
+14:06:09:824 [INFO] -------------------------------------------------
+14:06:09:824 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:06:09:825 [INFO]     sensors["Chase"]["scene_camera"]
+14:06:09:825 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:06:09:825 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:06:09:826 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:06:09:826 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:06:09:826 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:06:09:827 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:06:09:827 [INFO]     sensors["GPS"]["gps"]
+14:06:09:827 [INFO]     sensors["Barometer"]["barometer"]
+14:06:09:827 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:06:09:828 [INFO]     robot_info["actual_pose"]
+14:06:09:828 [INFO]     robot_info["collision_info"]
+14:06:09:828 [INFO]     robot_info["rotor_info"]
+14:06:09:828 [INFO] -------------------------------------------------
+14:06:09:829 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:06:25:181 [INFO] Disconnecting from simulation server...
+14:06:25:271 [INFO] Disconnected.
+14:06:25:274 [INFO] Connecting to simulation server at 127.0.0.1
+14:06:25:277 [INFO] Connection opened.
+14:06:25:278 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:06:26:879 [INFO] Getting the list of available topic info from the sim server...
+14:06:26:901 [INFO] Successfully received topic info list.
+14:06:28:902 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:06:28:904 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:06:28:905 [INFO] Initalizing Drone 'Drone1'...
+14:06:28:905 [INFO] -------------------------------------------------
+14:06:28:906 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:06:28:906 [INFO]     sensors["Chase"]["scene_camera"]
+14:06:28:907 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:06:28:907 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:06:28:907 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:06:28:908 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:06:28:908 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:06:28:909 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:06:28:909 [INFO]     sensors["GPS"]["gps"]
+14:06:28:909 [INFO]     sensors["Barometer"]["barometer"]
+14:06:28:910 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:06:28:910 [INFO]     robot_info["actual_pose"]
+14:06:28:910 [INFO]     robot_info["collision_info"]
+14:06:28:910 [INFO]     robot_info["rotor_info"]
+14:06:28:911 [INFO] -------------------------------------------------
+14:06:28:911 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:06:44:132 [INFO] Disconnecting from simulation server...
+14:06:44:270 [INFO] Disconnected.
+14:06:44:273 [INFO] Connecting to simulation server at 127.0.0.1
+14:06:44:278 [INFO] Connection opened.
+14:06:44:279 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:06:45:800 [INFO] Getting the list of available topic info from the sim server...
+14:06:45:812 [INFO] Successfully received topic info list.
+14:06:47:813 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:06:47:815 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:06:47:816 [INFO] Initalizing Drone 'Drone1'...
+14:06:47:816 [INFO] -------------------------------------------------
+14:06:47:816 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:06:47:817 [INFO]     sensors["Chase"]["scene_camera"]
+14:06:47:818 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:06:47:818 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:06:47:818 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:06:47:818 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:06:47:819 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:06:47:819 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:06:47:819 [INFO]     sensors["GPS"]["gps"]
+14:06:47:820 [INFO]     sensors["Barometer"]["barometer"]
+14:06:47:820 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:06:47:820 [INFO]     robot_info["actual_pose"]
+14:06:47:821 [INFO]     robot_info["collision_info"]
+14:06:47:821 [INFO]     robot_info["rotor_info"]
+14:06:47:821 [INFO] -------------------------------------------------
+14:06:47:822 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:07:02:970 [INFO] Disconnecting from simulation server...
+14:07:03:029 [INFO] Disconnected.
+14:07:03:032 [INFO] Connecting to simulation server at 127.0.0.1
+14:07:03:035 [INFO] Connection opened.
+14:07:03:036 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:07:04:588 [INFO] Getting the list of available topic info from the sim server...
+14:07:04:601 [INFO] Successfully received topic info list.
+14:07:06:602 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:07:06:604 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:07:06:604 [INFO] Initalizing Drone 'Drone1'...
+14:07:06:605 [INFO] -------------------------------------------------
+14:07:06:605 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:07:06:606 [INFO]     sensors["Chase"]["scene_camera"]
+14:07:06:606 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:07:06:607 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:07:06:607 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:07:06:608 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:07:06:608 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:07:06:609 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:07:06:609 [INFO]     sensors["GPS"]["gps"]
+14:07:06:610 [INFO]     sensors["Barometer"]["barometer"]
+14:07:06:610 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:07:06:610 [INFO]     robot_info["actual_pose"]
+14:07:06:611 [INFO]     robot_info["collision_info"]
+14:07:06:611 [INFO]     robot_info["rotor_info"]
+14:07:06:611 [INFO] -------------------------------------------------
+14:07:06:612 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:07:21:866 [INFO] Disconnecting from simulation server...
+14:07:21:925 [INFO] Disconnected.
+14:07:21:928 [INFO] Connecting to simulation server at 127.0.0.1
+14:07:21:932 [INFO] Connection opened.
+14:07:21:932 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:07:23:186 [INFO] Getting the list of available topic info from the sim server...
+14:07:23:198 [INFO] Successfully received topic info list.
+14:07:25:199 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:07:25:202 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:07:25:202 [INFO] Initalizing Drone 'Drone1'...
+14:07:25:203 [INFO] -------------------------------------------------
+14:07:25:203 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:07:25:204 [INFO]     sensors["Chase"]["scene_camera"]
+14:07:25:204 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:07:25:205 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:07:25:205 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:07:25:206 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:07:25:206 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:07:25:206 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:07:25:206 [INFO]     sensors["GPS"]["gps"]
+14:07:25:207 [INFO]     sensors["Barometer"]["barometer"]
+14:07:25:207 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:07:25:207 [INFO]     robot_info["actual_pose"]
+14:07:25:208 [INFO]     robot_info["collision_info"]
+14:07:25:208 [INFO]     robot_info["rotor_info"]
+14:07:25:208 [INFO] -------------------------------------------------
+14:07:25:209 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:07:40:076 [INFO] Disconnecting from simulation server...
+14:07:40:134 [INFO] Disconnected.
+14:07:40:136 [INFO] Connecting to simulation server at 127.0.0.1
+14:07:40:139 [INFO] Connection opened.
+14:07:40:140 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:07:41:774 [INFO] Getting the list of available topic info from the sim server...
+14:07:41:787 [INFO] Successfully received topic info list.
+14:07:43:788 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:07:43:791 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:07:43:791 [INFO] Initalizing Drone 'Drone1'...
+14:07:43:792 [INFO] -------------------------------------------------
+14:07:43:792 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:07:43:793 [INFO]     sensors["Chase"]["scene_camera"]
+14:07:43:793 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:07:43:794 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:07:43:794 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:07:43:795 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:07:43:795 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:07:43:795 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:07:43:795 [INFO]     sensors["GPS"]["gps"]
+14:07:43:796 [INFO]     sensors["Barometer"]["barometer"]
+14:07:43:796 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:07:43:797 [INFO]     robot_info["actual_pose"]
+14:07:43:797 [INFO]     robot_info["collision_info"]
+14:07:43:797 [INFO]     robot_info["rotor_info"]
+14:07:43:798 [INFO] -------------------------------------------------
+14:07:43:798 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:07:58:911 [INFO] Disconnecting from simulation server...
+14:07:58:971 [INFO] Disconnected.
+14:07:58:974 [INFO] Connecting to simulation server at 127.0.0.1
+14:07:58:977 [INFO] Connection opened.
+14:07:58:977 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:08:00:793 [INFO] Getting the list of available topic info from the sim server...
+14:08:00:805 [INFO] Successfully received topic info list.
+14:08:02:806 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:08:02:810 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:08:02:811 [INFO] Initalizing Drone 'Drone1'...
+14:08:02:811 [INFO] -------------------------------------------------
+14:08:02:811 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:08:02:812 [INFO]     sensors["Chase"]["scene_camera"]
+14:08:02:812 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:08:02:812 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:08:02:813 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:08:02:813 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:08:02:813 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:08:02:814 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:08:02:814 [INFO]     sensors["GPS"]["gps"]
+14:08:02:814 [INFO]     sensors["Barometer"]["barometer"]
+14:08:02:815 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:08:02:815 [INFO]     robot_info["actual_pose"]
+14:08:02:815 [INFO]     robot_info["collision_info"]
+14:08:02:816 [INFO]     robot_info["rotor_info"]
+14:08:02:816 [INFO] -------------------------------------------------
+14:08:02:816 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:08:17:793 [INFO] Disconnecting from simulation server...
+14:08:17:932 [INFO] Disconnected.
+14:08:17:936 [INFO] Connecting to simulation server at 127.0.0.1
+14:08:17:941 [INFO] Connection opened.
+14:08:17:942 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:08:19:650 [INFO] Getting the list of available topic info from the sim server...
+14:08:19:662 [INFO] Successfully received topic info list.
+14:08:21:663 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:08:21:665 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:08:21:666 [INFO] Initalizing Drone 'Drone1'...
+14:08:21:666 [INFO] -------------------------------------------------
+14:08:21:667 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:08:21:667 [INFO]     sensors["Chase"]["scene_camera"]
+14:08:21:667 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:08:21:668 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:08:21:668 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:08:21:669 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:08:21:669 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:08:21:670 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:08:21:670 [INFO]     sensors["GPS"]["gps"]
+14:08:21:671 [INFO]     sensors["Barometer"]["barometer"]
+14:08:21:672 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:08:21:672 [INFO]     robot_info["actual_pose"]
+14:08:21:673 [INFO]     robot_info["collision_info"]
+14:08:21:673 [INFO]     robot_info["rotor_info"]
+14:08:21:674 [INFO] -------------------------------------------------
+14:08:21:674 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:08:36:944 [INFO] Disconnecting from simulation server...
+14:08:36:976 [INFO] Disconnected.
+14:08:36:978 [INFO] Connecting to simulation server at 127.0.0.1
+14:08:36:981 [INFO] Connection opened.
+14:08:36:981 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:08:38:601 [INFO] Getting the list of available topic info from the sim server...
+14:08:38:613 [INFO] Successfully received topic info list.
+14:08:40:615 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:08:40:617 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:08:40:618 [INFO] Initalizing Drone 'Drone1'...
+14:08:40:618 [INFO] -------------------------------------------------
+14:08:40:619 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:08:40:619 [INFO]     sensors["Chase"]["scene_camera"]
+14:08:40:619 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:08:40:620 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:08:40:620 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:08:40:621 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:08:40:621 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:08:40:622 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:08:40:622 [INFO]     sensors["GPS"]["gps"]
+14:08:40:623 [INFO]     sensors["Barometer"]["barometer"]
+14:08:40:623 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:08:40:623 [INFO]     robot_info["actual_pose"]
+14:08:40:624 [INFO]     robot_info["collision_info"]
+14:08:40:624 [INFO]     robot_info["rotor_info"]
+14:08:40:624 [INFO] -------------------------------------------------
+14:08:40:624 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:08:55:775 [INFO] Disconnecting from simulation server...
+14:08:55:915 [INFO] Disconnected.
+14:08:55:917 [INFO] Connecting to simulation server at 127.0.0.1
+14:08:55:921 [INFO] Connection opened.
+14:08:55:921 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:08:57:477 [INFO] Getting the list of available topic info from the sim server...
+14:08:57:488 [INFO] Successfully received topic info list.
+14:08:59:489 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:08:59:491 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:08:59:492 [INFO] Initalizing Drone 'Drone1'...
+14:08:59:492 [INFO] -------------------------------------------------
+14:08:59:493 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:08:59:493 [INFO]     sensors["Chase"]["scene_camera"]
+14:08:59:494 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:08:59:494 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:08:59:495 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:08:59:496 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:08:59:496 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:08:59:497 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:08:59:497 [INFO]     sensors["GPS"]["gps"]
+14:08:59:497 [INFO]     sensors["Barometer"]["barometer"]
+14:08:59:498 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:08:59:498 [INFO]     robot_info["actual_pose"]
+14:08:59:499 [INFO]     robot_info["collision_info"]
+14:08:59:499 [INFO]     robot_info["rotor_info"]
+14:08:59:499 [INFO] -------------------------------------------------
+14:08:59:500 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:09:14:589 [INFO] Disconnecting from simulation server...
+14:09:14:668 [INFO] Disconnected.
+14:09:14:672 [INFO] Connecting to simulation server at 127.0.0.1
+14:09:14:675 [INFO] Connection opened.
+14:09:14:676 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:09:16:228 [INFO] Getting the list of available topic info from the sim server...
+14:09:16:240 [INFO] Successfully received topic info list.
+14:09:18:241 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:09:18:243 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:09:18:244 [INFO] Initalizing Drone 'Drone1'...
+14:09:18:244 [INFO] -------------------------------------------------
+14:09:18:245 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:09:18:245 [INFO]     sensors["Chase"]["scene_camera"]
+14:09:18:245 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:09:18:246 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:09:18:246 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:09:18:246 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:09:18:246 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:09:18:246 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:09:18:247 [INFO]     sensors["GPS"]["gps"]
+14:09:18:247 [INFO]     sensors["Barometer"]["barometer"]
+14:09:18:247 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:09:18:247 [INFO]     robot_info["actual_pose"]
+14:09:18:247 [INFO]     robot_info["collision_info"]
+14:09:18:247 [INFO]     robot_info["rotor_info"]
+14:09:18:248 [INFO] -------------------------------------------------
+14:09:18:248 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:09:33:439 [INFO] Disconnecting from simulation server...
+14:09:33:560 [INFO] Disconnected.
+14:09:33:562 [INFO] Connecting to simulation server at 127.0.0.1
+14:09:33:565 [INFO] Connection opened.
+14:09:33:566 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:09:35:309 [INFO] Getting the list of available topic info from the sim server...
+14:09:35:322 [INFO] Successfully received topic info list.
+14:09:37:323 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:09:37:325 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:09:37:325 [INFO] Initalizing Drone 'Drone1'...
+14:09:37:326 [INFO] -------------------------------------------------
+14:09:37:326 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:09:37:326 [INFO]     sensors["Chase"]["scene_camera"]
+14:09:37:327 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:09:37:327 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:09:37:327 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:09:37:328 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:09:37:328 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:09:37:328 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:09:37:328 [INFO]     sensors["GPS"]["gps"]
+14:09:37:329 [INFO]     sensors["Barometer"]["barometer"]
+14:09:37:329 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:09:37:329 [INFO]     robot_info["actual_pose"]
+14:09:37:330 [INFO]     robot_info["collision_info"]
+14:09:37:330 [INFO]     robot_info["rotor_info"]
+14:09:37:330 [INFO] -------------------------------------------------
+14:09:37:331 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:09:52:389 [INFO] Disconnecting from simulation server...
+14:09:52:434 [INFO] Disconnected.
+14:09:52:436 [INFO] Connecting to simulation server at 127.0.0.1
+14:09:52:440 [INFO] Connection opened.
+14:09:52:440 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:09:53:883 [INFO] Getting the list of available topic info from the sim server...
+14:09:53:896 [INFO] Successfully received topic info list.
+14:09:55:897 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:09:55:899 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:09:55:899 [INFO] Initalizing Drone 'Drone1'...
+14:09:55:900 [INFO] -------------------------------------------------
+14:09:55:900 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:09:55:900 [INFO]     sensors["Chase"]["scene_camera"]
+14:09:55:901 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:09:55:901 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:09:55:902 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:09:55:902 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:09:55:902 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:09:55:903 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:09:55:903 [INFO]     sensors["GPS"]["gps"]
+14:09:55:903 [INFO]     sensors["Barometer"]["barometer"]
+14:09:55:903 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:09:55:904 [INFO]     robot_info["actual_pose"]
+14:09:55:904 [INFO]     robot_info["collision_info"]
+14:09:55:904 [INFO]     robot_info["rotor_info"]
+14:09:55:905 [INFO] -------------------------------------------------
+14:09:55:905 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:10:10:942 [INFO] Disconnecting from simulation server...
+14:10:11:069 [INFO] Disconnected.
+14:10:11:071 [INFO] Connecting to simulation server at 127.0.0.1
+14:10:11:074 [INFO] Connection opened.
+14:10:11:075 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:10:12:632 [INFO] Getting the list of available topic info from the sim server...
+14:10:12:654 [INFO] Successfully received topic info list.
+14:10:14:655 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:10:14:657 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:10:14:657 [INFO] Initalizing Drone 'Drone1'...
+14:10:14:658 [INFO] -------------------------------------------------
+14:10:14:658 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:10:14:659 [INFO]     sensors["Chase"]["scene_camera"]
+14:10:14:659 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:10:14:659 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:10:14:660 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:10:14:660 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:10:14:660 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:10:14:661 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:10:14:661 [INFO]     sensors["GPS"]["gps"]
+14:10:14:661 [INFO]     sensors["Barometer"]["barometer"]
+14:10:14:662 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:10:14:662 [INFO]     robot_info["actual_pose"]
+14:10:14:662 [INFO]     robot_info["collision_info"]
+14:10:14:663 [INFO]     robot_info["rotor_info"]
+14:10:14:663 [INFO] -------------------------------------------------
+14:10:14:663 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:10:29:777 [INFO] Disconnecting from simulation server...
+14:10:29:822 [INFO] Disconnected.
+14:10:29:825 [INFO] Connecting to simulation server at 127.0.0.1
+14:10:29:829 [INFO] Connection opened.
+14:10:29:829 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:10:31:561 [INFO] Getting the list of available topic info from the sim server...
+14:10:31:574 [INFO] Successfully received topic info list.
+14:10:33:575 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:10:33:577 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:10:33:577 [INFO] Initalizing Drone 'Drone1'...
+14:10:33:578 [INFO] -------------------------------------------------
+14:10:33:578 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:10:33:578 [INFO]     sensors["Chase"]["scene_camera"]
+14:10:33:579 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:10:33:579 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:10:33:579 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:10:33:579 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:10:33:580 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:10:33:580 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:10:33:580 [INFO]     sensors["GPS"]["gps"]
+14:10:33:581 [INFO]     sensors["Barometer"]["barometer"]
+14:10:33:581 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:10:33:581 [INFO]     robot_info["actual_pose"]
+14:10:33:581 [INFO]     robot_info["collision_info"]
+14:10:33:582 [INFO]     robot_info["rotor_info"]
+14:10:33:582 [INFO] -------------------------------------------------
+14:10:33:582 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:10:48:878 [INFO] Disconnecting from simulation server...
+14:10:48:948 [INFO] Disconnected.
+14:10:48:951 [INFO] Connecting to simulation server at 127.0.0.1
+14:10:48:954 [INFO] Connection opened.
+14:10:48:954 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:10:50:470 [INFO] Getting the list of available topic info from the sim server...
+14:10:50:481 [INFO] Successfully received topic info list.
+14:10:52:483 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:10:52:485 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:10:52:485 [INFO] Initalizing Drone 'Drone1'...
+14:10:52:486 [INFO] -------------------------------------------------
+14:10:52:486 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:10:52:486 [INFO]     sensors["Chase"]["scene_camera"]
+14:10:52:487 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:10:52:488 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:10:52:488 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:10:52:488 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:10:52:489 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:10:52:489 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:10:52:490 [INFO]     sensors["GPS"]["gps"]
+14:10:52:490 [INFO]     sensors["Barometer"]["barometer"]
+14:10:52:491 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:10:52:491 [INFO]     robot_info["actual_pose"]
+14:10:52:491 [INFO]     robot_info["collision_info"]
+14:10:52:492 [INFO]     robot_info["rotor_info"]
+14:10:52:492 [INFO] -------------------------------------------------
+14:10:52:493 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:11:07:788 [INFO] Disconnecting from simulation server...
+14:11:07:854 [INFO] Disconnected.
+14:11:07:857 [INFO] Connecting to simulation server at 127.0.0.1
+14:11:07:862 [INFO] Connection opened.
+14:11:07:862 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:11:09:412 [INFO] Getting the list of available topic info from the sim server...
+14:11:09:424 [INFO] Successfully received topic info list.
+14:11:11:426 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:11:11:428 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:11:11:428 [INFO] Initalizing Drone 'Drone1'...
+14:11:11:428 [INFO] -------------------------------------------------
+14:11:11:429 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:11:11:429 [INFO]     sensors["Chase"]["scene_camera"]
+14:11:11:429 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:11:11:430 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:11:11:430 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:11:11:430 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:11:11:430 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:11:11:431 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:11:11:431 [INFO]     sensors["GPS"]["gps"]
+14:11:11:431 [INFO]     sensors["Barometer"]["barometer"]
+14:11:11:432 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:11:11:432 [INFO]     robot_info["actual_pose"]
+14:11:11:432 [INFO]     robot_info["collision_info"]
+14:11:11:433 [INFO]     robot_info["rotor_info"]
+14:11:11:433 [INFO] -------------------------------------------------
+14:11:11:433 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:11:26:345 [INFO] Disconnecting from simulation server...
+14:11:26:420 [INFO] Disconnected.
+14:11:26:423 [INFO] Connecting to simulation server at 127.0.0.1
+14:11:26:430 [INFO] Connection opened.
+14:11:26:430 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:11:28:036 [INFO] Getting the list of available topic info from the sim server...
+14:11:28:048 [INFO] Successfully received topic info list.
+14:11:30:049 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:11:30:051 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:11:30:052 [INFO] Initalizing Drone 'Drone1'...
+14:11:30:052 [INFO] -------------------------------------------------
+14:11:30:053 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:11:30:053 [INFO]     sensors["Chase"]["scene_camera"]
+14:11:30:053 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:11:30:054 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:11:30:055 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:11:30:055 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:11:30:056 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:11:30:056 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:11:30:057 [INFO]     sensors["GPS"]["gps"]
+14:11:30:057 [INFO]     sensors["Barometer"]["barometer"]
+14:11:30:057 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:11:30:058 [INFO]     robot_info["actual_pose"]
+14:11:30:058 [INFO]     robot_info["collision_info"]
+14:11:30:058 [INFO]     robot_info["rotor_info"]
+14:11:30:059 [INFO] -------------------------------------------------
+14:11:30:059 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:11:44:872 [INFO] Disconnecting from simulation server...
+14:11:45:008 [INFO] Disconnected.
+14:11:45:010 [INFO] Connecting to simulation server at 127.0.0.1
+14:11:45:013 [INFO] Connection opened.
+14:11:45:013 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:11:46:457 [INFO] Getting the list of available topic info from the sim server...
+14:11:46:469 [INFO] Successfully received topic info list.
+14:11:48:469 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:11:48:472 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:11:48:473 [INFO] Initalizing Drone 'Drone1'...
+14:11:48:474 [INFO] -------------------------------------------------
+14:11:48:474 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:11:48:474 [INFO]     sensors["Chase"]["scene_camera"]
+14:11:48:475 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:11:48:475 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:11:48:476 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:11:48:476 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:11:48:476 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:11:48:477 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:11:48:477 [INFO]     sensors["GPS"]["gps"]
+14:11:48:477 [INFO]     sensors["Barometer"]["barometer"]
+14:11:48:477 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:11:48:478 [INFO]     robot_info["actual_pose"]
+14:11:48:478 [INFO]     robot_info["collision_info"]
+14:11:48:478 [INFO]     robot_info["rotor_info"]
+14:11:48:479 [INFO] -------------------------------------------------
+14:11:48:479 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:12:03:734 [INFO] Disconnecting from simulation server...
+14:12:03:828 [INFO] Disconnected.
+14:12:03:831 [INFO] Connecting to simulation server at 127.0.0.1
+14:12:03:834 [INFO] Connection opened.
+14:12:03:835 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:12:05:578 [INFO] Getting the list of available topic info from the sim server...
+14:12:05:591 [INFO] Successfully received topic info list.
+14:12:07:592 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:12:07:594 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:12:07:595 [INFO] Initalizing Drone 'Drone1'...
+14:12:07:595 [INFO] -------------------------------------------------
+14:12:07:596 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:12:07:596 [INFO]     sensors["Chase"]["scene_camera"]
+14:12:07:596 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:12:07:596 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:12:07:597 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:12:07:597 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:12:07:597 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:12:07:598 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:12:07:598 [INFO]     sensors["GPS"]["gps"]
+14:12:07:598 [INFO]     sensors["Barometer"]["barometer"]
+14:12:07:599 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:12:07:599 [INFO]     robot_info["actual_pose"]
+14:12:07:599 [INFO]     robot_info["collision_info"]
+14:12:07:600 [INFO]     robot_info["rotor_info"]
+14:12:07:600 [INFO] -------------------------------------------------
+14:12:07:600 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:12:22:580 [INFO] Disconnecting from simulation server...
+14:12:22:676 [INFO] Disconnected.
+14:12:22:679 [INFO] Connecting to simulation server at 127.0.0.1
+14:12:22:684 [INFO] Connection opened.
+14:12:22:684 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:12:24:202 [INFO] Getting the list of available topic info from the sim server...
+14:12:24:214 [INFO] Successfully received topic info list.
+14:12:26:215 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:12:26:217 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:12:26:217 [INFO] Initalizing Drone 'Drone1'...
+14:12:26:218 [INFO] -------------------------------------------------
+14:12:26:218 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:12:26:218 [INFO]     sensors["Chase"]["scene_camera"]
+14:12:26:219 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:12:26:219 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:12:26:219 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:12:26:220 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:12:26:220 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:12:26:220 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:12:26:220 [INFO]     sensors["GPS"]["gps"]
+14:12:26:221 [INFO]     sensors["Barometer"]["barometer"]
+14:12:26:221 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:12:26:222 [INFO]     robot_info["actual_pose"]
+14:12:26:222 [INFO]     robot_info["collision_info"]
+14:12:26:223 [INFO]     robot_info["rotor_info"]
+14:12:26:223 [INFO] -------------------------------------------------
+14:12:26:224 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:12:41:195 [INFO] Disconnecting from simulation server...
+14:12:41:239 [INFO] Disconnected.
+14:12:41:241 [INFO] Connecting to simulation server at 127.0.0.1
+14:12:41:245 [INFO] Connection opened.
+14:12:41:246 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:12:42:805 [INFO] Getting the list of available topic info from the sim server...
+14:12:42:817 [INFO] Successfully received topic info list.
+14:12:44:819 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:12:44:820 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:12:44:821 [INFO] Initalizing Drone 'Drone1'...
+14:12:44:821 [INFO] -------------------------------------------------
+14:12:44:822 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:12:44:822 [INFO]     sensors["Chase"]["scene_camera"]
+14:12:44:822 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:12:44:823 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:12:44:823 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:12:44:823 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:12:44:824 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:12:44:824 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:12:44:824 [INFO]     sensors["GPS"]["gps"]
+14:12:44:825 [INFO]     sensors["Barometer"]["barometer"]
+14:12:44:825 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:12:44:825 [INFO]     robot_info["actual_pose"]
+14:12:44:826 [INFO]     robot_info["collision_info"]
+14:12:44:826 [INFO]     robot_info["rotor_info"]
+14:12:44:826 [INFO] -------------------------------------------------
+14:12:44:827 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:12:59:971 [INFO] Disconnecting from simulation server...
+14:13:00:023 [INFO] Disconnected.
+14:13:00:025 [INFO] Connecting to simulation server at 127.0.0.1
+14:13:00:030 [INFO] Connection opened.
+14:13:00:030 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:13:01:566 [INFO] Getting the list of available topic info from the sim server...
+14:13:01:578 [INFO] Successfully received topic info list.
+14:13:03:579 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:13:03:581 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:13:03:581 [INFO] Initalizing Drone 'Drone1'...
+14:13:03:581 [INFO] -------------------------------------------------
+14:13:03:582 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:13:03:582 [INFO]     sensors["Chase"]["scene_camera"]
+14:13:03:582 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:13:03:583 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:13:03:583 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:13:03:583 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:13:03:584 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:13:03:584 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:13:03:584 [INFO]     sensors["GPS"]["gps"]
+14:13:03:585 [INFO]     sensors["Barometer"]["barometer"]
+14:13:03:585 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:13:03:585 [INFO]     robot_info["actual_pose"]
+14:13:03:586 [INFO]     robot_info["collision_info"]
+14:13:03:586 [INFO]     robot_info["rotor_info"]
+14:13:03:587 [INFO] -------------------------------------------------
+14:13:03:588 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:13:18:675 [INFO] Disconnecting from simulation server...
+14:13:18:780 [INFO] Disconnected.
+14:13:18:783 [INFO] Connecting to simulation server at 127.0.0.1
+14:13:18:787 [INFO] Connection opened.
+14:13:18:788 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:13:20:257 [INFO] Getting the list of available topic info from the sim server...
+14:13:20:269 [INFO] Successfully received topic info list.
+14:13:22:271 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:13:22:273 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:13:22:274 [INFO] Initalizing Drone 'Drone1'...
+14:13:22:274 [INFO] -------------------------------------------------
+14:13:22:275 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:13:22:275 [INFO]     sensors["Chase"]["scene_camera"]
+14:13:22:276 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:13:22:276 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:13:22:276 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:13:22:277 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:13:22:277 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:13:22:278 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:13:22:278 [INFO]     sensors["GPS"]["gps"]
+14:13:22:278 [INFO]     sensors["Barometer"]["barometer"]
+14:13:22:279 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:13:22:279 [INFO]     robot_info["actual_pose"]
+14:13:22:280 [INFO]     robot_info["collision_info"]
+14:13:22:280 [INFO]     robot_info["rotor_info"]
+14:13:22:281 [INFO] -------------------------------------------------
+14:13:22:281 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:13:37:370 [INFO] Disconnecting from simulation server...
+14:13:37:425 [INFO] Disconnected.
+14:13:37:428 [INFO] Connecting to simulation server at 127.0.0.1
+14:13:37:431 [INFO] Connection opened.
+14:13:37:432 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:13:38:814 [INFO] Getting the list of available topic info from the sim server...
+14:13:38:826 [INFO] Successfully received topic info list.
+14:13:40:826 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:13:40:828 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:13:40:829 [INFO] Initalizing Drone 'Drone1'...
+14:13:40:829 [INFO] -------------------------------------------------
+14:13:40:830 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:13:40:830 [INFO]     sensors["Chase"]["scene_camera"]
+14:13:40:831 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:13:40:831 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:13:40:831 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:13:40:832 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:13:40:832 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:13:40:832 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:13:40:833 [INFO]     sensors["GPS"]["gps"]
+14:13:40:834 [INFO]     sensors["Barometer"]["barometer"]
+14:13:40:834 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:13:40:835 [INFO]     robot_info["actual_pose"]
+14:13:40:835 [INFO]     robot_info["collision_info"]
+14:13:40:836 [INFO]     robot_info["rotor_info"]
+14:13:40:836 [INFO] -------------------------------------------------
+14:13:40:837 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:13:55:973 [INFO] Disconnecting from simulation server...
+14:13:56:039 [INFO] Disconnected.
+14:13:56:042 [INFO] Connecting to simulation server at 127.0.0.1
+14:13:56:045 [INFO] Connection opened.
+14:13:56:045 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:13:57:715 [INFO] Getting the list of available topic info from the sim server...
+14:13:57:727 [INFO] Successfully received topic info list.
+14:13:59:728 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:13:59:730 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:13:59:731 [INFO] Initalizing Drone 'Drone1'...
+14:13:59:731 [INFO] -------------------------------------------------
+14:13:59:732 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:13:59:732 [INFO]     sensors["Chase"]["scene_camera"]
+14:13:59:733 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:13:59:733 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:13:59:733 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:13:59:734 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:13:59:735 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:13:59:736 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:13:59:736 [INFO]     sensors["GPS"]["gps"]
+14:13:59:737 [INFO]     sensors["Barometer"]["barometer"]
+14:13:59:737 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:13:59:737 [INFO]     robot_info["actual_pose"]
+14:13:59:738 [INFO]     robot_info["collision_info"]
+14:13:59:738 [INFO]     robot_info["rotor_info"]
+14:13:59:739 [INFO] -------------------------------------------------
+14:13:59:739 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:14:15:127 [INFO] Disconnecting from simulation server...
+14:14:15:258 [INFO] Disconnected.
+14:14:15:261 [INFO] Connecting to simulation server at 127.0.0.1
+14:14:15:266 [INFO] Connection opened.
+14:14:15:266 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:14:16:972 [INFO] Getting the list of available topic info from the sim server...
+14:14:16:983 [INFO] Successfully received topic info list.
+14:14:18:985 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:14:18:987 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:14:18:987 [INFO] Initalizing Drone 'Drone1'...
+14:14:18:988 [INFO] -------------------------------------------------
+14:14:18:988 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:14:18:989 [INFO]     sensors["Chase"]["scene_camera"]
+14:14:18:989 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:14:18:990 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:14:18:990 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:14:18:990 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:14:18:990 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:14:18:991 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:14:18:991 [INFO]     sensors["GPS"]["gps"]
+14:14:18:991 [INFO]     sensors["Barometer"]["barometer"]
+14:14:18:992 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:14:18:992 [INFO]     robot_info["actual_pose"]
+14:14:18:992 [INFO]     robot_info["collision_info"]
+14:14:18:992 [INFO]     robot_info["rotor_info"]
+14:14:18:993 [INFO] -------------------------------------------------
+14:14:18:993 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:14:34:294 [INFO] Disconnecting from simulation server...
+14:14:34:341 [INFO] Disconnected.
+14:14:34:343 [INFO] Connecting to simulation server at 127.0.0.1
+14:14:34:347 [INFO] Connection opened.
+14:14:34:348 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:14:35:827 [INFO] Getting the list of available topic info from the sim server...
+14:14:35:839 [INFO] Successfully received topic info list.
+14:14:37:841 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:14:37:842 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:14:37:843 [INFO] Initalizing Drone 'Drone1'...
+14:14:37:843 [INFO] -------------------------------------------------
+14:14:37:843 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:14:37:844 [INFO]     sensors["Chase"]["scene_camera"]
+14:14:37:844 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:14:37:844 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:14:37:845 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:14:37:845 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:14:37:845 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:14:37:846 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:14:37:846 [INFO]     sensors["GPS"]["gps"]
+14:14:37:846 [INFO]     sensors["Barometer"]["barometer"]
+14:14:37:847 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:14:37:847 [INFO]     robot_info["actual_pose"]
+14:14:37:847 [INFO]     robot_info["collision_info"]
+14:14:37:847 [INFO]     robot_info["rotor_info"]
+14:14:37:848 [INFO] -------------------------------------------------
+14:14:37:848 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:14:52:493 [INFO] Disconnecting from simulation server...
+14:14:52:593 [INFO] Disconnected.
+14:14:52:596 [INFO] Connecting to simulation server at 127.0.0.1
+14:14:52:600 [INFO] Connection opened.
+14:14:52:600 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:14:54:214 [INFO] Getting the list of available topic info from the sim server...
+14:14:54:226 [INFO] Successfully received topic info list.
+14:14:56:227 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:14:56:229 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:14:56:229 [INFO] Initalizing Drone 'Drone1'...
+14:14:56:230 [INFO] -------------------------------------------------
+14:14:56:230 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:14:56:230 [INFO]     sensors["Chase"]["scene_camera"]
+14:14:56:231 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:14:56:231 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:14:56:232 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:14:56:232 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:14:56:233 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:14:56:233 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:14:56:234 [INFO]     sensors["GPS"]["gps"]
+14:14:56:234 [INFO]     sensors["Barometer"]["barometer"]
+14:14:56:235 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:14:56:235 [INFO]     robot_info["actual_pose"]
+14:14:56:236 [INFO]     robot_info["collision_info"]
+14:14:56:236 [INFO]     robot_info["rotor_info"]
+14:14:56:237 [INFO] -------------------------------------------------
+14:14:56:237 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:15:11:440 [INFO] Disconnecting from simulation server...
+14:15:11:493 [INFO] Disconnected.
+14:15:11:496 [INFO] Connecting to simulation server at 127.0.0.1
+14:15:11:500 [INFO] Connection opened.
+14:15:11:500 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:15:13:135 [INFO] Getting the list of available topic info from the sim server...
+14:15:13:148 [INFO] Successfully received topic info list.
+14:15:15:149 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:15:15:151 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:15:15:152 [INFO] Initalizing Drone 'Drone1'...
+14:15:15:152 [INFO] -------------------------------------------------
+14:15:15:152 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:15:15:153 [INFO]     sensors["Chase"]["scene_camera"]
+14:15:15:153 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:15:15:153 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:15:15:153 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:15:15:154 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:15:15:154 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:15:15:154 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:15:15:155 [INFO]     sensors["GPS"]["gps"]
+14:15:15:155 [INFO]     sensors["Barometer"]["barometer"]
+14:15:15:155 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:15:15:156 [INFO]     robot_info["actual_pose"]
+14:15:15:156 [INFO]     robot_info["collision_info"]
+14:15:15:156 [INFO]     robot_info["rotor_info"]
+14:15:15:156 [INFO] -------------------------------------------------
+14:15:15:157 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:15:30:343 [INFO] Disconnecting from simulation server...
+14:15:30:410 [INFO] Disconnected.
+14:15:30:413 [INFO] Connecting to simulation server at 127.0.0.1
+14:15:30:416 [INFO] Connection opened.
+14:15:30:416 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:15:32:006 [INFO] Getting the list of available topic info from the sim server...
+14:15:32:018 [INFO] Successfully received topic info list.
+14:15:34:019 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:15:34:021 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:15:34:022 [INFO] Initalizing Drone 'Drone1'...
+14:15:34:022 [INFO] -------------------------------------------------
+14:15:34:022 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:15:34:023 [INFO]     sensors["Chase"]["scene_camera"]
+14:15:34:023 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:15:34:024 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:15:34:024 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:15:34:025 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:15:34:025 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:15:34:026 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:15:34:026 [INFO]     sensors["GPS"]["gps"]
+14:15:34:027 [INFO]     sensors["Barometer"]["barometer"]
+14:15:34:027 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:15:34:027 [INFO]     robot_info["actual_pose"]
+14:15:34:028 [INFO]     robot_info["collision_info"]
+14:15:34:028 [INFO]     robot_info["rotor_info"]
+14:15:34:029 [INFO] -------------------------------------------------
+14:15:34:029 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:15:49:432 [INFO] Disconnecting from simulation server...
+14:15:49:566 [INFO] Disconnected.
+14:15:49:569 [INFO] Connecting to simulation server at 127.0.0.1
+14:15:49:572 [INFO] Connection opened.
+14:15:49:573 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:15:51:057 [INFO] Getting the list of available topic info from the sim server...
+14:15:51:069 [INFO] Successfully received topic info list.
+14:15:53:070 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:15:53:072 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:15:53:073 [INFO] Initalizing Drone 'Drone1'...
+14:15:53:073 [INFO] -------------------------------------------------
+14:15:53:074 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:15:53:074 [INFO]     sensors["Chase"]["scene_camera"]
+14:15:53:074 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:15:53:075 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:15:53:075 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:15:53:075 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:15:53:076 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:15:53:076 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:15:53:077 [INFO]     sensors["GPS"]["gps"]
+14:15:53:077 [INFO]     sensors["Barometer"]["barometer"]
+14:15:53:078 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:15:53:078 [INFO]     robot_info["actual_pose"]
+14:15:53:078 [INFO]     robot_info["collision_info"]
+14:15:53:079 [INFO]     robot_info["rotor_info"]
+14:15:53:080 [INFO] -------------------------------------------------
+14:15:53:081 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:16:08:296 [INFO] Disconnecting from simulation server...
+14:16:08:418 [INFO] Disconnected.
+14:16:08:421 [INFO] Connecting to simulation server at 127.0.0.1
+14:16:08:426 [INFO] Connection opened.
+14:16:08:427 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:16:10:020 [INFO] Getting the list of available topic info from the sim server...
+14:16:10:031 [INFO] Successfully received topic info list.
+14:16:12:032 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:16:12:034 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:16:12:035 [INFO] Initalizing Drone 'Drone1'...
+14:16:12:035 [INFO] -------------------------------------------------
+14:16:12:036 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:16:12:036 [INFO]     sensors["Chase"]["scene_camera"]
+14:16:12:036 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:16:12:037 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:16:12:037 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:16:12:038 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:16:12:038 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:16:12:038 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:16:12:039 [INFO]     sensors["GPS"]["gps"]
+14:16:12:039 [INFO]     sensors["Barometer"]["barometer"]
+14:16:12:039 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:16:12:040 [INFO]     robot_info["actual_pose"]
+14:16:12:040 [INFO]     robot_info["collision_info"]
+14:16:12:040 [INFO]     robot_info["rotor_info"]
+14:16:12:040 [INFO] -------------------------------------------------
+14:16:12:041 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:16:26:935 [INFO] Disconnecting from simulation server...
+14:16:27:031 [INFO] Disconnected.
+14:16:27:034 [INFO] Connecting to simulation server at 127.0.0.1
+14:16:27:037 [INFO] Connection opened.
+14:16:27:038 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:16:28:605 [INFO] Getting the list of available topic info from the sim server...
+14:16:28:617 [INFO] Successfully received topic info list.
+14:16:30:618 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:16:30:620 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:16:30:620 [INFO] Initalizing Drone 'Drone1'...
+14:16:30:620 [INFO] -------------------------------------------------
+14:16:30:621 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:16:30:621 [INFO]     sensors["Chase"]["scene_camera"]
+14:16:30:621 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:16:30:622 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:16:30:622 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:16:30:622 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:16:30:622 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:16:30:623 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:16:30:623 [INFO]     sensors["GPS"]["gps"]
+14:16:30:623 [INFO]     sensors["Barometer"]["barometer"]
+14:16:30:624 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:16:30:624 [INFO]     robot_info["actual_pose"]
+14:16:30:624 [INFO]     robot_info["collision_info"]
+14:16:30:625 [INFO]     robot_info["rotor_info"]
+14:16:30:625 [INFO] -------------------------------------------------
+14:16:30:625 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:16:45:700 [INFO] Disconnecting from simulation server...
+14:16:45:782 [INFO] Disconnected.
+14:16:45:785 [INFO] Connecting to simulation server at 127.0.0.1
+14:16:45:790 [INFO] Connection opened.
+14:16:45:791 [INFO] Loading scene config: scene_basic_drone.jsonc
+14:16:47:456 [INFO] Getting the list of available topic info from the sim server...
+14:16:47:467 [INFO] Successfully received topic info list.
+14:16:49:468 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+14:16:49:470 [INFO] Trajectory 'null_trajectory' imported successfully.
+14:16:49:471 [INFO] Initalizing Drone 'Drone1'...
+14:16:49:472 [INFO] -------------------------------------------------
+14:16:49:472 [INFO] The following topics can be subscribed to for robot 'Drone1':
+14:16:49:473 [INFO]     sensors["Chase"]["scene_camera"]
+14:16:49:473 [INFO]     sensors["Chase"]["scene_camera_info"]
+14:16:49:474 [INFO]     sensors["DownCamera"]["scene_camera"]
+14:16:49:474 [INFO]     sensors["DownCamera"]["scene_camera_info"]
+14:16:49:475 [INFO]     sensors["DownCamera"]["depth_camera"]
+14:16:49:476 [INFO]     sensors["DownCamera"]["depth_camera_info"]
+14:16:49:476 [INFO]     sensors["IMU1"]["imu_kinematics"]
+14:16:49:477 [INFO]     sensors["GPS"]["gps"]
+14:16:49:477 [INFO]     sensors["Barometer"]["barometer"]
+14:16:49:478 [INFO]     sensors["Magnetometer"]["magnetometer"]
+14:16:49:478 [INFO]     robot_info["actual_pose"]
+14:16:49:478 [INFO]     robot_info["collision_info"]
+14:16:49:479 [INFO]     robot_info["rotor_info"]
+14:16:49:479 [INFO] -------------------------------------------------
+14:16:49:479 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+14:17:04:458 [INFO] Disconnecting from simulation server...
+14:17:04:526 [INFO] Disconnected.
