@@ -1,56 +1,91 @@
 import numpy as np
-from Subsystems.action import Action
-from Subsystems.state import State
+from Subsystems.action import Action, State
 
-    
 class Database:
-    HISTORY_TIME: float = 0.5  # seconds
-    SAVE_FREQUENCY: int = 20  # Hz
-    SAVE_PERIOD: float = 1 / SAVE_FREQUENCY
+    HISTORY_TIME: float = 1  # seconds
+    SAVE_FREQUENCY: int = 100  # Hz
     STEPS: int = int(HISTORY_TIME * SAVE_FREQUENCY)
 
     def __init__(self) -> None:
-        self.step = 0
-        self.action_history : list[np.ndarray] = []
-        self.state_history : list[np.ndarray] = []
-        self.time_history : list[np.double] = []
+        self.step = 0   # Number of stored entries (0-100)
+        self.index = 0  # Next buffer position to write
 
-    def update_history(self, state: np.ndarray, action: np.ndarray, time_stamp: np.double, display : bool):
-        #Make sure enough time has passed to update the state history
-        if (self.step > 0 and self.time_history[self.step - 1] is not None and time_stamp - self.time_history[self.step - 1] < self.SAVE_PERIOD):
-            return
-        self.step = min(self.step, self.STEPS - 1)
-        self.step = max(self.step, 0)
+        self.action_history: np.ndarray | None = None
+        self.state_history: np.ndarray | None = None
+        self.time_history = np.empty(self.STEPS, dtype=np.float64)
 
-        self.state_history.append(state)
-        self.action_history.append(action)
-        self.time_history.append(time_stamp)
-        
-        if (self.step < self.STEPS - 1):
-            self.step += 1
-        else:
-            self.state_history.pop(0)
-            self.action_history.pop(0)
-            self.time_history.pop(0)
-        
+    def update_history(
+        self,
+        state: np.ndarray,
+        action: np.ndarray,
+        time_stamp: np.double,
+        display: bool = False
+    ) -> None:
+
+        # Initialize buffers on first update
+        if self.state_history is None:
+            self.state_history = np.empty(
+                (self.STEPS, *state.shape),
+                dtype=state.dtype
+            )
+            self.action_history = np.empty(
+                (self.STEPS, *action.shape),
+                dtype=action.dtype
+            )
+
+        # Save data at current position
+        self.state_history[self.index] = state
+        self.action_history[self.index] = action
+        self.time_history[self.index] = time_stamp
+
+        # Advance circular buffer
+        self.index = (self.index + 1) % self.STEPS
+        self.step = min(self.step + 1, self.STEPS)
+
         if display:
             print("----- Recent Step -----")
             print(self.step_to_string())
-    def step_to_string(self,i = None):
-        if (self.step == 0):
+
+    def get_history(self):
+        """
+        Returns histories in chronological order:
+        oldest -> newest.
+        """
+        if self.step == 0:
+            return None, None, None
+
+        indices = (
+            np.arange(self.step) + self.index - self.step
+        ) % self.STEPS
+
+        return (
+            self.state_history[indices],
+            self.action_history[indices],
+            self.time_history[indices]
+        )
+
+    def step_to_string(self, i=None) -> str:
+        if self.step == 0:
             return "No history available"
+
         if i is None:
             i = self.step - 1
+
+        if not 0 <= i < self.step:
+            raise IndexError("History step out of range")
+
+        # Convert chronological index to buffer index
+        buffer_index = (self.index - self.step + i) % self.STEPS
+
         return (
-            f"Step: {i+1}\n" +
-            f"Action: {Action.to_string(self.action_history[i])}\n" +
-            f"State: {State.to_string(self.state_history[i])}\n" +
-            f"Time Step: {self.time_history[i]}"
+            f"Step: {i + 1}\n"
+            f"Action: {Action.to_string(self.action_history[buffer_index])}\n"
+            f"State: {State.to_string(self.state_history[buffer_index])}\n"
+            f"Time Step: {self.time_history[buffer_index]}"
         )
+
     def to_string(self) -> str:
-        output = ""
-        for i in range(self.step):
-            output += (
-                self.step_to_string(i) + "\n"
-            )
-        return output
+        return "\n".join(
+            self.step_to_string(i)
+            for i in range(self.step)
+        )

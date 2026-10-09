@@ -151,6 +151,7 @@ async def main():
     simulation = ProjectAirSimSimulation()
     simulation.log_prompt()
     drone = Drone(flight_controller=simulation)
+    drone.prompt_update_frequency()
     gamepad = Gamepad()
 
     action = None

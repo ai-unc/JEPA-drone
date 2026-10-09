@@ -11,7 +11,6 @@ class Drone():
     def __init__(self, flight_controller: FlightController | None = None, action_sequence : ActionSequence | None = None):
         self.state = State.generate()
         self.flight_controller = flight_controller
-        self.database = Database()
         self.time_stamp = 0
         self.update_frequency : float = FlightController.CONTROL_HZ
         self.action_sequence = action_sequence
@@ -23,9 +22,12 @@ class Drone():
             print("Negative??? Using default update frequency.")
         else:
             self.update_frequency = float(frequency)
+    def get_database(self) -> Database:
+        return self.flight_controller.database
     def step(self, action: np.ndarray, display: bool = False) -> None:
         self.state,self.time_stamp = self.flight_controller.step(action=action)
-        self.database.update_history(self.state, action, self.time_stamp,display = display)
+        if display:
+            print(self.get_database().to_string())
     async def update(self, action : np.ndarray | None = None, display: bool = False) -> bool:
         wait_time = 0
         if (self.update_frequency > 0):

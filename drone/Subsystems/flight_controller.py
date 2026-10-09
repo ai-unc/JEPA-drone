@@ -5,6 +5,7 @@ import csv
 from scipy.spatial.transform import Rotation
 from Subsystems.action import Action
 from Subsystems.state import State
+from Subsystems.database import Database
 
 
 
@@ -21,6 +22,7 @@ class FlightController():
         self.action_data : list[np.ndarray] = []
         self.state_data : list[np.ndarray] = []
         self.time_data = []
+        self.database = Database()
         self.log_data = False
         self.data_name = FlightController.DATA_PATH + "temp.csv"
     def start(self,initial_state : np.ndarray | None = None) -> None:
@@ -38,6 +40,7 @@ class FlightController():
         pass
     def step(self,action: np.ndarray | None = None) -> tuple[State, np.double]:
         #Steps the flight controller and returns the current state and timestamp.
+        #Also Update the database
         pass
     def close(self) -> None:
         pass
@@ -46,16 +49,6 @@ class FlightController():
     def write_data_log(self):
         if not self.log_data:
             return
-        """
-        Log the collected time stamps, actions, and states into a csv.
-        State:
-            position: np.ndarray = np.zeros(3,dtype=float),
-            velocity: np.ndarray = np.zeros(3,dtype=float),
-            rotation: np.ndarray = np.zeros((3,3),dtype=float),
-            angular_velocity: np.ndarray = np.zeros(3,dtype=float)
-        Action:
-             motor_thrusts: dict = {Motor.FL: 0, Motor.FR: 0, Motor.BL: 0, Motor.BR: 0},
-        """
         header = [
             "time",
             "FL", "FR", "BL", "BR",
@@ -84,27 +77,27 @@ class FlightController():
                     action[Action.BL],
                     action[Action.BR],
 
-                    state[State.PX],
+                    state[State.PX], #Position X
                     state[State.PY],
                     state[State.PZ],
 
-                    state[State.VX],
+                    state[State.VX], #Velocity X
                     state[State.VY],
                     state[State.VZ],
 
-                    state[State.R1x],
+                    state[State.R1x], #Rotation matrix row 1 X
                     state[State.R1y],
                     state[State.R1z],
 
-                    state[State.R2x],
+                    state[State.R2x], #Rotation matrix row 2 X
                     state[State.R2y],
                     state[State.R2z],
 
-                    state[State.R3x],
+                    state[State.R3x], #Rotation matrix row 3 X
                     state[State.R3y],
                     state[State.R3z],
 
-                    state[State.WX],
+                    state[State.WX], #Angular velocity X
                     state[State.WY],
                     state[State.WZ],
                 ])

@@ -194,6 +194,7 @@ class ProjectAirSimSimulation(FlightController):
             self.action_data.append(action)
             self.state_data.append(prev_state)
             self.time_data.append(prev_time_stamp)
+        self.database.update_history(prev_state, action, prev_time_stamp)
         return self.read()
     @override
     def close(self) -> None:
