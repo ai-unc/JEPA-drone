@@ -10,8 +10,8 @@ class Config:
     Tensor layouts that go with these numbers are in docs/tensor_shapes.md.
     """
 
-    state_dim: int = 4
-    action_dim: int = 2
+    state_dim: int = 16
+    action_dim: int = 8
     latent_dim: int = 24
     history_len: int = 10
     horizon: int = 10
