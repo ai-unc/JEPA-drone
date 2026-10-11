@@ -10,6 +10,8 @@ dependencies = [
     "matplotlib>=3.8",
     "pandas>=3.0.6",
     "projectairsim==1.0.2",
+    "scipy>=1.17.1",
+    "json5>=0.17.3",
 ]
 
 [build-system]

@@ -3,9 +3,9 @@ import asyncio
 from Subsystems.Gamepad import Gamepad
 
 from Subsystems.drone import Drone
-from Subsystems.action import Action, ActionSequence
+from drone.Subsystems.data.data import Action, DataSequence
 import numpy as np
-from drone.Subsystems.state import State
+from drone.Subsystems.data.data import State
 from simulations.simulation import ProjectAirSimSimulation
 from Subsystems.PID import PID
 
@@ -150,6 +150,7 @@ async def main():
     max_time = float(input("Enter the maximum simulation time: "))
     simulation = ProjectAirSimSimulation()
     simulation.log_prompt()
+    simulation.config_prompt()
     drone = Drone(flight_controller=simulation)
     drone.prompt_update_frequency()
     gamepad = Gamepad()
@@ -188,7 +189,7 @@ async def main():
             integral_limit=1.0
         )
         
-        drone.action_sequence = None
+        drone.data_sequence = None
 
         while (drone.time_stamp < max_time):
             throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)

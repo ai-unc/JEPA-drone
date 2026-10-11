@@ -36,6 +36,7 @@ Here are the dependencies the simulator and client require:
 uv add projectairsim==1.0.2
 uv add pandas
 uv add sciPy
+uv add json5
 ```
 # Step 3. Run the client
 -> Go to the drone

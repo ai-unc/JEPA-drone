@@ -3,17 +3,17 @@ from time import time
 import numpy as np
 import asyncio
 from Subsystems.flight_controller import FlightController, State
-from Subsystems.action import ActionSequence
-from Subsystems.database import Database
+from drone.Subsystems.data.data import DataSequence
+from drone.Subsystems.data.database import Database
 
 
 class Drone():
-    def __init__(self, flight_controller: FlightController | None = None, action_sequence : ActionSequence | None = None):
+    def __init__(self, flight_controller: FlightController | None = None, data_sequence : DataSequence | None = None):
         self.state = State.generate()
         self.flight_controller = flight_controller
         self.time_stamp = 0
         self.update_frequency : float = FlightController.CONTROL_HZ
-        self.action_sequence = action_sequence
+        self.data_sequence = data_sequence
         if self.flight_controller is None:
             raise ValueError("A flight controller must be provided.")
     def prompt_update_frequency(self):
@@ -33,8 +33,8 @@ class Drone():
         if (self.update_frequency > 0):
             wait_time = 1 / self.update_frequency
         await asyncio.sleep(wait_time)
-        if action is None and self.action_sequence is not None:
-            action = self.action_sequence.get_action(self.time_stamp)
+        if action is None and self.data_sequence is not None:
+            action = self.data_sequence.get_action(self.time_stamp)
         if (action is None):
             return False
         self.step(action, display=display)

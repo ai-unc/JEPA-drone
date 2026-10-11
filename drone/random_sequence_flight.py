@@ -6,7 +6,7 @@ import asyncio
 from Subsystems.drone import Drone
 
 from simulations.simulation import ProjectAirSimSimulation
-from Subsystems.action import Action, ActionSequence
+from drone.Subsystems.data.data import Action, DataSequence
 
 
 RANDOM_ACTION_LENGTH = 10  # seconds
@@ -37,14 +37,14 @@ async def main() -> None:
         try:
             simulation.start()
             simulation.set_pose_to_random_in_sky(height = -350)
-            random_sequence = ActionSequence.generate_random_sequence(
+            random_sequence = DataSequence.generate_random_sequence(
                 start_time = drone.time_stamp,
                 time = RANDOM_ACTION_LENGTH, 
                 frequency = RANDOM_ACTION_FREQUENCY,
                 thrust_variance = (min_thrust, max_thrust)
             )
 
-            drone.action_sequence = random_sequence
+            drone.data_sequence = random_sequence
             while (await drone.update()):
                 pass
                 

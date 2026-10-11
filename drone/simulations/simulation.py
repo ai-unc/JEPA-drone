@@ -1,11 +1,13 @@
 from __future__ import annotations
 import math
+import asyncio
 
 from sympy import Quaternion
 
 from Subsystems.flight_controller import FlightController, Rotation
-from Subsystems.action import Action
-from Subsystems.state import State
+from drone.Subsystems.data.data import Action, State
+from simulations.simulation_config import SimulationConfigs
+
 import numpy as np
 from pathlib import Path
 from typing import override
@@ -23,8 +25,6 @@ class ProjectAirSimSimulation(FlightController):
     }
     SCENE = "scene_basic_drone.jsonc"
     DEFAULT_DRONE_NAME = "Drone1"
-    SIMULATION_FOLDER = Path(__file__).resolve().parent
-    SIM_CONFIG_PATH = SIMULATION_FOLDER / "sim_config"
     LOAD_DELAY = 2
 
     SKY_POSE_Z = -80
@@ -49,6 +49,17 @@ class ProjectAirSimSimulation(FlightController):
             "translation": position,
             "rotation": orientation,
         }))
+    def config_prompt(self) -> None:
+        #CONFIGS MUST BE SET BEFORE THE SIMULATION STARTS!!!
+        user_input = input("Random Configs? (y/n): ")
+        if user_input.lower() == "y":
+            self.configs.randomize()
+        self.configs.write()
+
+    def set_configs(self, configs: SimulationConfigs) -> None:
+        self.configs = configs
+        self.configs.write()
+
     @override
     def __init__(
         self,
@@ -57,18 +68,22 @@ class ProjectAirSimSimulation(FlightController):
         self.client: ProjectAirSimClient | None = None
         self.world: World | None = None
         self.drone: Drone | None = None
+        self.configs = SimulationConfigs()
 
     @override
     def start(self, initial_state: np.ndarray | None = None) -> None:
         self.client = ProjectAirSimClient()
         self.client.connect()
 
+        print("Starting simulation with config path:", self.configs.path)
+        print("CONFIGS: ", self.configs.to_string())
+
 
         self.world = World(
             self.client,
             self.SCENE,
             delay_after_load_sec=self.LOAD_DELAY,
-            sim_config_path=str(self.SIM_CONFIG_PATH),
+            sim_config_path=str(self.configs.path),
         )
 
         self.drone = Drone(
@@ -196,6 +211,12 @@ class ProjectAirSimSimulation(FlightController):
             self.time_data.append(prev_time_stamp)
         self.database.update_history(prev_state, action, prev_time_stamp)
         return self.read()
+    @override
+    def csv_header(self) -> str:
+        if (self.configs is None):
+            return ""
+        return self.configs.config_to_csv() + "\n"
+    
     @override
     def close(self) -> None:
         self.write_data_log()

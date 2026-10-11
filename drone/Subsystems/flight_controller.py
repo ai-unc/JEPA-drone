@@ -3,9 +3,9 @@ from enum import Enum
 import numpy as np
 import csv
 from scipy.spatial.transform import Rotation
-from Subsystems.action import Action
-from Subsystems.state import State
-from Subsystems.database import Database
+from drone.Subsystems.data.data import Action
+from drone.Subsystems.data.data import State
+from drone.Subsystems.data.database import Database
 
 
 
@@ -31,7 +31,7 @@ class FlightController():
     def log_prompt(self) -> None:
         self.log_data = input("Do you want to log data? (y/n): ").strip().lower() == "y"
         if (self.log_data):
-            self.data_name = input("Name the data log file: (ex. temp):\n")
+            self.data_name = input("Name the csv data log file: (ex. temp):\n")
             self.data_name = FlightController.DATA_PATH + self.data_name
     def send(self,action : np.ndarray) -> None:
         pass
@@ -46,6 +46,8 @@ class FlightController():
         pass
     def set_state(self, state: np.ndarray) -> None:
         pass
+    def csv_header(self) -> str:
+        return ""
     def write_data_log(self):
         if not self.log_data:
             return
@@ -61,6 +63,8 @@ class FlightController():
         ]
 
         with open(self.data_name + ".csv", "w", newline="") as file:
+            file.write(self.csv_header())
+            
             writer = csv.writer(file)
             writer.writerow(header)
 
