@@ -135,40 +135,13 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
 
 
 def train_baseline(loader: DataLoader, config: Config) -> None:
-    device = config.device
-    model = baseline.DirectStatePredictor(config).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
-    for _ in range(config.epochs):
-        for batch in loader:
-            batch = _on_device(batch, device)
-            predicted = model(
-                batch["state_history"],
-                batch["action_history"],
-                batch["future_actions"],
-            )
-            loss = (predicted - batch["future_states"]).pow(2).mean()
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-    model.eval()
-    curves = []
-    with torch.no_grad():
-        for batch in loader:
-            batch = _on_device(batch, device)
-            predicted = model(
-                batch["state_history"],
-                batch["action_history"],
-                batch["future_actions"],
-            )
-            per_step = torch.linalg.vector_norm(
-                predicted - batch["future_states"], dim=-1
-            ).mean(dim=0)
-            curves.append(per_step.cpu())
-    errors = torch.stack(curves).mean(dim=0).numpy()
+    model = baseline.DirectStatePredictor(config).to(config.device)
+    model.fit_normalizer(loader.dataset.tensors)
+    baseline.train_direct_predictor(model, loader, config)
+    errors = baseline.prediction_error_vs_horizon(model, loader)
     path = Path("artifacts") / "prediction_error_vs_horizon.png"
     path.parent.mkdir(exist_ok=True)
-    baseline.plot_prediction_error_vs_horizon(errors, str(path))
+    baseline.plot_prediction_error_vs_horizon(errors, str(path), dt=config.dt)
 
 
 def main() -> None:

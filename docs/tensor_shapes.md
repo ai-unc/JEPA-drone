@@ -95,9 +95,17 @@ Target latents are encoded with `torch.no_grad()`. Gradients still reach both en
 
 ## Baseline
 
-`DirectStatePredictor.forward(state_history, action_history, future_actions)` returns `(B, T, 4)`, the future physical states in one shot.
+`DirectStatePredictor.step(state_window, action_window)` maps `(B, H, state_dim)` and `(B, H, action_dim)` windows ending at `t` to `x̂_{t+1}` `(B, state_dim)`. The MLP predicts the normalized change `x_{t+1} - x_t`. `fit_normalizer(windows)` sets the statistics from training windows.
 
-`plot_prediction_error_vs_horizon(errors, path)` draws one curve. `errors` has shape `(T,)`. `errors[k]` is the mean L2 error of the prediction of `x_{t+1+k}`.
+`DirectStatePredictor.forward(state_history, action_history, future_actions)` returns `(B, T, state_dim)` by recursive rollout: each `x̂_{t+k}` is appended to the state window, the action window slides to `a_{t+k}`, and the step repeats. Only the true future actions are fed in, never true future states.
+
+`rollout_loss(model, batch, steps)` is the training loss: `steps=1` is one-step (teacher-forced) training, `steps=T` trains through the whole rollout.
+
+`prediction_error_vs_horizon(model, loader)` returns `errors` with shape `(T,)`. `errors[k]` is the mean L2 error of the prediction of `x_{t+1+k}`.
+
+`plot_prediction_error_vs_horizon(errors, path)` draws `errors`, or a dict of label to `(T,)` curves on shared axes so the JEPA curve can be added later.
+
+`python -m skyjepa.run_baseline` trains the baseline on the drone logs (`skyjepa.data.drone`), holds out whole trajectories, and writes the plot and a CSV of the errors to `artifacts/`.
 
 ## Modules
 
@@ -108,7 +116,9 @@ Target latents are encoded with `torch.no_grad()`. Gradients still reach both en
 | `skyjepa/models/encoders.py` | `StateHistoryEncoder`, `ActionHistoryEncoder` |
 | `skyjepa/models/predictor.py` | `LatentPredictor.forward`, `LatentPredictor.rollout` |
 | `skyjepa/losses.py` | `latent_prediction_loss`, `latent_stats` |
-| `skyjepa/baseline.py` | `DirectStatePredictor`, `plot_prediction_error_vs_horizon` |
+| `skyjepa/baseline.py` | `DirectStatePredictor`, `rollout_loss`, `train_direct_predictor`, `prediction_error_vs_horizon`, `plot_prediction_error_vs_horizon` |
+| `skyjepa/data/drone.py` | `load_trajectories`, `split_trajectories`, `stride_for` |
+| `skyjepa/run_baseline.py` | `main` |
 | `skyjepa/config.py` | `Config` |
 | `skyjepa/windows.py` | `sliding_windows`, `rollout_windows` |
 | `skyjepa/train_jepa.py` | `main` |
