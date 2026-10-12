@@ -1,9 +1,5 @@
 """JEPA latent prediction loss."""
 
-import torch #helps with math on tensors
-
-"""JEPA latent prediction loss."""
-
 import torch
 
 
@@ -56,6 +52,15 @@ def check_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
     return collapsed
 
 
+def log_jepa_step(predicted, target, s_t, threshold: float = 0.1) -> dict[str, float]:
+    """One call per batch: per-horizon losses L1..LT, latent stats, and collapse warning."""
+    out = {f"L{k + 1}": v for k, v in enumerate(per_horizon_losses(predicted, target).tolist())}
+    stats = latent_stats(s_t)
+    out.update(stats)
+    out["collapsed"] = float(check_collapse(stats, threshold))
+    return out
+
+
 if __name__ == "__main__":
     B, T, D = 64, 10, 24
     good = torch.randn(B, T, D)
@@ -72,3 +77,4 @@ if __name__ == "__main__":
           latent_prediction_loss(good, good + 1).item())
     print("per-horizon shape (should be torch.Size([10])):",
           per_horizon_losses(good, good + 1).shape)
+    print("log_jepa_step keys:", list(log_jepa_step(good, good + 1, good[:, 0]).keys()))
