@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader
 
 from skyjepa import baseline
 from skyjepa.config import Config
-from skyjepa.data import dataset, drone
+from skyjepa.data import dataset, trajectory_loader
 from skyjepa.train_jepa import WindowDataset
 
 
@@ -33,7 +33,7 @@ def _seed(seed: int) -> None:
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     defaults = Config()
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--data-dir", type=Path, default=drone.DEFAULT_DIR)
+    parser.add_argument("--data-dir", type=Path, default=trajectory_loader.DEFAULT_DIR)
     parser.add_argument("--out-dir", type=Path, default=Path("artifacts"))
     parser.add_argument("--test-fraction", type=float, default=0.2)
     parser.add_argument("--epochs", type=int, default=defaults.epochs)
@@ -47,13 +47,13 @@ def main(argv: list[str] | None = None) -> None:
     config = replace(Config(), epochs=args.epochs, seed=args.seed)
     _seed(config.seed)
 
-    trajectories = drone.load_trajectories(args.data_dir, stride=drone.stride_for(config.dt))
+    trajectories = trajectory_loader.load_trajectories(args.data_dir, stride=trajectory_loader.stride_for(config.dt))
     config = replace(
         config,
         state_dim=trajectories[0]["states"].shape[1],
         action_dim=trajectories[0]["actions"].shape[1],
     )
-    train, test = drone.split_trajectories(trajectories, args.test_fraction, config.seed)
+    train, test = trajectory_loader.split_trajectories(trajectories, args.test_fraction, config.seed)
     windows = {
         name: dataset.build_dataset(
             split,

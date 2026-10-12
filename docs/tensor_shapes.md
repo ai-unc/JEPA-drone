@@ -105,7 +105,7 @@ Target latents are encoded with `torch.no_grad()`. Gradients still reach both en
 
 `plot_prediction_error_vs_horizon(errors, path)` draws `errors`, or a dict of label to `(T,)` curves on shared axes so the JEPA curve can be added later.
 
-`python -m skyjepa.run_baseline` trains the baseline on the drone logs (`skyjepa.data.drone`), holds out whole trajectories, and writes the plot and a CSV of the errors to `artifacts/`.
+`python -m skyjepa.run_baseline` trains the baseline on the drone logs (`skyjepa.data.trajectory_loader`), holds out whole trajectories, and writes the plot and a CSV of the errors to `artifacts/`.
 
 ## Modules
 
@@ -117,7 +117,7 @@ Target latents are encoded with `torch.no_grad()`. Gradients still reach both en
 | `skyjepa/models/predictor.py` | `LatentPredictor.forward`, `LatentPredictor.rollout` |
 | `skyjepa/losses.py` | `latent_prediction_loss`, `latent_stats` |
 | `skyjepa/baseline.py` | `DirectStatePredictor`, `rollout_loss`, `train_direct_predictor`, `prediction_error_vs_horizon`, `plot_prediction_error_vs_horizon` |
-| `skyjepa/data/drone.py` | `load_trajectories`, `split_trajectories`, `stride_for` |
+| `skyjepa/data/trajectory_loader.py` | `load_trajectories`, `split_trajectories`, `stride_for` |
 | `skyjepa/run_baseline.py` | `main` |
 | `skyjepa/config.py` | `Config` |
 | `skyjepa/windows.py` | `sliding_windows`, `rollout_windows` |
