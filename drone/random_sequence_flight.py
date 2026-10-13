@@ -36,7 +36,7 @@ async def main() -> None:
 
         try:
             simulation.start()
-            simulation.set_pose_to_random_in_sky(height = -350)
+            simulation.set_pose_to_random_in_sky(height = -650)
             random_sequence = DataSequence.generate_random_sequence(
                 start_time = drone.time_stamp,
                 time = RANDOM_ACTION_LENGTH, 
