@@ -62,8 +62,8 @@ def log_jepa_step(predicted, target, s_t, threshold: float = 0.1) -> dict[str, f
 
 
 if __name__ == "__main__":
-    B, T, D = 64, 10, 24
-    good = torch.randn(B, T, D)
+    B, T, D = 64, 10, 24 # fake tensors shaped like real latents
+    good = torch.randn(B, T, D) # fills the tensor with random normal noise (mean = 0, s.d. = 1)
     bad = torch.zeros(B, T, D) + 1e-4 * torch.randn(B, T, D)
 
     print("good latents (should NOT warn):")
