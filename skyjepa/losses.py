@@ -3,6 +3,15 @@
 import torch
 
 
+def variance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
+    pass
+
+def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
+    pass
+
+def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
+    pass
+
 def per_horizon_losses(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """Loss at each future step: L1, L2, ..., LT. Returns shape (T,)."""
     squared_error = (predicted - target) ** 2       # (B, T, D)
@@ -53,7 +62,7 @@ def check_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
 
 
 def log_jepa_step(predicted, target, s_t, threshold: float = 0.1) -> dict[str, float]:
-    """One call per batch: per-horizon losses L1..LT, latent stats, and collapse warning."""
+    """One call per batch: per-horizon losses L1...LT, latent stats, and collapse warning."""
     out = {f"L{k + 1}": v for k, v in enumerate(per_horizon_losses(predicted, target).tolist())}
     stats = latent_stats(s_t)
     out.update(stats)
@@ -64,7 +73,7 @@ def log_jepa_step(predicted, target, s_t, threshold: float = 0.1) -> dict[str, f
 if __name__ == "__main__":
     B, T, D = 64, 10, 24 # fake tensors shaped like real latents
     good = torch.randn(B, T, D) # fills the tensor with random normal noise (mean = 0, s.d. = 1)
-    bad = torch.zeros(B, T, D) + 1e-4 * torch.randn(B, T, D)
+    bad = torch.zeros(B, T, D) + 1e-4 * torch.randn(B, T, D) # almost all 0 with a tiny bit of noise added
 
     print("good latents (should NOT warn):")
     print(check_collapse(latent_stats(good)))
