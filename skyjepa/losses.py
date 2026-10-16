@@ -1,4 +1,4 @@
-"""JEPA latent prediction loss."""
+"""JEPA latent prediction loss, given batch size D = 16 latent dimensions"""
 
 import torch
 
@@ -7,7 +7,12 @@ def variance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     pass
 
 def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
-    pass
+    """Calculate the mean squared difference between corresponding embeddings,
+    then output one nonnegative scalar representing prediction error"""
+
+    squared_err = (predicted - target) ** 2 # [(B, T, D)' - (B, T, D)]^2 -> (B, T, D)
+    return squared_err.mean() # sum / (B*T*D)
+    
 
 def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     pass
