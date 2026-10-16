@@ -3,6 +3,7 @@
 from sympy.core import Float
 from sympy.core.numbers import num_digits
 import torch
+import torch.nn.functional as F
 
 
 def variance_loss(predicted: torch.Tensor, target: torch.Tensor):
@@ -17,7 +18,6 @@ def variance_loss(predicted: torch.Tensor, target: torch.Tensor):
 
     loss = torch.clamp(gamma - target_col_sd, min=0).mean()
     return loss
-    
 
 def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     """Calculate the mean squared difference between corresponding embeddings,
@@ -42,12 +42,23 @@ def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tens
     off_diag = C - torch.diag(torch.diag(C)) # zero out the diagonal
     return (off_diag ** 2).sum() / D
 
+def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, lam: float = 25.0, mu: float = 25.0, nu: float = 1.0) -> torch.Tensor:
+    """
+    VICReg loss = lambda * L_inv + mu * L_var + nu * L_cov
+    """
+    inv = F.mse_loss(predicted, target) # Invariance: computed once, comparing the two embeddings
+
+    # variance and covariance: computed independently for each embedding
+    var = variance_loss(None, target) + variance_loss(None, predicted)
+    cov = covariance_loss(None, target) + covariance_loss(None, predicted)
+
+    return lam * inv + mu * var + nu * cov
+
 def per_horizon_losses(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """Loss at each future step: L1, L2, ..., LT. Returns shape (T,)."""
     squared_error = (predicted - target) ** 2       # (B, T, D)
     per_sample = squared_error.sum(dim=-1)          # (B, T)  add up the D numbers
     return per_sample.mean(dim=0)                   # (T,)    average over the batch
-
 
 def latent_prediction_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """L_pred for predicted and target shaped (B, T, latent_dim).
