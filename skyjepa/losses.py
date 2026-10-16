@@ -1,10 +1,24 @@
 """JEPA latent prediction loss, given batch size D = 16 latent dimensions"""
 
+from sympy.core import Float
+from sympy.core.numbers import num_digits
 import torch
 
 
-def variance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
-    pass
+def variance_loss(predicted: torch.Tensor, target: torch.Tensor):
+    """calculate the mean of each column, then calculate each column's standard deviation,
+    then finally penalize dimensions with standard deviation below gamma"""
+
+    gamma, epsilon = 1, 1e-4
+    N = target.shape[0] * target.shape[1] # number of rows = B*T
+
+    target_means = torch.mean(target, dim=(0,1))
+    target_col_sd = torch.sqrt(((target - target_means) ** 2).sum(dim=(0, 1)) / (N - 1) + epsilon)
+
+    loss = torch.clamp(gamma - target_col_sd, min=0).mean()
+    return loss
+    
+    
 
 def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     """Calculate the mean squared difference between corresponding embeddings,
@@ -12,7 +26,6 @@ def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
 
     squared_err = (predicted - target) ** 2 # [(B, T, D)' - (B, T, D)]^2 -> (B, T, D)
     return squared_err.mean() # sum / (B*T*D)
-    
 
 def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     pass
