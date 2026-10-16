@@ -148,82 +148,100 @@ def controller_to_action(
 
 async def main():
     max_time = float(input("Enter the maximum simulation time: "))
-    simulation = ProjectAirSimSimulation()
-    simulation.log_prompt()
-    simulation.config_prompt()
-    drone = Drone(flight_controller=simulation)
-    drone.prompt_update_frequency()
-    gamepad = Gamepad()
+    iteration = int(input("Enter the starting iteration: "))
+    iterations = input("How many times do you want to run this sequence? ")
+    iterations = int(iterations) + iteration
+    bool_rnd_configs = input("Do you want to use random configurations? (y/n): ").lower() == "y"
+    frequency = input("Enter the update frequency in seconds (real time is 100, as fast as possible is 0, 50 percent is 50): ")
+    frequency = float(frequency)
+    spawn_height = input("Enter the spawn height (negative value, default is -650): ")
+    spawn_height = float(spawn_height)
+    log_data = input("Do you want to log data? (y/n): ").lower() == "y"
+    name = "rnd_gamepad"
+    if (not bool_rnd_configs):
+        name = "gamepad_sky"
 
-    action = None
+    while iteration < iterations:
+        iteration += 1
+        simulation = ProjectAirSimSimulation()
+        simulation.log_data = log_data
+        simulation.data_name = str(simulation.DATA_PATH + (name + str(iteration)))
+        if (bool_rnd_configs):
+            simulation.configs.randomize()
+        simulation.configs.write()
+        drone = Drone(flight_controller=simulation)
+        drone.update_frequency = frequency
+        gamepad = Gamepad()
 
-    #Left Stick y is throttle
-    #Left Stick x is roll
-    #Right Stick y is pitch
-    #Right Stick x is yaw
-    try:
-        simulation.start()
-        simulation.set_pose_to_random_in_sky()
+        action = None
 
-        roll_pid = PID(
-            kp=-0.13,
-            ki=0,
-            kd=-0.000,
-            output_limit=2,
-            integral_limit=1.0
-        )
+        #Left Stick y is throttle
+        #Left Stick x is roll
+        #Right Stick y is pitch
+        #Right Stick x is yaw
+        try:
+            simulation.start()
+            simulation.set_pose_to_random_in_sky(height = spawn_height)
 
-        pitch_pid = PID(
-            kp=-0.2,
-            ki=0,
-            kd=0.000,
-            output_limit=2,
-            integral_limit=1.0
-        )
+            roll_pid = PID(
+                kp=-0.13,
+                ki=0,
+                kd=-0.000,
+                output_limit=2,
+                integral_limit=1.0
+            )
 
-        yaw_pid = PID(
-            kp=0.8,
-            ki=0.00,
-            kd=0.0,
-            output_limit=2,
-            integral_limit=1.0
-        )
-        
-        drone.data_sequence = None
+            pitch_pid = PID(
+                kp=-0.2,
+                ki=0,
+                kd=0.000,
+                output_limit=2,
+                integral_limit=1.0
+            )
 
-        while (drone.time_stamp < max_time):
-            throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)
-            roll     = gamepad.get_joystick(Gamepad.Inputs.LEFT_X)
-            pitch    = gamepad.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
-            yaw      = gamepad.get_joystick(Gamepad.Inputs.RIGHT_X)
-            THRESHOLD = 0.2
-
-
-            # Apply deadzone threshold
-            if abs(throttle) < THRESHOLD:
-                throttle = 0.0
-            if abs(roll) < THRESHOLD:
-                roll = 0.0
-            if abs(pitch) < THRESHOLD:
-                pitch = 0.0
-            if abs(yaw) < THRESHOLD:
-                yaw = 0.0
-            angular_velocity = State.get_angular_velocity(drone.state)
-            action = controller_to_action(
-                throttle,
-                roll,
-                pitch,
-                yaw,
-                angular_velocity,
-                drone.flight_controller.CONTROL_PERIOD,
-                roll_pid,
-                pitch_pid,
-                yaw_pid
+            yaw_pid = PID(
+                kp=0.8,
+                ki=0.00,
+                kd=0.0,
+                output_limit=2,
+                integral_limit=1.0
             )
             
-            await drone.update(action = action,display=False)
-    finally:
-        simulation.close()
+            drone.data_sequence = None
+
+            while (drone.time_stamp < max_time):
+                throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)
+                roll     = gamepad.get_joystick(Gamepad.Inputs.LEFT_X)
+                pitch    = gamepad.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
+                yaw      = gamepad.get_joystick(Gamepad.Inputs.RIGHT_X)
+                THRESHOLD = 0.2
+
+
+                # Apply deadzone threshold
+                if abs(throttle) < THRESHOLD:
+                    throttle = 0.0
+                if abs(roll) < THRESHOLD:
+                    roll = 0.0
+                if abs(pitch) < THRESHOLD:
+                    pitch = 0.0
+                if abs(yaw) < THRESHOLD:
+                    yaw = 0.0
+                angular_velocity = State.get_angular_velocity(drone.state)
+                action = controller_to_action(
+                    throttle,
+                    roll,
+                    pitch,
+                    yaw,
+                    angular_velocity,
+                    drone.flight_controller.CONTROL_PERIOD,
+                    roll_pid,
+                    pitch_pid,
+                    yaw_pid
+                )
+                
+                await drone.update(action = action,display=False)
+        finally:
+            simulation.close()
     
 
 if __name__ == "__main__":
