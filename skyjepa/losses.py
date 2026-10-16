@@ -18,7 +18,6 @@ def variance_loss(predicted: torch.Tensor, target: torch.Tensor):
     loss = torch.clamp(gamma - target_col_sd, min=0).mean()
     return loss
     
-    
 
 def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     """Calculate the mean squared difference between corresponding embeddings,
@@ -27,8 +26,21 @@ def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
     squared_err = (predicted - target) ** 2 # [(B, T, D)' - (B, T, D)]^2 -> (B, T, D)
     return squared_err.mean() # sum / (B*T*D)
 
-def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
-    pass
+def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+    """
+    first center each column before calculating the covariance matrix then square and sum every off-diagonal entry
+    """
+
+    B, T, D = target.shape
+    N = B * T
+
+    Z = target.reshape(N, D) # (B*T, D)
+    Z_c = Z - Z.mean(dim=0) # center each column, (N, D)
+
+    C = (Z_c.T @ Z_c) / (N - 1) # covariance matrix, (D, D)
+
+    off_diag = C - torch.diag(torch.diag(C)) # zero out the diagonal
+    return (off_diag ** 2).sum() / D
 
 def per_horizon_losses(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """Loss at each future step: L1, L2, ..., LT. Returns shape (T,)."""
