@@ -15,7 +15,7 @@ import torch
 from torch import Tensor, nn
 
 
-class GRUPredictor(nn.Module):
+class LatentPredictor(nn.Module):
     """One-step latent predictor built on nn.GRUCell.
 
     The action latent z_t is the GRU input.

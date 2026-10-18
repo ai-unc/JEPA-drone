@@ -6,35 +6,33 @@ import torch
 import torch.nn.functional as F
 
 
-def variance_loss(predicted: torch.Tensor, target: torch.Tensor):
+def variance_loss(target: torch.Tensor, gamma: float = 1.0, e: float = 1e-4):
     """calculate the mean of each column, then calculate each column's standard deviation,
     then finally penalize dimensions with standard deviation below gamma"""
 
-    gamma, epsilon = 1, 1e-4
-    N = target.shape[0] * target.shape[1] # number of rows = B*T
+    target = target.reshape(-1, target.shape[-1]) # (..., D) -> (N, D)
+    N = target.shape[0]
 
-    target_means = torch.mean(target, dim=(0,1))
-    target_col_sd = torch.sqrt(((target - target_means) ** 2).sum(dim=(0, 1)) / (N - 1) + epsilon)
+    target_means = torch.mean(target, dim=0)
+    target_col_sd = torch.sqrt(((target - target_means) ** 2).sum(dim=0) / (N - 1) + e)
 
-    loss = torch.clamp(gamma - target_col_sd, min=0).mean()
-    return loss
+    return F.relu(gamma - target_col_sd).mean()
 
-def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> int:
+def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """Calculate the mean squared difference between corresponding embeddings,
     then output one nonnegative scalar representing prediction error"""
 
     squared_err = (predicted - target) ** 2 # [(B, T, D)' - (B, T, D)]^2 -> (B, T, D)
     return squared_err.mean() # sum / (B*T*D)
 
-def covariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+def covariance_loss(target: torch.Tensor) -> torch.Tensor:
     """
     first center each column before calculating the covariance matrix then square and sum every off-diagonal entry
     """
 
-    B, T, D = target.shape
-    N = B * T
+    Z = target.reshape(-1, target.shape[-1]) # (..., D) -> (N, D)
+    N, D = Z.shape
 
-    Z = target.reshape(N, D) # (B*T, D)
     Z_c = Z - Z.mean(dim=0) # center each column, (N, D)
 
     C = (Z_c.T @ Z_c) / (N - 1) # covariance matrix, (D, D)
@@ -68,7 +66,6 @@ def latent_prediction_loss(predicted: torch.Tensor, target: torch.Tensor) -> tor
     """
     return per_horizon_losses(predicted, target).mean()
 
-
 def latent_stats(latent: torch.Tensor) -> dict[str, float]:
     """Mean and std of every element in `latent`.
 
@@ -88,7 +85,6 @@ def latent_stats(latent: torch.Tensor) -> dict[str, float]:
             "dim_std_min": dim_std.min().item(),
             "dead_frac": (dim_std < 0.01).float().mean().item(),
         }
-
 
 def check_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
     """Print a warning and return True if the latents look collapsed."""
@@ -116,15 +112,15 @@ if __name__ == "__main__":
     good = torch.randn(B, T, D) # fills the tensor with random normal noise (mean = 0, s.d. = 1)
     bad = torch.zeros(B, T, D) + 1e-4 * torch.randn(B, T, D) # almost all 0 with a tiny bit of noise added
 
-    print("good latents (should NOT warn):")
-    print(check_collapse(latent_stats(good)))
+    # print("good latents (should NOT warn):")
+    # print(check_collapse(latent_stats(good)))
 
-    print("collapsed latents (SHOULD warn):")
-    print(check_collapse(latent_stats(bad)))
+    # print("collapsed latents (SHOULD warn):")
+    # print(check_collapse(latent_stats(bad)))
 
-    print("loss on collapsed model (should be ~0):", latent_prediction_loss(bad, bad).item())
-    print("loss when every number is off by 1 (should be 24.0):",
-          latent_prediction_loss(good, good + 1).item())
-    print("per-horizon shape (should be torch.Size([10])):",
-          per_horizon_losses(good, good + 1).shape)
-    print("log_jepa_step keys:", list(log_jepa_step(good, good + 1, good[:, 0]).keys()))
+    # print("loss on collapsed model (should be ~0):", latent_prediction_loss(bad, bad).item())
+    # print("loss when every number is off by 1 (should be 24.0):",
+    #       latent_prediction_loss(good, good + 1).item())
+    # print("per-horizon shape (should be torch.Size([10])):",
+    #       per_horizon_losses(good, good + 1).shape)
+    # print("log_jepa_step keys:", list(log_jepa_step(good, good + 1, good[:, 0]).keys()))

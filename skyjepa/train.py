@@ -73,12 +73,7 @@ def _on_device(batch: dict[str, torch.Tensor], device: str) -> dict[str, torch.T
     return {key: value.to(device) for key, value in batch.items()}
 
 
-def _jepa_step(
-    batch: dict[str, torch.Tensor],
-    state_encoder: nn.Module,
-    action_encoder: nn.Module,
-    latent_predictor: nn.Module,
-) -> tuple[torch.Tensor, torch.Tensor]:
+def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module) -> tuple[torch.Tensor, torch.Tensor]:
     state_windows, action_windows = rollout_windows(
         batch["state_history"],
         batch["action_history"],
@@ -86,8 +81,7 @@ def _jepa_step(
         batch["future_actions"],
     )
     s_t = state_encoder(state_windows[:, 0])
-    with torch.no_grad():
-        targets = _encode_sequence(state_encoder, state_windows[:, 1:])
+    targets = _encode_sequence(state_encoder, state_windows[:, 1:])
     z_seq = _encode_sequence(action_encoder, action_windows)
     predicted = latent_predictor.rollout(s_t, z_seq)
     if predicted.shape != targets.shape:
@@ -102,11 +96,13 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
     state_encoder = encoders.StateHistoryEncoder(config).to(device)
     action_encoder = encoders.ActionHistoryEncoder(config).to(device)
     latent_predictor = predictor.LatentPredictor(config).to(device)
+
     params = [
         *state_encoder.parameters(),
         *action_encoder.parameters(),
         *latent_predictor.parameters(),
     ]
+    
     optimizer = torch.optim.Adam(params, lr=config.lr)
 
     for epoch in range(config.epochs):
