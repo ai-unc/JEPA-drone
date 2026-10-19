@@ -23,6 +23,10 @@ class Config:
     epochs: int = 10
     seed: int = 0
     device: str = "cpu"
+    vicreg_lam: float = 25.0
+    vicreg_mu: float = 25.0
+    vicreg_nu: float = 1.0
+    grad_clip: float = 1.0
 
     @property
     def H(self) -> int:
