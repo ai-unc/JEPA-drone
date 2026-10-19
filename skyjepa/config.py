@@ -23,9 +23,14 @@ class Config:
     epochs: int = 10
     seed: int = 0
     device: str = "cpu"
+    # "sigreg" is SkyJEPA eq. 13. "vicreg" keeps the previous objective.
+    jepa_loss: str = "vicreg"
     vicreg_lam: float = 25.0
     vicreg_mu: float = 25.0
     vicreg_nu: float = 1.0
+    sigreg_lambda: float = 0.02
+    sigreg_projections: int = 64
+    sigreg_knots: int = 17
     grad_clip: float = 1.0
 
     @property

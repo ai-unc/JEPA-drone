@@ -52,6 +52,66 @@ def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, 
     total = lam * inv + mu * var + nu * cov
     return total, {"pred": inv.item(), "var": var.item(), "cov": cov.item()}
 
+def sigreg(
+    latents: torch.Tensor,
+    num_projections: int = 64,
+    num_knots: int = 17,
+    integration_limit: float = 5.0,
+) -> torch.Tensor:
+    """L_SIGReg for latents shaped ``[time, batch, latent_dim]``.
+
+    SkyJEPA eqs. 10-12. Random 1-D projections are matched to N(0, 1) with an
+    Epps-Pulley characteristic-function discrepancy. The integral uses a fixed
+    symmetric grid; ``num_knots=17`` matches the paper.
+    """
+    if latents.ndim != 3:
+        raise ValueError("latents must have shape [time, batch, latent_dim]")
+    if num_projections < 1 or num_knots < 3:
+        raise ValueError("num_projections must be positive and num_knots >= 3")
+    _, _, latent_dim = latents.shape
+    directions = torch.randn(
+        num_projections,
+        latent_dim,
+        device=latents.device,
+        dtype=latents.dtype,
+    )
+    directions = directions / directions.norm(dim=-1, keepdim=True).clamp_min(1e-8)
+    projected = torch.einsum("tbd,md->tbm", latents, directions)
+
+    t = torch.linspace(
+        -integration_limit,
+        integration_limit,
+        num_knots,
+        device=latents.device,
+        dtype=latents.dtype,
+    )
+    phase = projected.unsqueeze(-1) * t
+    empirical_real = phase.cos().mean(dim=1)
+    empirical_imag = phase.sin().mean(dim=1)
+    target_real = torch.exp(-0.5 * t.square())
+    discrepancy = (empirical_real - target_real).square() + empirical_imag.square()
+
+    # Gaussian weighting gives an integrable Epps-Pulley statistic.
+    weight = torch.exp(-0.5 * t.square())
+    return torch.trapezoid(discrepancy * weight, t, dim=-1).mean()
+
+def sigreg_loss(
+    predicted: torch.Tensor,
+    target: torch.Tensor,
+    lam: float = 0.02,
+    num_projections: int = 64,
+    num_knots: int = 17,
+) -> tuple[torch.Tensor, dict[str, float]]:
+    """SkyJEPA objective, eq. 13: L_pred + λ_sig * L_SIGReg.
+
+    ``predicted`` and ``target`` are ``(B, T, D)``. SIGReg is applied to the
+    predicted rollout only, transposed to the paper's ``(T, B, D)`` layout.
+    """
+    pred = latent_prediction_loss(predicted, target)
+    reg = sigreg(predicted.transpose(0, 1), num_projections=num_projections, num_knots=num_knots)
+    total = pred + lam * reg
+    return total, {"pred": pred.detach().item(), "sigreg": reg.detach().item()}
+
 def per_horizon_losses(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """Loss at each future step: L1, L2, ..., LT. Returns shape (T,)."""
     squared_error = (predicted - target) ** 2       # (B, T, D)

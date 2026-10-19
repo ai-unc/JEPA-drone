@@ -90,6 +90,31 @@ def _normalize(batch, norm):
         out[key] = (value - norm[f"{kind}_mean"]) / norm[f"{kind}_std"]
     return out
 
+def _jepa_loss(
+    predicted: torch.Tensor,
+    targets: torch.Tensor,
+    s_t: torch.Tensor,
+    config: Config,
+) -> tuple[torch.Tensor, dict[str, float]]:
+    if config.jepa_loss == "vicreg":
+        return losses.vicreg_loss(
+            predicted,
+            targets,
+            s_t,
+            lam=config.vicreg_lam,
+            mu=config.vicreg_mu,
+            nu=config.vicreg_nu,
+        )
+    if config.jepa_loss == "sigreg":
+        return losses.sigreg_loss(
+            predicted,
+            targets,
+            lam=config.sigreg_lambda,
+            num_projections=config.sigreg_projections,
+            num_knots=config.sigreg_knots,
+        )
+    raise ValueError(f"unknown jepa_loss {config.jepa_loss!r}; expected 'vicreg' or 'sigreg'")
+
 def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module, config: Config,) -> tuple[torch.Tensor, dict[str, float], torch.Tensor]:
     state_windows, action_windows = rollout_windows(
         batch["state_history"],
@@ -105,7 +130,7 @@ def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_
         raise ValueError(
             f"rollout shape {tuple(predicted.shape)} != targets {tuple(targets.shape)}"
         )
-    loss, parts = losses.vicreg_loss(predicted, targets, s_t, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
+    loss, parts = _jepa_loss(predicted, targets, s_t, config)
     return loss, parts, s_t
 
 def train_jepa(loader: DataLoader, config: Config) -> None:
@@ -126,30 +151,37 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
     
     optimizer = torch.optim.Adam(params, lr=config.lr)
     norm = {k: v.to(device) for k, v in _fit_normalizer(loader.dataset.tensors).items()}
+    print(f"jepa loss: {config.jepa_loss}")
 
     for epoch in range(config.epochs):
-        totals = {"loss": 0.0, "pred": 0.0, "var": 0.0, "cov": 0.0}
+        totals = {"loss": 0.0}
         steps = 0
         last_latent = None
         for batch in loader:
             batch = _normalize(_on_device(batch, device), norm)
-            loss, parts, s_t = _jepa_step(batch, state_encoder, action_encoder, latent_predictor, config)
+            loss, parts, s_t = _jepa_step(
+                batch, state_encoder, action_encoder, latent_predictor, config,
+            )
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(params, config.grad_clip)
             optimizer.step()
             totals["loss"] += loss.item()
             for key, value in parts.items():
-                totals[key] += value
+                totals[key] = totals.get(key, 0.0) + value
             steps += 1
             last_latent = s_t.detach()
         if last_latent is None:
             raise RuntimeError("no training batches; check the dataset windows")
         stats = losses.latent_stats(last_latent)
         avg = {key: value / max(steps, 1) for key, value in totals.items()}
+        parts_line = "  ".join(
+            f"{key}={value:.5f}" if key == "pred" else f"{key}={value:.4f}"
+            for key, value in avg.items()
+            if key != "loss"
+        )
         print(
-            f"epoch {epoch:02d}  loss={avg['loss']:.4f}  pred={avg['pred']:.5f}  "
-            f"var={avg['var']:.4f}  cov={avg['cov']:.4f}  "
+            f"epoch {epoch:02d}  loss={avg['loss']:.4f}  {parts_line}  "
             f"dim_std_min={stats['dim_std_min']:.4f}  dead={stats['dead_frac']:.0%}"
         )
         losses.check_collapse(stats)
