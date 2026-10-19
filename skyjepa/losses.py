@@ -1,7 +1,5 @@
 """JEPA latent prediction loss, given batch size D = 16 latent dimensions"""
 
-from sympy.core import Float
-from sympy.core.numbers import num_digits
 import torch
 import torch.nn.functional as F
 

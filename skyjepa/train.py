@@ -83,7 +83,7 @@ def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_
     s_t = state_encoder(state_windows[:, 0])
     targets = _encode_sequence(state_encoder, state_windows[:, 1:])
     z_seq = _encode_sequence(action_encoder, action_windows)
-    predicted = latent_predictor.rollout(s_t, z_seq)
+    predicted = latent_predictor.rollout(s_t, z_seq.transpose(0, 1)).transpose(0, 1)
     if predicted.shape != targets.shape:
         raise ValueError(
             f"rollout shape {tuple(predicted.shape)} != targets {tuple(targets.shape)}"
@@ -95,7 +95,11 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
     device = config.device
     state_encoder = encoders.StateHistoryEncoder(config).to(device)
     action_encoder = encoders.ActionHistoryEncoder(config).to(device)
-    latent_predictor = predictor.LatentPredictor(config).to(device)
+    latent_predictor = predictor.LatentPredictor(
+        latent_dim=config.latent_dim,
+        action_dim=config.latent_dim,  # the action encoder also outputs latent_dim
+        hidden_dim=config.latent_dim
+    ).to(device)
 
     params = [
         *state_encoder.parameters(),
