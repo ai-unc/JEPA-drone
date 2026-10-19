@@ -125,29 +125,39 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
     ]
     
     optimizer = torch.optim.Adam(params, lr=config.lr)
+    norm = {k: v.to(device) for k, v in _fit_normalizer(loader.dataset.tensors).items()}
 
     for epoch in range(config.epochs):
-        total = 0.0
+        totals = {"loss": 0.0, "pred": 0.0, "var": 0.0, "cov": 0.0}
         steps = 0
         last_latent = None
         for batch in loader:
+            batch = _normalize(_on_device(batch, device), norm)
             batch = _on_device(batch, device)
             loss, parts, s_t = _jepa_step(batch, state_encoder, action_encoder, latent_predictor, config)
+            torch.nn.utils.clip_grad_norm_(params, config.grad_clip)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            total += float(loss.item())
+            totals["loss"] += loss.item()
+            for key, value in parts.items():
+                totals[key] += value
             steps += 1
             last_latent = s_t.detach()
         if last_latent is None:
             raise RuntimeError("no training batches; check the dataset windows")
         stats = losses.latent_stats(last_latent)
-        average = total / max(steps, 1)
+        avg = {key: value / max(steps, 1) for key, value in totals.items()}
+        print(
+            f"epoch {epoch:02d}  loss={avg['loss']:.4f}  pred={avg['pred']:.5f}  "
+            f"var={avg['var']:.4f}  cov={avg['cov']:.4f}  "
+            f"dim_std_min={stats['dim_std_min']:.4f}  dead={stats['dead_frac']:.0%}"
+        )
         print(
             f"epoch {epoch:02d}  L_pred={average:.6f}  "
             f"latent_mean={stats['mean']:.4f}  latent_std={stats['std']:.4f}"
         )
-        if stats["std"] < 1e-3:
+        if losses.check_collapse(stats):
             print("latent std is near 0; embeddings may have collapsed")
 
 
