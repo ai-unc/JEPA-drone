@@ -133,11 +133,10 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
         last_latent = None
         for batch in loader:
             batch = _normalize(_on_device(batch, device), norm)
-            batch = _on_device(batch, device)
             loss, parts, s_t = _jepa_step(batch, state_encoder, action_encoder, latent_predictor, config)
-            torch.nn.utils.clip_grad_norm_(params, config.grad_clip)
             optimizer.zero_grad()
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(params, config.grad_clip)
             optimizer.step()
             totals["loss"] += loss.item()
             for key, value in parts.items():
@@ -153,12 +152,7 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
             f"var={avg['var']:.4f}  cov={avg['cov']:.4f}  "
             f"dim_std_min={stats['dim_std_min']:.4f}  dead={stats['dead_frac']:.0%}"
         )
-        print(
-            f"epoch {epoch:02d}  L_pred={average:.6f}  "
-            f"latent_mean={stats['mean']:.4f}  latent_std={stats['std']:.4f}"
-        )
-        if losses.check_collapse(stats):
-            print("latent std is near 0; embeddings may have collapsed")
+        losses.check_collapse(stats)
 
 
 def train_baseline(loader: DataLoader, config: Config) -> None:
