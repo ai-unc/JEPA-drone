@@ -40,7 +40,6 @@ class WindowDataset(Dataset):
     def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
         return {key: tensor[index] for key, tensor in self.tensors.items()}
 
-
 def _require_shapes(arrays: dict[str, np.ndarray], config: Config) -> None:
     count = int(arrays["state_history"].shape[0])
     expected = {
@@ -54,12 +53,10 @@ def _require_shapes(arrays: dict[str, np.ndarray], config: Config) -> None:
         if actual != shape:
             raise ValueError(f"{key} shape {actual} != {shape}")
 
-
 def _seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-
 
 def _encode_sequence(encoder: nn.Module, windows: torch.Tensor) -> torch.Tensor:
     """windows (B, K, H, D) -> (B, K, latent_dim)."""
@@ -68,12 +65,32 @@ def _encode_sequence(encoder: nn.Module, windows: torch.Tensor) -> torch.Tensor:
     encoded = encoder(windows.reshape(batch * steps, history, dim))
     return encoded.reshape(batch, steps, -1)
 
-
 def _on_device(batch: dict[str, torch.Tensor], device: str) -> dict[str, torch.Tensor]:
     return {key: value.to(device) for key, value in batch.items()}
 
+def _fit_normalizer(tensors: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+    """helper function that normalizes all the inputs for the eoncoder to be able to
+    assess which feature has the biggest numbers. This helper computes one mean and one
+    s.d. per feature."""
 
-def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module) -> tuple[torch.Tensor, torch.Tensor]:
+
+    states = torch.cat([tensors["state_history"], tensors["future_states"]], dim=1)
+    actions = torch.cat([tensors["action_history"], tensors["future_actions"]], dim=1)
+    states = states.reshape(-1, states.shape[-1])
+    actions = actions.reshape(-1, actions.shape[-1])
+    return {
+        "state_mean": states.mean(0), "state_std": states.std(0) + 1e-6,
+        "action_mean": actions.mean(0), "action_std": actions.std(0) + 1e-6,
+    }
+
+def _normalize(batch, norm):
+    out = {}
+    for key, value in batch.items():
+        kind = "state" if "states" in key or key == "state_history" else "action"
+        out[key] = (value - norm[f"{kind}_mean"]) / norm[f"{kind}_std"]
+    return out
+
+def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module, config: Config,) -> tuple[torch.Tensor, dict[str, float], torch.Tensor]:
     state_windows, action_windows = rollout_windows(
         batch["state_history"],
         batch["action_history"],
@@ -88,8 +105,8 @@ def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_
         raise ValueError(
             f"rollout shape {tuple(predicted.shape)} != targets {tuple(targets.shape)}"
         )
-    return losses.latent_prediction_loss(predicted, targets), s_t
-
+    loss, parts = losses.vicreg_loss(predicted, targets, s_t, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
+    return loss, parts, s_t
 
 def train_jepa(loader: DataLoader, config: Config) -> None:
     device = config.device
@@ -115,7 +132,7 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
         last_latent = None
         for batch in loader:
             batch = _on_device(batch, device)
-            loss, s_t = _jepa_step(batch, state_encoder, action_encoder, latent_predictor)
+            loss, parts, s_t = _jepa_step(batch, state_encoder, action_encoder, latent_predictor, config)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()

@@ -38,7 +38,7 @@ def covariance_loss(target: torch.Tensor) -> torch.Tensor:
     off_diag = C - torch.diag(torch.diag(C)) # zero out the diagonal
     return (off_diag ** 2).sum() / D
 
-def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, mu = 25.0, nu = 1.0) -> torch.Tensor:
+def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, mu = 25.0, nu = 1.0) -> tuple[torch.Tensor, dict[str, float]]:
     """
     VICReg loss = lambda * L_inv + mu * L_var + nu * L_cov
     """
@@ -49,8 +49,8 @@ def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, 
     var = variance_loss(embeddings)
     cov = covariance_loss(embeddings)
 
-    total = lam * pred + mu * var + nu * cov
-    return total, {"pred": pred.item(), "var": var.item(), "cov": cov.item()}
+    total = lam * inv + mu * var + nu * cov
+    return total, {"pred": inv.item(), "var": var.item(), "cov": cov.item()}
 
 def per_horizon_losses(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """Loss at each future step: L1, L2, ..., LT. Returns shape (T,)."""
