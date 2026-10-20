@@ -10,16 +10,24 @@ import numpy as np
 class PointMass:
     def __init__(self, dt: float) -> None:
         self.dt = dt
-
+        self.state = np.zeros(4, dtype=np.float32)
+        self._rng = np.random.default_rng()
     def reset(self, seed: int | None = None) -> np.ndarray:
-        """Return the initial state, shape (4,)."""
-
-        raise NotImplementedError("PointMass.reset")
-
+        if seed is not None:
+            self._rng = np.random.default_rng(seed)
+        position = self._rng.uniform(-1.0, 1.0, size=2)
+        velocity = self._rng.normal(0.0, 0.1, size=2)
+        self.state = np.concatenate([position, velocity]).astype(np.float32)
+        return self.state.copy()
     def step(self, action: np.ndarray) -> np.ndarray:
-        """Apply an action of shape (2,) and return the next state, shape (4,)."""
-
-        raise NotImplementedError("PointMass.step")
+        ax, ay = np.asarray(action, dtype=np.float32)
+        x, y, vx, vy = self.state
+        vx = vx + ax * self.dt
+        vy = vy + ay * self.dt
+        x = x + vx * self.dt
+        y = y + vy * self.dt
+        self.state = np.array([x, y, vx, vy], dtype=np.float32)
+        return self.state.copy()
 
 
 def generate_trajectories(
