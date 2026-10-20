@@ -44,4 +44,19 @@ def generate_trajectories(
     actions[i] is applied to states[i] and produces states[i + 1].
     """
 
-    raise NotImplementedError("generate_trajectories")
+    rng = np.random.default_rng(seed)
+    trajectories = []
+    for _ in range(n):
+        env = PointMass(dt)
+        state = env.reset(seed=int(rng.integers(0, 2**31 - 1)))
+        states = [state]
+        actions = []
+        for _step in range(n_steps):
+            action = rng.uniform(-1.0, 1.0, size=2).astype(np.float32)
+            actions.append(action)
+            states.append(env.step(action))
+        trajectories.append({
+            "states": np.stack(states),
+            "actions": np.stack(actions)
+        })
+    return trajectories
