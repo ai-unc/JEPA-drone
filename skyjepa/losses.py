@@ -16,13 +16,6 @@ def variance_loss(target: torch.Tensor, gamma: float = 1.0, e: float = 1e-4):
 
     return F.relu(gamma - target_col_sd).mean()
 
-def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """Calculate the mean squared difference between corresponding embeddings,
-    then output one nonnegative scalar representing prediction error"""
-
-    squared_err = (predicted - target) ** 2 # [(B, T, D)' - (B, T, D)]^2 -> (B, T, D)
-    return squared_err.mean() # sum / (B*T*D)
-
 def covariance_loss(target: torch.Tensor) -> torch.Tensor:
     """
     first center each column before calculating the covariance matrix then square and sum every off-diagonal entry
@@ -51,20 +44,6 @@ def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, 
 
     total = lam * inv + mu * var + nu * cov
     return total, {"pred": inv.item(), "var": var.item(), "cov": cov.item()}
-
-def per_horizon_losses(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """Loss at each future step: L1, L2, ..., LT. Returns shape (T,)."""
-    squared_error = (predicted - target) ** 2       # (B, T, D)
-    per_sample = squared_error.sum(dim=-1)          # (B, T)  add up the D numbers
-    return per_sample.mean(dim=0)                   # (T,)    average over the batch
-
-def latent_prediction_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """L_pred for predicted and target shaped (B, T, latent_dim).
-
-    Mean over the batch of (1/T) * sum_k ||predicted[:, k] - target[:, k]||_2^2.
-    Returns a scalar.
-    """
-    return per_horizon_losses(predicted, target).mean()
 
 def latent_stats(latent: torch.Tensor) -> dict[str, float]:
     """Mean and std of every element in `latent`.
@@ -96,15 +75,6 @@ def check_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
             f"dead dims={stats['dead_frac']:.0%}"
         )
     return collapsed
-
-def log_jepa_step(predicted, target, s_t, threshold: float = 0.1) -> dict[str, float]:
-    """One call per batch: per-horizon losses L1...LT, latent stats, and collapse warning."""
-    out = {f"L{k + 1}": v for k, v in enumerate(per_horizon_losses(predicted, target).tolist())}
-    stats = latent_stats(s_t)
-    out.update(stats)
-    out["collapsed"] = float(check_collapse(stats, threshold))
-    return out
-
 
 if __name__ == "__main__":
     B, T, D = 64, 10, 24 # fake tensors shaped like real latents
