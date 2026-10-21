@@ -90,7 +90,6 @@ def _rank_collapse(state_encoded: torch.Tensor, threshold = 0.01) -> bool:
         print(f"[WARN] rank collapse: stable rank {stable_rank:.1f}/{max_rank}")
     return collapsed
 
-
 def check_collapse(stats: dict[str, float], latent: torch.Tensor, threshold: float = 0.1) -> bool:
     dim_collapsed = _dimensional_collapse(stats, threshold)
     rank_collapsed = _rank_collapse(latent)

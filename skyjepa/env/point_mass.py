@@ -30,12 +30,7 @@ class PointMass:
         return self.state.copy()
 
 
-def generate_trajectories(
-    n: int,
-    n_steps: int,
-    dt: float,
-    seed: int,
-) -> list[dict[str, np.ndarray]]:
+def generate_trajectories(n: int, n_steps: int, dt: float, seed: int) -> list[dict[str, np.ndarray]]:
     """Return `n` float32 trajectories.
 
     Each dict has:
@@ -57,6 +52,5 @@ def generate_trajectories(
             states.append(env.step(action))
         trajectories.append({
             "states": np.stack(states),
-            "actions": np.stack(actions)
-        })
+            "actions": np.stack(actions)})
     return trajectories

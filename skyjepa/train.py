@@ -165,7 +165,7 @@ def train_baseline(loader: DataLoader, config: Config) -> None:
     path.parent.mkdir(exist_ok=True)
     baseline.plot_prediction_error_vs_horizon(errors, str(path), dt=config.dt)
 
-def main() -> None:
+def main_generate_trajectories() -> None:
     config = Config() # start here
     _seed(config.seed) # seeds the random number generator
     
@@ -192,6 +192,22 @@ def main() -> None:
     train_jepa(loader, config) # train JEPA
     train_baseline(loader, config) # train the MLP that JEPA is to be compared against
 
+def main() -> None:
+    config = Config() # start here
+    _seed(config.seed) # seeds the random number generator
+
+    # reads every CSV in drone/data_sequences/rnd_sky_training. Logs are 100 Hz and dt is 0.05 s, so every 5th state is kept and the 4 motor thrusts are averaged over those rows. Each flight is states (n + 1, 18) as [x, y, z, vx, vy, vz, rotation matrix, wx, wy, wz] and actions (n, 4) as [FL, FR, BL, BR]
+    trajectories = trajectory_loader.load_trajectories(stride=trajectory_loader.stride_for(config.dt))
+
+    # slides a window of length 10 plus a future horizon of 10 along every flight producing four arrays: state_history, action_history, future_states, and future_actions
+    arrays = dataset.build_dataset(trajectories, history_len=config.history_len, horizon=config.horizon)
+    _require_shapes(arrays, config) # check the shapes
+    loader = DataLoader( # hands out shuffled batches of 32
+        WindowDataset(arrays),
+        batch_size=config.batch_size,
+        shuffle=True)
+    train_jepa(loader, config) # train JEPA
+    train_baseline(loader, config) # train the MLP that JEPA is to be compared against
 
 if __name__ == "__main__":
     main()
