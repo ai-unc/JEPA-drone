@@ -22,7 +22,6 @@ _WINDOW_KEYS = (
     "future_actions",
 )
 
-
 class WindowDataset(Dataset):
     def __init__(self, arrays: dict[str, np.ndarray]) -> None:
         self.tensors = {
@@ -91,20 +90,22 @@ def _normalize(batch, norm):
     return out
 
 def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module, config: Config,) -> tuple[torch.Tensor, dict[str, float], torch.Tensor]:
+    # call rollout windows to cut these tensors into overlapping 10-step clips
     state_windows, action_windows = rollout_windows(
         batch["state_history"],
         batch["action_history"],
         batch["future_states"],
         batch["future_actions"],
     )
-    s_t = state_encoder(state_windows[:, 0])
-    targets = _encode_sequence(state_encoder, state_windows[:, 1:])
-    z_seq = _encode_sequence(action_encoder, action_windows)
-    predicted = latent_predictor.rollout(s_t, z_seq.transpose(0, 1)).transpose(0, 1)
+    s_t = state_encoder(state_windows[:, 0]) # turn the "now" clip into s_t
+    targets = _encode_sequence(state_encoder, state_windows[:, 1:]) # turn the future clips into targets
+    z_seq = _encode_sequence(action_encoder, action_windows) # turn action clips into z_seq
+    predicted = latent_predictor.rollout(s_t, z_seq.transpose(0, 1)).transpose(0, 1) # guess the next 10 state summaries from s_t and z_seq
     if predicted.shape != targets.shape:
         raise ValueError(
             f"rollout shape {tuple(predicted.shape)} != targets {tuple(targets.shape)}"
         )
+    # returns a weighted sum of the MSE (invariance), variance and covariance as a penalty
     loss, parts = losses.vicreg_loss(predicted, targets, s_t, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
     return loss, parts, s_t
 
@@ -124,24 +125,24 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
         *latent_predictor.parameters(),
     ]
     
-    optimizer = torch.optim.Adam(params, lr=config.lr)
-    norm = {k: v.to(device) for k, v in _fit_normalizer(loader.dataset.tensors).items()}
+    optimizer = torch.optim.Adam(params, lr=config.lr) # pick the Adam optimizer
+    norm = {k: v.to(device) for k, v in _fit_normalizer(loader.dataset.tensors).items()} # compute one mean and one s.d. per state and action feature 
 
     for epoch in range(config.epochs):
         totals = {"loss": 0.0, "pred": 0.0, "var": 0.0, "cov": 0.0}
         steps = 0
         last_latent = None
         for batch in loader:
-            batch = _normalize(_on_device(batch, device), norm)
+            batch = _normalize(_on_device(batch, device), norm) # move every batch to the device and standardize
             loss, parts, s_t = _jepa_step(batch, state_encoder, action_encoder, latent_predictor, config)
             optimizer.zero_grad()
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(params, config.grad_clip)
-            optimizer.step()
-            totals["loss"] += loss.item()
+            loss.backward() # compute how to change every weight
+            torch.nn.utils.clip_grad_norm_(params, config.grad_clip) # caps the update from the line above
+            optimizer.step() # apply the changes
+            totals["loss"] += loss.item() # add the batch's total loss to the running total for the epoch
             for key, value in parts.items():
-                totals[key] += value
-            steps += 1
+                totals[key] += value # do the same for the three separate terms in parts (pred error, variance penalty and covar penalty)
+            steps += 1 
             last_latent = s_t.detach()
         if last_latent is None:
             raise RuntimeError("no training batches; check the dataset windows")
@@ -152,9 +153,9 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
             f"var={avg['var']:.4f}  cov={avg['cov']:.4f}  "
             f"dim_std_min={stats['dim_std_min']:.4f}  dead={stats['dead_frac']:.0%}"
         )
-        losses.check_collapse(stats)
+        losses.check_collapse(stats) # warns if the summaries have all bnecome the same vector (representation collapse)
 
-
+# train a separate raw-state predictor on the same loader for comparison with the JEPA model
 def train_baseline(loader: DataLoader, config: Config) -> None:
     model = baseline.DirectStatePredictor(config).to(config.device)
     model.fit_normalizer(loader.dataset.tensors)
@@ -164,29 +165,32 @@ def train_baseline(loader: DataLoader, config: Config) -> None:
     path.parent.mkdir(exist_ok=True)
     baseline.plot_prediction_error_vs_horizon(errors, str(path), dt=config.dt)
 
-
 def main() -> None:
-    config = Config()
-    _seed(config.seed)
+    config = Config() # start here
+    _seed(config.seed) # seeds the random number generator
+    
+    # simulates 100 flights of a 2D point mass and returns NumPy arrays: states shaped (101, 4) as [x, y, vx, vy], and actions shaped (100, 2) as accelerations
     trajectories = point_mass.generate_trajectories(
         n=config.n_trajectories,
         n_steps=config.n_steps,
         dt=config.dt,
         seed=config.seed,
     )
+
+    # slides a window of length 10 plus a future horizon of 10 along every flight producing four arrays: state_history, action_history, future_states, and future_actions
     arrays = dataset.build_dataset(
         trajectories,
         history_len=config.history_len,
         horizon=config.horizon,
     )
-    _require_shapes(arrays, config)
-    loader = DataLoader(
+    _require_shapes(arrays, config) # check the shapes
+    loader = DataLoader( # hands out shuffled batches of 32
         WindowDataset(arrays),
         batch_size=config.batch_size,
         shuffle=True,
     )
-    train_jepa(loader, config)
-    train_baseline(loader, config)
+    train_jepa(loader, config) # train JEPA
+    train_baseline(loader, config) # train the MLP that JEPA is to be compared against
 
 
 if __name__ == "__main__":
