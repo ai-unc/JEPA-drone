@@ -3,17 +3,17 @@
 import random
 from pathlib import Path
 
+from torch.utils.data import DataLoader, Dataset
+from torch import nn
 import numpy as np
 import torch
-from torch import nn
-from torch.utils.data import DataLoader, Dataset
 
-from skyjepa import baseline, losses
-from skyjepa.config import Config
-from skyjepa.data import dataset
-from skyjepa.env import point_mass
+from skyjepa.data import dataset, trajectory_loader
 from skyjepa.models import encoders, predictor
 from skyjepa.windows import rollout_windows
+from skyjepa import baseline, losses
+from skyjepa.env import point_mass
+from skyjepa.config import Config
 
 _WINDOW_KEYS = (
     "state_history",

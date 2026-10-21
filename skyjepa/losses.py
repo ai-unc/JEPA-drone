@@ -76,7 +76,7 @@ def _dimensional_collapse(stats: dict[str, float], threshold: float = 0.1) -> bo
         )
     return stats["dim_std_mean"] < threshold
 
-def _rank_collapse(state_encoded: torch.Tensor, threshold = 0.01) -> bool:
+def _rank_collapse(state_encoded: torch.Tensor, min_frac: float = 0.5) -> bool:
     with torch.no_grad():
         z = state_encoded.reshape(-1, state_encoded.shape[-1]).float() # (N, D)
         n, d = z.shape
