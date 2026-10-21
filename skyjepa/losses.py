@@ -1,5 +1,6 @@
 """JEPA latent prediction loss, given batch size D = 16 latent dimensions"""
 
+from numpy._core import bool_
 import torch
 import torch.nn.functional as F
 
@@ -65,16 +66,36 @@ def latent_stats(latent: torch.Tensor) -> dict[str, float]:
             "dead_frac": (dim_std < 0.01).float().mean().item(),
         }
 
-def check_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
-    """Print a warning and return True if the latents look collapsed."""
-    collapsed = stats["dim_std_mean"] < threshold
-    if collapsed:
+def _dimensional_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
+    """Checks for dimensional collpase and returns True if detected"""
+    if stats["dim_std_mean"] < threshold:
         print(
             f"[WARN] possible representation collapse: "
             f"avg latent std={stats['dim_std_mean']:.4f} < {threshold}, "
             f"dead dims={stats['dead_frac']:.0%}"
         )
+    return stats["dim_std_mean"] < threshold
+
+def _rank_collapse(state_encoded: torch.Tensor, threshold = 0.01) -> bool:
+    with torch.no_grad():
+        z = state_encoded.reshape(-1, state_encoded.shape[-1]).float() # (N, D)
+        n, d = z.shape
+        z = z - z.mean(dim=0, keepdim=True)
+        cov = (z.T @ z) / max(n - 1, 1) # (D, D)
+        eigvals = torch.linalg.eigvalsh(cov).clamp_min(0)
+        stable_rank = (eigvals.sum() / eigvals.max().clamp_min(1e-8)).item()
+        max_rank = min(n - 1, d) # centering drops one direction
+        collapsed = stable_rank < min_frac * max_rank
+    if collapsed:
+        print(f"[WARN] rank collapse: stable rank {stable_rank:.1f}/{max_rank}")
     return collapsed
+
+
+def check_collapse(stats: dict[str, float], latent: torch.Tensor, threshold: float = 0.1) -> bool:
+    dim_collapsed = _dimensional_collapse(stats, threshold)
+    rank_collapsed = _rank_collapse(latent)
+    return dim_collapsed or rank_collapsed
+    
 
 if __name__ == "__main__":
     B, T, D = 64, 10, 24 # fake tensors shaped like real latents

@@ -143,7 +143,7 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
             for key, value in parts.items():
                 totals[key] += value # do the same for the three separate terms in parts (pred error, variance penalty and covar penalty)
             steps += 1 
-            last_latent = s_t.detach()
+            last_latent = s_t.detach() 
         if last_latent is None:
             raise RuntimeError("no training batches; check the dataset windows")
         stats = losses.latent_stats(last_latent)
@@ -153,7 +153,7 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
             f"var={avg['var']:.4f}  cov={avg['cov']:.4f}  "
             f"dim_std_min={stats['dim_std_min']:.4f}  dead={stats['dead_frac']:.0%}"
         )
-        losses.check_collapse(stats) # warns if the summaries have all bnecome the same vector (representation collapse)
+        losses.check_collapse(stats, last_latent) # warns if the summaries have all bnecome the same vector (representation collapse)
 
 # train a separate raw-state predictor on the same loader for comparison with the JEPA model
 def train_baseline(loader: DataLoader, config: Config) -> None:
