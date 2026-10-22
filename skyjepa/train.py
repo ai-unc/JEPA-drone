@@ -223,6 +223,26 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
         _LOG.info("checking representation collapse")
         losses.check_collapse(stats, last_latent) # warns if the summaries have all bnecome the same vector (representation collapse)
 
+    path = Path("artifacts") / "jepa.pt"
+    path.parent.mkdir(exist_ok=True)
+    torch.save(
+        {
+            "state_encoder": state_encoder.state_dict(),
+            "action_encoder": action_encoder.state_dict(),
+            "predictor": latent_predictor.state_dict(),
+            "norm": {key: value.detach().cpu() for key, value in norm.items()},
+            "config": {
+                "state_dim": config.state_dim,
+                "action_dim": config.action_dim,
+                "latent_dim": config.latent_dim,
+                "history_len": config.history_len,
+                "horizon": config.horizon,
+            },
+        },
+        path,
+    )
+    _LOG.info("wrote %s (%d bytes)", path, path.stat().st_size)
+
 # train a separate raw-state predictor on the same loader for comparison with the JEPA model
 def train_baseline(loader: DataLoader, config: Config) -> None:
     _ensure_logging()
