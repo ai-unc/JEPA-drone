@@ -12,7 +12,6 @@ from skyjepa.data import dataset, trajectory_loader
 from skyjepa.models import encoders, predictor
 from skyjepa.windows import rollout_windows
 from skyjepa import baseline, losses
-from skyjepa.env import point_mass
 from skyjepa.config import Config
 
 _WINDOW_KEYS = (
@@ -165,33 +164,6 @@ def train_baseline(loader: DataLoader, config: Config) -> None:
     path.parent.mkdir(exist_ok=True)
     baseline.plot_prediction_error_vs_horizon(errors, str(path), dt=config.dt)
 
-def main_generate_trajectories() -> None:
-    config = Config() # start here
-    _seed(config.seed) # seeds the random number generator
-    
-    # simulates 100 flights of a 2D point mass and returns NumPy arrays: states shaped (101, 4) as [x, y, vx, vy], and actions shaped (100, 2) as accelerations
-    trajectories = point_mass.generate_trajectories(
-        n=config.n_trajectories,
-        n_steps=config.n_steps,
-        dt=config.dt,
-        seed=config.seed,
-    )
-
-    # slides a window of length 10 plus a future horizon of 10 along every flight producing four arrays: state_history, action_history, future_states, and future_actions
-    arrays = dataset.build_dataset(
-        trajectories,
-        history_len=config.history_len,
-        horizon=config.horizon,
-    )
-    _require_shapes(arrays, config) # check the shapes
-    loader = DataLoader( # hands out shuffled batches of 32
-        WindowDataset(arrays),
-        batch_size=config.batch_size,
-        shuffle=True,
-    )
-    train_jepa(loader, config) # train JEPA
-    train_baseline(loader, config) # train the MLP that JEPA is to be compared against
-
 def main() -> None:
     config = Config() # start here
     _seed(config.seed) # seeds the random number generator
@@ -206,6 +178,8 @@ def main() -> None:
         WindowDataset(arrays),
         batch_size=config.batch_size,
         shuffle=True)
+
+    
     train_jepa(loader, config) # train JEPA
     train_baseline(loader, config) # train the MLP that JEPA is to be compared against
 
