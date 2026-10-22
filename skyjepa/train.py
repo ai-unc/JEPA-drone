@@ -6,6 +6,7 @@ from pathlib import Path
 from torch.utils.data import DataLoader, Dataset
 from torch import nn
 import numpy as np
+import argparse
 import torch
 
 from skyjepa.data import dataset, trajectory_loader
@@ -25,7 +26,6 @@ _WINDOW_KEYS = (
 
 def _param_count(module: nn.Module) -> int:
     return sum(param.numel() for param in module.parameters())
-
 
 class WindowDataset(Dataset):
     def __init__(self, arrays: dict[str, np.ndarray]) -> None:
@@ -252,7 +252,12 @@ def train_baseline(loader: DataLoader, config: Config) -> None:
     _LOG.info("wrote %s (%d bytes)", path, path.stat().st_size)
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("model", choices=("jepa", "baseline"))
+    args = parser.parse_args()
+
     _ensure_logging()
+    _LOG.info("training %s", args.model)
     _LOG.info("loading config")
     config = Config() # start here
     _LOG.info("config loaded: %s", config)
@@ -289,10 +294,12 @@ def main() -> None:
         shuffle=True)
     _LOG.info("dataloader ready: %d batches", len(loader))
 
-    _LOG.info("starting JEPA training")
-    train_jepa(loader, config) # train JEPA
-    _LOG.info("starting baseline training")
-    train_baseline(loader, config) # train the MLP that JEPA is to be compared against
+    if args.model == "jepa":
+        _LOG.info("starting JEPA training")
+        train_jepa(loader, config)
+    else:
+        _LOG.info("starting baseline training")
+        train_baseline(loader, config)
     _LOG.info("training finished")
 
 if __name__ == "__main__":
