@@ -70,7 +70,7 @@ def _dimensional_collapse(stats: dict[str, float], threshold: float = 0.1) -> bo
     """Checks for dimensional collpase and returns True if detected"""
     if stats["dim_std_mean"] < threshold:
         print(
-            f"[WARN] possible representation collapse: "
+            f"[WARNING] possible representation collapse: "
             f"avg latent std={stats['dim_std_mean']:.4f} < {threshold}, "
             f"dead dims={stats['dead_frac']:.0%}"
         )
@@ -87,7 +87,7 @@ def _rank_collapse(state_encoded: torch.Tensor, min_frac: float = 0.5) -> bool:
         max_rank = min(n - 1, d) # centering drops one direction
         collapsed = stable_rank < min_frac * max_rank
     if collapsed:
-        print(f"[WARN] rank collapse: stable rank {stable_rank:.1f}/{max_rank}")
+        print(f"[WARNING] rank collapse: stable rank {stable_rank:.1f}/{max_rank}")
     return collapsed
 
 def check_collapse(stats: dict[str, float], latent: torch.Tensor, threshold: float = 0.1) -> bool:

@@ -1,8 +1,6 @@
-"""Step timers and the training progress logger"""
+"""Training progress logger. Lines are tagged [INFO], [WARNING], or [ERROR]."""
 
 import logging
-import time
-from contextlib import contextmanager
 
 import torch
 
@@ -14,9 +12,7 @@ def _ensure_logging() -> None:
         return
     _LOG.setLevel(logging.INFO)
     handler = logging.StreamHandler()
-    handler.setFormatter(
-        logging.Formatter("%(asctime)s.%(msecs)03d %(levelname)s %(message)s", datefmt="%H:%M:%S")
-    )
+    handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
     _LOG.addHandler(handler)
     _LOG.propagate = False
 
@@ -32,17 +28,3 @@ def _sync(device: str) -> None:
 
 def _ms(seconds: float) -> str:
     return f"{seconds * 1000:7.1f}ms"
-
-
-@contextmanager
-def _timed(step: str):
-    _ensure_logging()
-    _LOG.info("start  %s", step)
-    started = time.perf_counter()
-    try:
-        yield
-    except Exception:
-        _LOG.exception("fail   %s  after %.3fs", step, time.perf_counter() - started)
-        raise
-    else:
-        _LOG.info("done   %s  %.3fs", step, time.perf_counter() - started)
