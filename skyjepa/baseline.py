@@ -14,6 +14,7 @@ uses the same history length H and horizon T from `Config`, so the two models
 are compared on the same data over the same rollout.
 """
 
+import time
 from collections.abc import Mapping
 
 import numpy as np
@@ -23,6 +24,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from skyjepa.config import Config
+from skyjepa.logging.logger import _LOG, _ms, _sync
 from skyjepa.windows import sliding_windows
 
 # Categorical slots 1-8 of the reference chart palette, in fixed order.
@@ -175,20 +177,74 @@ def train_direct_predictor(
     optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
     history = []
     model.train()
+    n_batches = len(loader)
+    _LOG.info(
+        "baseline train loop  epochs=%d batches/epoch=%d train_steps=%d device=%s",
+        config.epochs, n_batches, train_steps, device,
+    )
     for epoch in range(config.epochs):
+        epoch_started = time.perf_counter()
         total = 0.0
         count = 0
-        for batch in loader:
-            batch = {key: value.to(device) for key, value in batch.items()}
-            loss = rollout_loss(model, batch, train_steps)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            size = batch["state_history"].shape[0]
-            total += float(loss.item()) * size
+        fetch_started = time.perf_counter()
+        for batch_index, batch in enumerate(loader, start=1):
+            _sync(device)
+            fetch = time.perf_counter() - fetch_started
+            try:
+                started = time.perf_counter()
+                batch = {key: value.to(device) for key, value in batch.items()}
+                _sync(device)
+                h2d = time.perf_counter() - started
+                started = time.perf_counter()
+                loss = rollout_loss(model, batch, train_steps)
+                _sync(device)
+                forward = time.perf_counter() - started
+                started = time.perf_counter()
+                optimizer.zero_grad()
+                loss.backward()
+                _sync(device)
+                backward = time.perf_counter() - started
+                started = time.perf_counter()
+                optimizer.step()
+                _sync(device)
+                opt = time.perf_counter() - started
+                started = time.perf_counter()
+                loss_value = float(loss.item())
+                size = batch["state_history"].shape[0]
+                _sync(device)
+                item_s = time.perf_counter() - started
+            except Exception:
+                _LOG.exception(
+                    "baseline  epoch %02d batch %04d/%04d failed",
+                    epoch, batch_index, n_batches,
+                )
+                raise
+            total += loss_value * size
             count += size
+            _LOG.info(
+                "baseline  epoch %02d batch %04d/%04d  n=%d  "
+                "fetch=%s h2d=%s fwd=%s bwd=%s opt=%s item=%s total=%s  loss=%.6f",
+                epoch,
+                batch_index,
+                n_batches,
+                size,
+                _ms(fetch),
+                _ms(h2d),
+                _ms(forward),
+                _ms(backward),
+                _ms(opt),
+                _ms(item_s),
+                _ms(fetch + h2d + forward + backward + opt + item_s),
+                loss_value,
+            )
+            fetch_started = time.perf_counter()
         history.append(total / max(count, 1))
+        elapsed = time.perf_counter() - epoch_started
         print(f"baseline epoch {epoch:02d}  loss={history[-1]:.6f}")
+        _LOG.info(
+            "baseline  epoch %02d done  %.3fs  windows=%d  loss=%.6f",
+            epoch, elapsed, count, history[-1],
+        )
     model.eval()
     return history
 
@@ -209,22 +265,61 @@ def prediction_error_vs_horizon(
     model.eval()
     total = None
     count = 0
-    for batch in loader:
-        batch = {key: value.to(device) for key, value in batch.items()}
-        predicted = model(
-            batch["state_history"],
-            batch["action_history"],
-            batch["future_actions"],
+    n_batches = len(loader)
+    _LOG.info("baseline eval  batches=%d dims=%s", n_batches, dims)
+    fetch_started = time.perf_counter()
+    for batch_index, batch in enumerate(loader, start=1):
+        _sync(device)
+        fetch = time.perf_counter() - fetch_started
+        try:
+            started = time.perf_counter()
+            batch = {key: value.to(device) for key, value in batch.items()}
+            _sync(device)
+            h2d = time.perf_counter() - started
+            started = time.perf_counter()
+            predicted = model(
+                batch["state_history"],
+                batch["action_history"],
+                batch["future_actions"],
+            )
+            _sync(device)
+            forward = time.perf_counter() - started
+            started = time.perf_counter()
+            error = predicted - batch["future_states"]
+            if dims is not None:
+                error = error[..., dims]
+            per_step = torch.linalg.vector_norm(error, dim=-1).sum(dim=0)
+            total = per_step if total is None else total + per_step
+            size = batch["state_history"].shape[0]
+            count += size
+            _sync(device)
+            reduce = time.perf_counter() - started
+        except Exception:
+            _LOG.exception("baseline eval  batch %04d/%04d failed", batch_index, n_batches)
+            raise
+        _LOG.info(
+            "baseline eval  batch %04d/%04d  n=%d  fetch=%s h2d=%s fwd=%s reduce=%s total=%s",
+            batch_index,
+            n_batches,
+            size,
+            _ms(fetch),
+            _ms(h2d),
+            _ms(forward),
+            _ms(reduce),
+            _ms(fetch + h2d + forward + reduce),
         )
-        error = predicted - batch["future_states"]
-        if dims is not None:
-            error = error[..., dims]
-        per_step = torch.linalg.vector_norm(error, dim=-1).sum(dim=0)
-        total = per_step if total is None else total + per_step
-        count += batch["state_history"].shape[0]
+        fetch_started = time.perf_counter()
     if total is None:
+        _LOG.error("baseline eval produced no batches")
         raise RuntimeError("no evaluation batches")
-    return (total / count).cpu().numpy()
+    started = time.perf_counter()
+    errors = (total / count).cpu().numpy()
+    _sync(device)
+    _LOG.info(
+        "baseline eval done  windows=%d  to_numpy=%s",
+        count, _ms(time.perf_counter() - started),
+    )
+    return errors
 
 
 def plot_prediction_error_vs_horizon(
