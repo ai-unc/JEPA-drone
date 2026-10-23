@@ -16,13 +16,6 @@ def variance_loss(target: torch.Tensor, gamma: float = 1.0, e: float = 1e-4):
 
     return F.relu(gamma - target_col_sd).mean()
 
-def invariance_loss(predicted: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """Calculate the mean squared difference between corresponding embeddings,
-    then output one nonnegative scalar representing prediction error"""
-
-    squared_err = (predicted - target) ** 2 # [(B, T, D)' - (B, T, D)]^2 -> (B, T, D)
-    return squared_err.mean() # sum / (B*T*D)
-
 def covariance_loss(target: torch.Tensor) -> torch.Tensor:
     """
     first center each column before calculating the covariance matrix then square and sum every off-diagonal entry
@@ -38,10 +31,31 @@ def covariance_loss(target: torch.Tensor) -> torch.Tensor:
     off_diag = C - torch.diag(torch.diag(C)) # zero out the diagonal
     return (off_diag ** 2).sum() / D
 
+def _require_rollout(predicted: torch.Tensor, target: torch.Tensor) -> None:
+    """Both tensors are the predictor rollout: (B, T, D)."""
+    if predicted.ndim != 3 or predicted.shape != target.shape:
+        raise ValueError(
+            f"predicted {tuple(predicted.shape)} and target {tuple(target.shape)} "
+            "must both be (B, T, D) and match"
+        )
+
+
+def _require_state_latent(s_t: torch.Tensor, target: torch.Tensor) -> None:
+    """s_t is the current latent (B, D) and lines up with target (B, T, D)."""
+    expected = (target.shape[0], target.shape[-1])
+    if tuple(s_t.shape) != expected:
+        raise ValueError(
+            f"s_t {tuple(s_t.shape)} must be (B, D)={expected} "
+            f"to match target {tuple(target.shape)}"
+        )
+
+
 def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, mu = 25.0, nu = 1.0) -> tuple[torch.Tensor, dict[str, float]]:
     """
     VICReg loss = lambda * L_inv + mu * L_var + nu * L_cov
     """
+    _require_rollout(predicted, target)
+    _require_state_latent(s_t, target)
     inv = F.mse_loss(predicted, target) # Invariance: computed once, comparing the two embeddings
     embeddings = torch.cat([s_t.unsqueeze(1), target], dim=1)  # (B, T+1, D)
 
@@ -50,7 +64,7 @@ def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, 
     cov = covariance_loss(embeddings)
 
     total = lam * inv + mu * var + nu * cov
-    return total, {"pred": inv.item(), "var": var.item(), "cov": cov.item()}
+    return total, {"pred": inv.detach().item(), "var": var.detach().item(), "cov": cov.detach().item()}
 
 def sigreg(
     latents: torch.Tensor,
@@ -107,7 +121,9 @@ def sigreg_loss(
     ``predicted`` and ``target`` are ``(B, T, D)``. SIGReg is applied to the
     predicted rollout only, transposed to the paper's ``(T, B, D)`` layout.
     """
+    _require_rollout(predicted, target)
     pred = latent_prediction_loss(predicted, target)
+    # (B, T, D) -> (T, B, D). sigreg averages the characteristic function over batch.
     reg = sigreg(predicted.transpose(0, 1), num_projections=num_projections, num_knots=num_knots)
     total = pred + lam * reg
     return total, {"pred": pred.detach().item(), "sigreg": reg.detach().item()}
@@ -146,25 +162,35 @@ def latent_stats(latent: torch.Tensor) -> dict[str, float]:
             "dead_frac": (dim_std < 0.01).float().mean().item(),
         }
 
-def check_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
-    """Print a warning and return True if the latents look collapsed."""
-    collapsed = stats["dim_std_mean"] < threshold
-    if collapsed:
+def _dimensional_collapse(stats: dict[str, float], threshold: float = 0.1) -> bool:
+    """Checks for dimensional collpase and returns True if detected"""
+    if stats["dim_std_mean"] < threshold:
         print(
-            f"[WARN] possible representation collapse: "
+            f"[WARNING] possible representation collapse: "
             f"avg latent std={stats['dim_std_mean']:.4f} < {threshold}, "
             f"dead dims={stats['dead_frac']:.0%}"
         )
+    return stats["dim_std_mean"] < threshold
+
+def _rank_collapse(state_encoded: torch.Tensor, min_frac: float = 0.5) -> bool:
+    with torch.no_grad():
+        z = state_encoded.reshape(-1, state_encoded.shape[-1]).float() # (N, D)
+        n, d = z.shape
+        z = z - z.mean(dim=0, keepdim=True)
+        cov = (z.T @ z) / max(n - 1, 1) # (D, D)
+        eigvals = torch.linalg.eigvalsh(cov).clamp_min(0)
+        stable_rank = (eigvals.sum() / eigvals.max().clamp_min(1e-8)).item()
+        max_rank = min(n - 1, d) # centering drops one direction
+        collapsed = stable_rank < min_frac * max_rank
+    if collapsed:
+        print(f"[WARNING] rank collapse: stable rank {stable_rank:.1f}/{max_rank}")
     return collapsed
 
-def log_jepa_step(predicted, target, s_t, threshold: float = 0.1) -> dict[str, float]:
-    """One call per batch: per-horizon losses L1...LT, latent stats, and collapse warning."""
-    out = {f"L{k + 1}": v for k, v in enumerate(per_horizon_losses(predicted, target).tolist())}
-    stats = latent_stats(s_t)
-    out.update(stats)
-    out["collapsed"] = float(check_collapse(stats, threshold))
-    return out
-
+def check_collapse(stats: dict[str, float], latent: torch.Tensor, threshold: float = 0.1) -> bool:
+    dim_collapsed = _dimensional_collapse(stats, threshold)
+    rank_collapsed = _rank_collapse(latent)
+    return dim_collapsed or rank_collapsed
+    
 
 if __name__ == "__main__":
     B, T, D = 64, 10, 24 # fake tensors shaped like real latents
