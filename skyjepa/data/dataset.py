@@ -34,10 +34,14 @@ def build_dataset(
     if not trajectories:
         raise ValueError("trajectories must not be empty")
 
+    STATE_HISTORY = "state_history"
+    FUTURE_STATES = "future_states"
+    ACTIONS = "actions" #For training purposes all actions are known
+
+
     state_history = []
-    action_history = []
     future_states = []
-    future_actions = []
+    action_sequence = []
 
     for i, trajectory in enumerate(trajectories):
         states = np.asarray(trajectory["states"], dtype=np.float32)
@@ -70,7 +74,7 @@ def build_dataset(
                 states[t - history_len + 1 : t + 1]
             )
 
-            action_history.append(
+            action_sequence.append(
                 actions[t - history_len + 1 : t + 1]
             )
 
@@ -78,21 +82,18 @@ def build_dataset(
                 states[t + 1 : t + 1 + horizon]
             )
 
-            future_actions.append(
+            action_sequence.append(
                 actions[t : t + horizon]
             )
 
     return {
-        "state_history": np.stack(state_history).astype(
+        STATE_HISTORY: np.stack(state_history).astype(
             np.float32, copy=False
         ),
-        "action_history": np.stack(action_history).astype(
+        FUTURE_STATES: np.stack(future_states).astype(
             np.float32, copy=False
         ),
-        "future_states": np.stack(future_states).astype(
-            np.float32, copy=False
-        ),
-        "future_actions": np.stack(future_actions).astype(
+        ACTIONS: np.stack(action_sequence).astype(
             np.float32, copy=False
         ),
     }

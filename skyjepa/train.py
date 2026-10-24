@@ -98,28 +98,42 @@ def _normalize(batch, norm):
 
 def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module, config: Config,) -> tuple[torch.Tensor, dict[str, float], torch.Tensor]:
     # call rollout windows to cut these tensors into overlapping 10-step clips
-    state_windows, action_windows = rollout_windows(
-        batch["state_history"],
-        batch["action_history"],
-        batch["future_states"],
-        batch["future_actions"],
-    )
-    s_t = state_encoder(state_windows[:, 0]) # turn the "now" clip into s_t
-    targets = _encode_sequence(state_encoder, state_windows[:, 1:]) # turn the future clips into targets
-    z_seq = _encode_sequence(action_encoder, action_windows) # turn action clips into z_seq
-    predicted = latent_predictor.rollout(s_t, z_seq.transpose(0, 1)).transpose(0, 1) # guess the next 10 state summaries from s_t and z_seq
-    if predicted.shape != targets.shape:
+
+    state_history = batch[dataset.STATE_HISTORY]
+    actions = batch[dataset.ACTIONS]
+    future_states = batch[dataset.FUTURE_STATES]
+
+    history_len = state_history.shape[1]
+
+    initial_states = state_history
+    target_states = torch.cat(
+        [state_history, future_states], dim=1
+    )[:, -history_len:]
+
+    latent_initial_state = state_encoder(initial_states)
+    latent_target_states = state_encoder(target_states)
+
+    history_len = state_history.shape[1]
+
+
+    predicted_latent_state = latent_initial_state
+    for i in range(0,config.horizon):
+        action_window = actions[:, i:i + history_len]
+        latent_action = action_encoder(action_window)
+        predicted_latent_state = latent_predictor(predicted_latent_state, latent_action) #recursive prediction of the next latent state
+
+    if predicted_latent_state.shape != latent_target_states.shape:
         _LOG.error(
             "rollout shape %s != targets %s",
-            tuple(predicted.shape),
-            tuple(targets.shape),
+            tuple(predicted_latent_state.shape),
+            tuple(latent_target_states.shape),
         )
         raise ValueError(
-            f"rollout shape {tuple(predicted.shape)} != targets {tuple(targets.shape)}"
+            f"rollout shape {tuple(predicted_latent_state.shape)} != targets {tuple(latent_target_states.shape)}"
         )
     # returns a weighted sum of the MSE (invariance), variance and covariance as a penalty
-    loss, parts = losses.vicreg_loss(predicted, targets, s_t, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
-    return loss, parts, s_t
+    loss, parts = losses.vicreg_loss(predicted_latent_state, latent_target_states, latent_initial_state, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
+    return loss, parts, latent_initial_state
 
 def train_jepa(loader: DataLoader, config: Config) -> None:
     _ensure_logging()
