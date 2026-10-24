@@ -206,7 +206,7 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
                 epoch + 1,
                 batch_index,
                 n_batches,
-                batch["state_history"].shape[0],
+                batch[Data.STATE_HISTORY].shape[0],
                 loss_value,
                 parts["pred"],
                 parts["var"],
@@ -266,7 +266,7 @@ def train_baseline(loader: DataLoader, config: Config) -> None:
     _LOG.info("fitting baseline normalizer")
     model.fit_normalizer(loader.dataset.tensors)
     _LOG.info("running baseline training loop")
-    history = baseline.train_direct_predictor(model, loader, config)
+    history = baseline.train_direct_predictor(model, loader, config, train_steps=config.horizon)
     if history:
         _LOG.info("baseline training done: final loss=%.6f over %d epochs", history[-1], len(history))
     else:
