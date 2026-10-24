@@ -34,14 +34,15 @@ def covariance_loss(target: torch.Tensor) -> torch.Tensor:
     off_diag = C - torch.diag(torch.diag(C)) # zero out the diagonal
     return (off_diag ** 2).sum() / D
 
-def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, mu = 25.0, nu = 1.0) -> tuple[torch.Tensor, dict[str, float]]:
+def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, mu = 25.0, nu = 1.0, display=False) -> tuple[torch.Tensor, dict[str, float]]:
     """
     VICReg loss = lambda * L_inv + mu * L_var + nu * L_cov
     """
     #inv = F.mse_loss(predicted, target) # Invariance: computed once, comparing the two embeddings
 
     per_step_mse = (predicted - target).square().mean(dim=(0, 2))
-    print("Final step loss:", per_step_mse[-1].item())
+    if display:
+        print("Final step loss:", per_step_mse[-1].item())
 
     step = torch.arange(
         1, predicted.shape[1] + 1,
