@@ -4,6 +4,8 @@ from numpy._core import bool_
 import torch
 import torch.nn.functional as F
 
+from skyjepa import config
+
 
 def variance_loss(target: torch.Tensor, gamma: float = 1.0, e: float = 1e-4):
     """calculate the mean of each column, then calculate each column's standard deviation,
@@ -36,7 +38,19 @@ def vicreg_loss(predicted: torch.Tensor, target: torch.Tensor, s_t, lam = 25.0, 
     """
     VICReg loss = lambda * L_inv + mu * L_var + nu * L_cov
     """
-    inv = F.mse_loss(predicted, target) # Invariance: computed once, comparing the two embeddings
+    #inv = F.mse_loss(predicted, target) # Invariance: computed once, comparing the two embeddings
+
+    per_step_mse = (predicted - target).square().mean(dim=(0, 2))
+    print("Final step loss:", per_step_mse[-1].item())
+
+    step = torch.arange(
+        1, predicted.shape[1] + 1,
+        device=predicted.device,
+        dtype=predicted.dtype,
+    )
+    weights = step
+    inv = (weights * per_step_mse).sum() / weights.sum()
+
     embeddings = torch.cat([s_t.unsqueeze(1), target], dim=1)  # (B, T+1, D)
 
     # variance and covariance: computed independently for each embedding
