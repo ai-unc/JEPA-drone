@@ -20,8 +20,9 @@ from torch.utils.data import DataLoader
 
 from skyjepa import baseline
 from skyjepa.config import Config
-from skyjepa.data import dataset, trajectory_loader
-from skyjepa.train_jepa import WindowDataset
+from skyjepa.data import trajectory_loader
+from skyjepa.data.dataset import Data
+from skyjepa.train import WindowDataset
 
 
 def _seed(seed: int) -> None:
@@ -55,7 +56,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     train, test = trajectory_loader.split_trajectories(trajectories, args.test_fraction, config.seed)
     windows = {
-        name: dataset.build_dataset(
+        name: Data.build_dataset(
             split,
             history_len=config.history_len,
             horizon=config.horizon,
