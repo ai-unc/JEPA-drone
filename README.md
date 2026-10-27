@@ -65,7 +65,9 @@ NOTE: you can check out Ethan's README inside of the drone directory, please che
 
 OUTSTANDING QUESTIONS: What actions are acceptable in the random-thrust flights? In about 50% of them, the drone goes upside down (is the drone physically capable of flying upside down in the real world and/or sim, and should that be something that we're training on?)
 
-CSV write spec (N, 23): (time(s), FL(N), FR(N), BL(N), BR(N), x(m), y(m), z(m), vx(m/s), vy(m/s), vz(m/s), r1x, r1y, r1z, r2x, r2y, r2z, r3x, r3y, r3z, wx(rad/s), wy(rad/s), wz(rad/s))
+**CSV write spec** (N, 23): (time(s), FL(N), FR(N), BL(N), BR(N), x(m), y(m), z(m), vx(m/s), vy(m/s), vz(m/s), r1x, r1y, r1z, r2x, r2y, r2z, r3x, r3y, r3z, wx(rad/s), wy(rad/s), wz(rad/s))
+
+**SimulationConfigs** (CONFIG) spec (6): {mass (kg), arm_length(m), thrust_coefficient, torque_coefficient, motor tiem constant (s), drag_coefficient}
 
 Where each timestamp progresses in discrete 10ms steps, the next 4 parameters are inputs to the four rotors in Newtons, and the 9 rXX correspond to individual entries in the 3x3 rotation matrix of the drone.
 
@@ -79,10 +81,36 @@ Where each timestamp progresses in discrete 10ms steps, the next 4 parameters ar
   - **/gamepad_training**
     2 10s manually controlled flights, with default physics.
 - **/simulations**
-  placeholder
+  - **simulation.py**
+    This the controller for the entire simulation. It sends motor instructions and receives back state. 
+  - **simulation_config.py**
+    This controls the sim config settings outlined above by randomizing them and saving them for a specific run. 
+  - **/sim_config**
+    ProjectAirSim sample files.
+  - **/custom_sim_config**
+    Contains configs for the custom sim environment, including the scene in scene_basic_drone.jsonc, and the drone config in custom_config.jsonc.
+  
 - **/subsystems**
-  placeholder
+  Client-side pieces that sit between a flight script and the simulator: drone wrapper, controller I/O, and logged state/action history.
+  - **/data**
+    Shared action/state types and the rolling history buffer.
+    - **data.py**
+      `Action` (FL/FR/BL/BR thrusts) and `State` (position, velocity, rotation matrix, angular velocity), plus helpers to load/replay CSV sequences.
+    - **database.py**
+      Circular 1-second / 100 Hz buffer of recent state, action, and timestamps (`Database`).
+  - **Gamepad.py**
+    Background reader for a USB gamepad (sticks, triggers, buttons) used by manual flights.
+  - **PID.py**
+    Simple PID used to make gamepad flight tolerable.
+  - **drone.py**
+    `Drone` wrapper: takes an action each step, talks to the flight controller, and can follow a `DataSequence`.
+  - **flight_controller.py**
+    Generic 100 Hz flight-controller template (`send` / `read` / `step`) and CSV logging of the 23-column flight spec.
 - **custom_flight.py**
+  Replays a CSV from `action_sequences` through the sim (pick the file, optional logging). Useful for replaying logged flights.
 - **gamepad_flight.py**
+  Manual Xbox/gamepad flying. Maps sticks to throttle and body rates, with PID loops so a human can actually fly it, and can log the run.
 - **projectairsim_client.log**
+  Runtime log from the ProjectAirSim client (connect, scene load, topics). Not source; it shows up after you run a flight.
 - **random_sequence_flight.py**
+  Batch of 10s random-thrust flights (the `rnd_sky*` logs). Hover-ish start in the sky, then random motor commands at a random frequency and thrust range, logged to CSV.
