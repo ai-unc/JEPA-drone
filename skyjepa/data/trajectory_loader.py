@@ -25,7 +25,7 @@ STATE_COLUMNS = (
     "wx", "wy", "wz",
 )
 ACTION_COLUMNS = ("FL", "FR", "BL", "BR")
-DEFAULT_DIR = Path(__file__).resolve().parents[2] / "drone" / "data_sequences" / "rnd_sky_training"
+DEFAULT_DIR = Path(__file__).resolve().parents[2] / "drone" / "data_sequences" / "rnd_configs_rnd_action_training"
 
 
 def stride_for(dt: float) -> int:
