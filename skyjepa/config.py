@@ -10,8 +10,8 @@ class Config:
     Tensor layouts that go with these numbers are in docs/tensor_shapes.md.
     """
 
-    state_dim: int = 18
-    action_dim: int = 4
+    state_dim: int = 18 # updated to reflect the paper, instead of template
+    action_dim: int = 4 # updated to reflect paper's number, instead of template
     latent_dim: int = 24
     history_len: int = 10
     horizon: int = 10
