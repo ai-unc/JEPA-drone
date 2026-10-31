@@ -30,9 +30,10 @@ class Drone():
             print(self.get_database().to_string())
     async def update(self, action : np.ndarray | None = None, display: bool = False) -> bool:
         wait_time = 0
-        if (self.update_frequency > 0):
+        if (self.update_frequency > 0.1):
             wait_time = 1 / self.update_frequency
-        await asyncio.sleep(wait_time)
+        if (wait_time > 0):
+            await asyncio.sleep(wait_time)
         if action is None and self.data_sequence is not None:
             action = self.data_sequence.get_action(self.time_stamp)
         if (action is None):

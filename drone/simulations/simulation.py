@@ -49,6 +49,8 @@ class ProjectAirSimSimulation(FlightController):
             "translation": position,
             "rotation": orientation,
         }))
+
+        self.state, self.time = self.read()
     def config_prompt(self) -> None:
         #CONFIGS MUST BE SET BEFORE THE SIMULATION STARTS!!!
         user_input = input("Random Configs? (y/n): ")
@@ -69,6 +71,7 @@ class ProjectAirSimSimulation(FlightController):
         self.world: World | None = None
         self.drone: Drone | None = None
         self.configs = SimulationConfigs()
+        self.local_data = True
 
     @override
     def start(self, initial_state: np.ndarray | None = None) -> None:
@@ -91,8 +94,11 @@ class ProjectAirSimSimulation(FlightController):
             self.world,
             self.DEFAULT_DRONE_NAME,
         )
+
         if initial_state is not None:
             self.set_state(initial_state, time=0)
+
+        self.state,self.time = self.read()
     @override
     def set_state(self, state: np.ndarray,time : np.double = 0) -> None:
         rotation_matrix = state[State.R1x:State.R3z+1].reshape(3,3)
@@ -140,7 +146,10 @@ class ProjectAirSimSimulation(FlightController):
                     })
                 }
             }
+            
         )
+
+        self.state, self.time = self.read()
     @override
     def read(self) -> tuple[np.ndarray, np.double]:
         assert self.drone is not None
@@ -198,7 +207,7 @@ class ProjectAirSimSimulation(FlightController):
         action: np.ndarray | None = None) -> tuple[np.ndarray, np.double]:
 
         assert self.world is not None
-        prev_state,prev_time_stamp = self.read()
+        prev_state,prev_time_stamp = self.state,self.time
         if (action is not None):
             self.send(actions=action)
         self.world.continue_for_n_steps(
@@ -209,8 +218,10 @@ class ProjectAirSimSimulation(FlightController):
             self.action_data.append(action)
             self.state_data.append(prev_state)
             self.time_data.append(prev_time_stamp)
-        self.database.update_history(prev_state, action, prev_time_stamp)
-        return self.read()
+        if (self.local_data):
+            self.database.update_history(prev_state, action, prev_time_stamp)
+        self.state,self.time = self.read()
+        return self.state,self.time
     @override
     def csv_header(self) -> str:
         if (self.configs is None):

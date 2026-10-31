@@ -25,6 +25,8 @@ class FlightController():
         self.database = Database()
         self.log_data = False
         self.data_name = FlightController.DATA_PATH + "temp.csv"
+        self.state = None
+        self.time = None
     def start(self,initial_state : np.ndarray | None = None) -> None:
         pass
     #Prompts the user if they want to log data and what to name said data
