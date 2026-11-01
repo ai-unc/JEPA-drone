@@ -1,6 +1,6 @@
 """Tests for skyjepa.data.validate_input_data on synthetic logs with known faults.
 
-    uv run --with pytest pytest tests/test_validate_input_data.py
+    uv run pytest tests/test_validate_input_data.py
 """
 
 import json
