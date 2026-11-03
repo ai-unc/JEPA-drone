@@ -1,0 +1,334 @@
+import asyncio
+import time
+from Subsystems.Gamepad import Gamepad
+
+from Subsystems.drone import Drone
+from drone.Subsystems.data.data import Action, DataSequence
+import numpy as np
+from drone.Subsystems.data.data import State
+from simulations.simulation import ProjectAirSimSimulation
+from Subsystems.PID import PID
+from drone.pid_autotuner import RatePIDAutotuner
+
+
+from projectairsim import drone, types
+from projectairsim.types import Pose, Vector3, Quaternion
+
+from scipy.spatial.transform import Rotation
+
+# Separate gamepad entry point using pid_autotuner.py.
+#There is a bunch of AI Generated code here. This was used to fly around and collect data.
+#To be flyable by a human there needs to be several PID controllers to control rotational velocity
+#Which is why this file is so massive
+
+def clamp(value, min_value, max_value):
+    return max(min_value, min(max_value, value))
+
+
+def normalize_motor_outputs(outputs, max_thrust):
+    """
+    Fits motor outputs into [0, max_thrust] while preserving
+    the relative differences between motors as much as possible.
+    """
+    outputs = np.array(outputs, dtype=float)
+
+    minimum = np.min(outputs)
+    maximum = np.max(outputs)
+
+    # If the requested differential range is larger than the
+    # physical motor range, scale the differential commands down.
+    span = maximum - minimum
+
+    if span > max_thrust:
+        center = (maximum + minimum) / 2.0
+
+        outputs = center + (
+            outputs - center
+        ) * (max_thrust / span)
+
+    # Recalculate after scaling
+    minimum = np.min(outputs)
+    maximum = np.max(outputs)
+
+    # Shift all motors downward together if any motor exceeds max.
+    if maximum > max_thrust:
+        outputs -= maximum - max_thrust
+
+    # Shift all motors upward together if any motor is below zero.
+    minimum = np.min(outputs)
+
+    if minimum < 0:
+        outputs -= minimum
+
+    return np.clip(outputs, 0.0, max_thrust)
+
+def controller_to_action(
+    throttle,
+    target_roll_vel,
+    target_pitch_vel,
+    target_yaw_vel,
+    angular_velocity: np.ndarray,
+    dt: np.double,
+    roll_pid: PID,
+    pitch_pid: PID,
+    yaw_pid: PID
+) -> np.ndarray:
+    # Maximum commanded rotational velocities in rad/s
+    MAX_ROLL_RATE = 2.0
+    MAX_PITCH_RATE = 2.0
+    MAX_YAW_RATE = 2.0
+
+    max_thrust = Action.ASSUMED_MAX_THRUST
+
+    # Controller input [-1, 1] -> target angular velocity
+    target_roll_vel *= MAX_ROLL_RATE
+    target_pitch_vel *= MAX_PITCH_RATE
+    target_yaw_vel *= MAX_YAW_RATE
+
+    current_roll_rate = angular_velocity[0]
+    current_pitch_rate = angular_velocity[1]
+    current_yaw_rate = angular_velocity[2]
+
+    # Angular velocity PID controllers
+    roll_output = roll_pid.update(
+        target_roll_vel,
+        current_roll_rate,
+        dt
+    )
+
+    pitch_output = pitch_pid.update(
+        target_pitch_vel,
+        current_pitch_rate,
+        dt
+    )
+
+    yaw_output = yaw_pid.update(
+        target_yaw_vel,
+        current_yaw_rate,
+        dt
+    )
+
+    corrections = np.array([
+        -roll_output - pitch_output - yaw_output,
+        roll_output - pitch_output + yaw_output,
+        -roll_output + pitch_output + yaw_output,
+        roll_output + pitch_output - yaw_output
+    ])
+
+    required_headroom = max(0.0, np.max(corrections))
+
+    requested_base = throttle * max_thrust
+
+    base = min(
+        requested_base,
+        max_thrust - required_headroom
+    )
+
+    """ print(
+        "target_roll_vel:", target_roll_vel,
+        "current_roll_vel:", current_roll_rate,
+        "target_pitch_vel:", target_pitch_vel,
+        "current_pitch_vel:", current_pitch_rate,
+        "target_yaw_vel:", target_yaw_vel,
+        "current_yaw_vel:", current_yaw_rate
+    )"""
+
+    # X-quad mixer
+    fl = base - roll_output - pitch_output - yaw_output
+    fr = base + roll_output - pitch_output + yaw_output
+    bl = base - roll_output + pitch_output + yaw_output
+    br = base + roll_output + pitch_output - yaw_output
+
+    # Desaturate while preserving motor differences
+    fl, fr, bl, br = normalize_motor_outputs(
+        [fl, fr, bl, br],
+        max_thrust
+    )
+
+    return Action.generate(
+        np.array([
+            np.double(fl),
+            np.double(fr),
+            np.double(bl),
+            np.double(br),
+        ],
+        dtype=np.double)
+    )
+
+"""
+The idea: run the simulator at the maximum speed the computer can handle.
+Have the flight last 100 in simulator seconds, which is split into 10, 10 second flight logs.
+Assuming simulation configs are randomized, have an auto tuner for PID controls based on sim configs.
+Since flight is sped up, acro control would be to hard, so rotation and velocity control is ideal.
+So I dont get bored flying, a "target" will spawn within a certain radius of my drone.
+Since I am lazy and there is no way to disable collisions in this python version, 
+I will make the target teleport somewhere else whenever you get too close.
+--Ethan
+"""
+async def main():
+    pid_mode = input("PID settings [calculated/default] (default: calculated): ").strip().lower() or "calculated"
+    if pid_mode not in ("default", "calculated"):
+        raise ValueError("Choose default or calculated PID settings")
+    max_time = float(input("Enter the maximum simulation time: "))
+    iteration = int(input("Enter the starting iteration: "))
+    iterations = input("How many times do you want to run this sequence? ")
+    iterations = int(iterations) + iteration
+    bool_rnd_configs = input("Do you want to use random configurations? (y/n): ").lower() == "y"
+    frequency = input("Enter the update frequency in seconds (real time is 100, as fast as possible is 0, 50 percent is 50): ")
+    frequency = float(frequency)
+    spawn_height = input("Enter the spawn height (negative value, default is -650): ")
+    spawn_height = float(spawn_height)
+    log_data = input("Do you want to log data? (y/n): ").lower() == "y"
+    name = "rnd_gamepad"
+    if (not bool_rnd_configs):
+        name = "gamepad_sky"
+
+    while iteration < iterations:
+        iteration += 1
+        simulation = ProjectAirSimSimulation()
+        simulation.log_data = log_data
+        simulation.local_data = False
+        simulation.data_name = str(simulation.DATA_PATH + (name + str(iteration)))
+        if (bool_rnd_configs):
+            simulation.configs.randomize()
+        simulation.configs.write()
+        drone = Drone(flight_controller=simulation)
+        drone.update_frequency = frequency
+        gamepad = Gamepad()
+
+        action = None
+
+        #Left Stick y is throttle
+        #Left Stick x is roll
+        #Right Stick y is pitch
+        #Right Stick x is yaw
+        score = 0
+        start_time = time.perf_counter()
+        try:
+            simulation.start()
+            simulation.set_pose_to_random_in_sky(height = spawn_height)
+            start_time = time.perf_counter()
+            for asset in simulation.world.list_assets(
+                            ".*[Ss]phere.*|.*[Cc]ube.*|.*[Cc]one.*|.*[Cc]ylinder.*"
+                        ):
+                            print(asset)
+
+            pid_configs = RatePIDAutotuner.generate_configs(
+                simulation.configs, mode=pid_mode,
+                dt=float(simulation.CONTROL_PERIOD),
+            )
+            print("Rate PID settings:", pid_configs)
+            roll_pid, pitch_pid, yaw_pid = (
+                pid_configs[axis].create() for axis in ("roll", "pitch", "yaw")
+            )
+
+            drone.data_sequence = None
+
+            #Summon the "target" to fly to
+            drone.state, drone.time_stamp = drone.flight_controller.state,drone.flight_controller.time
+            rng = np.random.default_rng()
+            target_reached = True
+            target_name = None
+            target_pose = None
+            score = 0
+
+            while (drone.time_stamp < max_time):
+
+                if target_reached or gamepad.get_button(Gamepad.Inputs.B):
+                    target_reached = False
+                    angle = rng.uniform(0, 2 * np.pi)
+                    distance = rng.uniform(50, 200)
+
+                    # World position in metres. Negative Z is above ground.
+                    target_pose = types.Transform({
+                        "translation": {
+                            "x": float(
+                                drone.state[State.PX] + distance * np.cos(angle)
+                            ),
+                            "y": float(
+                                drone.state[State.PY] + distance * np.sin(angle)
+                            ),
+                            "z": float(min(
+                                -5.0,
+                                drone.state[State.PZ] + rng.uniform(-10, 10),
+                            )),
+                        },
+                        # Identity quaternion: no rotation.
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                        },
+                    })
+
+                    if target_name is None:
+                        target_name = simulation.world.spawn_object(
+                            object_name="FlightTarget",
+                            asset_path="Sphere",
+                            object_pose=target_pose,
+                            object_scale=[8.0, 8.0, 8.0],
+                            enable_physics=False,
+                        )
+                        if not target_name:
+                            raise RuntimeError("Failed to spawn FlightTarget.")
+                    else:
+                        simulation.world.set_object_pose(
+                            object_name=target_name,
+                            object_pose=target_pose,
+                            teleport=True,
+                        )
+
+                target_position = np.array([
+                    target_pose["translation"]["x"],
+                    target_pose["translation"]["y"],
+                    target_pose["translation"]["z"],
+                ], dtype=float)
+
+                x,y,z = State.get_position(drone.state)
+                tx,ty,tz = target_position[0],target_position[1],target_position[2]
+                distance_from_target = State.get_distance(x,tx,y,ty,z,tz)
+                if (distance_from_target < 20):
+                     target_reached = True
+                     score += 1
+
+                throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)
+                roll     = gamepad.get_joystick(Gamepad.Inputs.LEFT_X)
+                pitch    = gamepad.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
+                yaw      = gamepad.get_joystick(Gamepad.Inputs.RIGHT_X)
+                THRESHOLD = 0.2
+
+
+
+
+                # Apply deadzone threshold
+                if abs(throttle) < THRESHOLD:
+                    throttle = 0.0
+                if abs(roll) < THRESHOLD:
+                    roll = 0.0
+                if abs(pitch) < THRESHOLD:
+                    pitch = 0.0
+                if abs(yaw) < THRESHOLD:
+                    yaw = 0.0
+                angular_velocity = State.get_angular_velocity(drone.state)
+                action = controller_to_action(
+                    throttle,
+                    roll,
+                    pitch,
+                    yaw,
+                    angular_velocity,
+                    drone.flight_controller.CONTROL_PERIOD,
+                    roll_pid,
+                    pitch_pid,
+                    yaw_pid
+                )
+                
+                await drone.update(action = action,display=False)
+        finally:
+            simulation.close()
+            print("SCORE: ", score)
+            print("REAL TIME PASSED: ", time.perf_counter() - start_time)
+    
+
+if __name__ == "__main__":
+    asyncio.run(main())
