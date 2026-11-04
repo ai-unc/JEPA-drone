@@ -44,11 +44,32 @@ class PIDConfig:
         return PID(**vars(self))
 
 
+@dataclass(frozen=True)
+class RateThrustConfig:
+    """One physics-derived setup for rate feedback and motor allocation.
+
+    Motor thrust is in newtons. Collective values are per-motor action units,
+    normalized by Action.ASSUMED_MAX_THRUST when sent to the simulator.
+    """
+    pid_configs: dict[str, PIDConfig]
+    max_motor_thrust: float
+    hover_collective: float
+    recovery_collective: float
+    response_time: float
+
+    # Optional multipliers for gamepad inputs AFTER deadzone processing and
+    # BEFORE conversion to collective/rad/s. Never applied by RateController.
+    throttle_sensitivity: float = 1.0
+    roll_rate_sensitivity: float = 1.0
+    pitch_rate_sensitivity: float = 1.0
+    yaw_rate_sensitivity: float = 1.0
+
+
 class RateController:
     """
     1. Can convert gamepad inputs (throttle, roll_vel, pitch_vel, yaw_vel) to collective thrust and target angular velocities.
     2. Can calculate motor outputs from collective thrust, target angular velocities, and current angular velocities.
-    3. Can calculate PID gains from SimulationConfigs.
+    3. Tunes rate gains and recovery thrust together from SimulationConfigs.
     --Ethan
     """
     class Modes:
@@ -60,8 +81,8 @@ class RateController:
         YAW = "yaw"
 
     DEFAULT_CONFIGS = {
-        Gains.ROLL.value: PIDConfig(-0.13),
-        Gains.PITCH.value: PIDConfig(-0.2),
+        Gains.ROLL.value: PIDConfig(-0.05),
+        Gains.PITCH.value: PIDConfig(-0.12),
         Gains.YAW.value: PIDConfig(0.8),
     }
 
@@ -74,14 +95,18 @@ class RateController:
         self.pitch_pid = self.DEFAULT_CONFIGS[self.Gains.PITCH.value].create()
         self.yaw_pid = self.DEFAULT_CONFIGS[self.Gains.YAW.value].create()
         self.mode = mode
-    def create(self, configs = None, dt=0.01, response_time=0.25):
-        if self.mode == self.Modes.CALCULATED and configs is not None:
-            pid_configs = self.calculate_rate_gains(configs, dt, response_time)
-        else:
-            pid_configs = self.DEFAULT_CONFIGS
+        self.control_config: RateThrustConfig | None = None
+    def create(self, configs, dt=0.01, response_time=0.25):
+        self.control_config = self.calculate_control_config(configs, dt, response_time)
+        pid_configs = (self.control_config.pid_configs
+                       if self.mode == self.Modes.CALCULATED else self.DEFAULT_CONFIGS)
         self.roll_pid = pid_configs[self.Gains.ROLL.value].create()
         self.pitch_pid = pid_configs[self.Gains.PITCH.value].create()
         self.yaw_pid = pid_configs[self.Gains.YAW.value].create()
+    @property
+    def recovery_collective(self):
+        return self.control_config.recovery_collective if self.control_config else 0.0
+
     def print_configs(self):
         print("Rate PID settings:")
         print("Roll:", self.roll_pid.to_string())
@@ -95,22 +120,36 @@ class RateController:
         while True:
            response = input("Select Rate Gain Settings (" + RateController.Modes.DEFAULT + "/" + RateController.Modes.CALCULATED + "): ").strip().lower() or RateController.Modes.CALCULATED
            if response in (RateController.Modes.DEFAULT, RateController.Modes.CALCULATED):
-               break
+               return response
 
 
 
     @staticmethod
-    def calculate_rate_gains(configs, dt=0.01, response_time=0.25):
-        """Generate conservative P-only gains; larger response_time is softer.
+    def calculate_control_config(configs, dt=0.01, response_time=0.25,
+                                 *, gamepad_thrust_to_weight=2.0) -> RateThrustConfig:
+        """Tune rate gains and recovery collective from one shared physics model.
 
-        No integral windup or derivative kick. Motor commands are normalized
+        Larger response_time gives softer P-only rate control. Recovery thrust
+        is capped at half nominal hover to brake rotation at closed throttle.
+        Motor commands are normalized
         by Action.ASSUMED_MAX_THRUST, so gains account for actual motor power.
         Recalculate whenever physics configs change, after configs.write().
+
+        Optional gamepad multipliers are returned as metadata only. Throttle
+        scaling caps full stick at gamepad_thrust_to_weight times weight
+        (nominal density); hover is 1/gamepad_thrust_to_weight stick when enough
+        thrust is available. This intentionally limits accessible top power.
+        Rate multipliers use sqrt(throttle_sensitivity), a softer-stick comfort
+        heuristic, not compensation for plant gain. Closed-loop rate gains
+        already account for motor authority. Apply multipliers externally to
+        normalized gamepad inputs after deadzones, before unit conversion.
+        Do not apply rate multipliers to attitude-controller output rates.
         """
         positive = [configs.mass, configs.arm_length, configs.thrust_coef,
-                    configs.torque_coef, configs.MAX_RPM, dt, response_time]
+                    configs.torque_coef, configs.MAX_RPM, dt, response_time,
+                    gamepad_thrust_to_weight]
         if not all(math.isfinite(v) and v > 0 for v in positive):
-            raise ValueError("Mass, arm length, coefficients, RPM and timing must be positive and finite")
+            raise ValueError("Mass, arm length, coefficients, RPM, timing and gamepad thrust/weight must be positive and finite")
         if not math.isfinite(configs.motor_time_constant) or configs.motor_time_constant < 0:
             raise ValueError("Motor time constant must be finite and nonnegative")
         with open(configs.file, encoding="utf-8") as stream:
@@ -147,47 +186,59 @@ class RateController:
                                 4 * torque]) / Action.ASSUMED_MAX_THRUST / inertia
         response = max(response_time, 12 * configs.motor_time_constant, 20 * dt)
         gains = 1 / (authority * response)
-        return {axis: PIDConfig(float(gain), output_limit=Action.ASSUMED_MAX_THRUST / 4)
+        pid_configs = {axis: PIDConfig(float(gain), output_limit=Action.ASSUMED_MAX_THRUST / 4)
                 for axis, gain in zip((RateController.Gains.ROLL.value, RateController.Gains.PITCH.value, RateController.Gains.YAW.value), gains)}
+        hover_collective = configs.mass * 9.80665 / (4 * thrust) * Action.ASSUMED_MAX_THRUST
+        recovery_collective = min(Action.ASSUMED_MAX_THRUST / 2, .5 * hover_collective)
+        thrust_to_weight = 4 * thrust / (configs.mass * 9.80665)
+        throttle_sensitivity = min(1.0, gamepad_thrust_to_weight / thrust_to_weight)
+        rate_sensitivity = math.sqrt(throttle_sensitivity)
+        return RateThrustConfig(
+            pid_configs=pid_configs,
+            max_motor_thrust=thrust,
+            hover_collective=hover_collective,
+            recovery_collective=recovery_collective,
+            response_time=response,
+            throttle_sensitivity=throttle_sensitivity,
+            roll_rate_sensitivity=rate_sensitivity,
+            pitch_rate_sensitivity=rate_sensitivity,
+            yaw_rate_sensitivity=rate_sensitivity,
+        )
+
     
     @staticmethod
-    def normalize_motor_outputs(outputs, max_thrust):
+    def allocate_motor_outputs(collective, roll, pitch, yaw, limit, recovery):
+        """Prioritize roll/pitch, then fit yaw into remaining motor headroom.
+
+        Raise collective only as needed, and only up to max(requested,
+        recovery). Recovery is half nominal hover, so even saturated braking
+        at closed throttle cannot support the vehicle's weight.
         """
-        Fits motor outputs into [0, max_thrust] while preserving
-        the relative differences between motors as much as possible.
-        """
-        outputs = np.array(outputs, dtype=float)
+        requested = float(np.clip(collective, 0.0, limit))
+        budget = max(requested, float(np.clip(recovery, 0.0, limit / 2)))
+        rp = np.array([-roll - pitch, roll - pitch,
+                       -roll + pitch, roll + pitch])
+        peak = float(np.max(np.abs(rp)))
+        if peak > 0:
+            rp *= min(1.0, budget / peak, limit / (2 * peak))
+        # Preserve roll/pitch by reducing collective near full throttle.
+        yaw_vector = np.array([-yaw, yaw, yaw, -yaw])
+        factor = 1.0
+        # Feasible collective interval: -min(correction) <= base <=
+        # limit-max(correction), additionally base <= budget. Solve these
+        # linear inequalities for the largest attainable yaw fraction.
+        for i in range(4):
+            if yaw_vector[i] < 0:
+                factor = min(factor, (budget + rp[i]) / -yaw_vector[i])
+            for j in range(4):
+                delta = yaw_vector[i] - yaw_vector[j]
+                if delta > 0:
+                    factor = min(factor, (limit - rp[i] + rp[j]) / delta)
+        corrections = rp + max(0.0, factor) * yaw_vector
+        base = float(np.clip(requested, -np.min(corrections),
+                             min(budget, limit - np.max(corrections))))
+        return np.clip(base + corrections, 0.0, limit)
 
-        minimum = np.min(outputs)
-        maximum = np.max(outputs)
-
-        # If the requested differential range is larger than the
-        # physical motor range, scale the differential commands down.
-        span = maximum - minimum
-
-        if span > max_thrust:
-            center = (maximum + minimum) / 2.0
-
-            outputs = center + (
-                outputs - center
-            ) * (max_thrust / span)
-
-        # Recalculate after scaling
-        minimum = np.min(outputs)
-        maximum = np.max(outputs)
-
-        # Shift all motors downward together if any motor exceeds max.
-        if maximum > max_thrust:
-            outputs -= maximum - max_thrust
-
-        # Shift all motors upward together if any motor is below zero.
-        minimum = np.min(outputs)
-
-        if minimum < 0:
-            outputs -= minimum
-
-        return np.clip(outputs, 0.0, max_thrust)
-        
     @staticmethod
     def gamepad_to_target_rates(throttle,target_roll_vel,target_pitch_vel,target_yaw_vel):
         """
@@ -239,40 +290,9 @@ class RateController:
             dt
         )
 
-        corrections = np.array([
-            -roll_output - pitch_output - yaw_output,
-            roll_output - pitch_output + yaw_output,
-            -roll_output + pitch_output + yaw_output,
-            roll_output + pitch_output - yaw_output
-        ])
-
-        required_headroom = max(0.0, np.max(corrections))
-
-
-        base = min(
-            collective_thrust,
-            max_thrust - required_headroom
-        )
-
-        """ print(
-            "target_roll_rate:", target_roll_rate,
-            "current_roll_rate:", current_roll_rate,
-            "target_pitch_rate:", target_pitch_rate,
-            "current_pitch_rate:", current_pitch_rate,
-            "target_yaw_rate:", target_yaw_rate,
-            "current_yaw_rate:", current_yaw_rate
-        )"""
-
-        # X-quad mixer
-        fl = base - roll_output - pitch_output - yaw_output
-        fr = base + roll_output - pitch_output + yaw_output
-        bl = base - roll_output + pitch_output + yaw_output
-        br = base + roll_output + pitch_output - yaw_output
-
-        # Desaturate while preserving motor differences
-        fl, fr, bl, br = RateController.normalize_motor_outputs(
-            [fl, fr, bl, br],
-            max_thrust
+        fl, fr, bl, br = self.allocate_motor_outputs(
+            collective_thrust, roll_output, pitch_output, yaw_output,
+            max_thrust, self.recovery_collective,
         )
 
         return Action.generate(
@@ -299,7 +319,7 @@ class AttitudeController:
     CONFIGS = {
         Gains.ROLL.value: PIDConfig(3,output_limit=20.0),
         Gains.PITCH.value: PIDConfig(2,output_limit=12.0),
-        Gains.YAW.value: PIDConfig(0.8,output_limit=2.0),
+        Gains.YAW.value: PIDConfig(0.5,output_limit=8.0),
     }
     MAX_ROLL_ANGLE = 30 #degrees
     MAX_PITCH_ANGLE = 30 #degrees
@@ -317,7 +337,7 @@ class AttitudeController:
         target_rotation_matrix: np.ndarray,
         current_rotation_matrix: np.ndarray,
         dt: np.double
-    ) -> tuple[np.double, np.double, np.double]:
+    ) -> tuple[tuple[np.double, np.double, np.double]]:
         """
         Calculate body-frame target angular velocities in radians per second.
 

@@ -37,20 +37,20 @@ class Gamepad:
         while self._running:
             try:
                 events = get_gamepad()  # Blocks until controller events occur
-                self.connected = True
-
-                for event in events:
-                    with self._lock:
+                # A blocked read may return after stop(); do not restore
+                # commands on a stopped reader. Apply each batch atomically.
+                with self._lock:
+                    if not self._running:
+                        break
+                    self.connected = True
+                    for event in events:
                         if event.ev_type == "Key":
                             self._buttons[event.code] = bool(event.state)
-
                         elif event.ev_type == "Absolute":
                             self._axes[event.code] = event.state
 
             except Exception as e:
                 print(f"Gamepad error: {e}")
-                self._buttons.clear()
-                self._axes.clear()
                 self.stop()
 
     def get_button(self, button: str) -> bool :
@@ -69,10 +69,26 @@ class Gamepad:
             return max(0.0, min(1.0, raw / 255.0))
 
     def stop(self):
-        self._running = False
-        if (self.connected):
-            self._thread.join()
-        self.connected = False
+        # inputs.get_gamepad() can block until the device changes. Never wait
+        # indefinitely, and never join this thread from its own error handler.
+        with self._lock:
+            self._running = False
+            self.connected = False
+            self._buttons.clear()
+            self._axes.clear()
+        if self._thread is not threading.current_thread():
+            self._thread.join(timeout=0.2)
+
+    @staticmethod
+    def throttle_with_deadzone(value: float, threshold: float) -> float:
+        """Continuous unipolar throttle: deadzone edge is zero, full stick is one.
+
+        A hard cutoff otherwise makes the minimum nonzero thrust equal to
+        the deadzone fraction, which can exceed hover on powerful quads.
+        """
+        if not 0 <= threshold < 1:
+            raise ValueError("Throttle deadzone must be in [0, 1)")
+        return max(0.0, min(1.0, (value - threshold) / (1.0 - threshold)))
 
     def rate_control_inputs(self) -> tuple[float, float, float, float]:
         throttle = self.get_joystick(Gamepad.Inputs.LEFT_Y)
@@ -81,8 +97,7 @@ class Gamepad:
         yaw_vel      = self.get_joystick(Gamepad.Inputs.RIGHT_X)
 
         # Apply deadzone threshold
-        if abs(throttle) < self.THRESHOLD:
-            throttle = 0.0
+        throttle = self.throttle_with_deadzone(throttle, self.THRESHOLD)
         if abs(roll_vel) < self.THRESHOLD:
             roll_vel = 0.0
         if abs(pitch_vel) < self.THRESHOLD:
@@ -98,8 +113,7 @@ class Gamepad:
         yaw_vel      = self.get_joystick(Gamepad.Inputs.RIGHT_X)
 
         # Apply deadzone threshold
-        if abs(throttle) < self.THRESHOLD:
-            throttle = 0.0
+        throttle = self.throttle_with_deadzone(throttle, self.THRESHOLD)
         if abs(roll) < self.THRESHOLD:
             roll = 0.0
         if abs(pitch) < self.THRESHOLD:
