@@ -10,7 +10,7 @@ import json5
 import numpy as np
 from scipy.spatial.transform import Rotation
 from drone.Subsystems.PID import PID
-from drone.Subsystems.data.data import Action
+from drone.Subsystems.data.data import Action,State
 from drone.simulations.physics_model import atmosphere, ROTOR_BASE_DENSITY, SEA_LEVEL_DENSITY
 
 from enum import Enum
@@ -20,20 +20,6 @@ def clamp(value, min_value, max_value):
 
 gravity = 9.80665  # m/s^2. Positive because up is negative
 
-class Controllers():
-    RATE = "rate"
-    ATTITUDE = "attitude"
-    VELOCITY = "velocity"
-    @staticmethod
-    def prompt_mode():
-        """
-        Prompt the user to get what controller they want, then return the corresponding controller.
-        """
-        while True:
-            response = input("Select Controller (" + Controllers.RATE + "/" + Controllers.ATTITUDE + "/" + Controllers.VELOCITY + "): ").strip().lower() or Controllers.RATE
-            if response in (Controllers.RATE, Controllers.ATTITUDE, Controllers.VELOCITY):
-                break
-        return response
 
 @dataclass(frozen=True)
 class PIDConfig:
@@ -480,9 +466,7 @@ class VelocityController:
         self.z_pid.reset()
     @staticmethod
     def relative_to_world(forward, horizontal, yaw) -> tuple[np.double, np.double]:
-        """Convert heading-relative forward/right velocity to world NED X/Y.
-        yaw is in radians; positive horizontal points to the drone's right.
-        Only heading is used, so roll/pitch do not introduce vertical motion.
+        """Convert heading-relative forward/right velocity to world X and Y
         """
         cosine, sine = math.cos(yaw), math.sin(yaw)
         return (np.double(cosine * forward - sine * horizontal),
@@ -547,3 +531,115 @@ class VelocityController:
         if acceleration_saturated or thrust_saturated:
             self.z_pid.integral = previous_z_integral
         return rotation_matrix, collective
+class PositionController:
+    class Gains(Enum):
+        X = "x"
+        Y = "y"
+        Z = "z"
+    MAX_VELOCITY = 7 #m/s
+    CONFIGS = {
+            Gains.X.value: PIDConfig(0.5,output_limit=MAX_VELOCITY),
+            Gains.Y.value: PIDConfig(0.5,output_limit=MAX_VELOCITY),
+            Gains.Z.value: PIDConfig(0.5,output_limit=MAX_VELOCITY),
+        }
+    def __init__(self):
+        self.x_pid = self.CONFIGS[self.Gains.X.value].create()
+        self.y_pid = self.CONFIGS[self.Gains.Y.value].create()
+        self.z_pid = self.CONFIGS[self.Gains.Z.value].create()
+    def reset(self):
+        self.x_pid.reset()
+        self.y_pid.reset()
+        self.z_pid.reset()
+    def calculate_velocities(
+            self,
+            target_position : np.ndarray,
+            current_position : np.ndarray,
+            dt = 0.01
+    ) -> tuple[np.double,np.double,np.double]:
+        """
+        Input target position, outputs target velocities
+        """
+        x0,y0,z0 = current_position
+        x1,y1,z1 = target_position
+        x_error,y_error,z_error = x1-x0,y1-y0,z1-z0
+        x_velocity = self.x_pid.update(
+            x_error,
+            0.0,
+            dt
+        )
+
+        y_velocity = self.y_pid.update(
+            y_error,
+            0.0,
+            dt
+        )
+
+        z_velocity = self.z_pid.update(
+            z_error,
+            0.0,
+            dt
+        )
+        return x_velocity,y_velocity,z_velocity
+
+class Controllers():
+    RATE = "rate"
+    ATTITUDE = "attitude"
+    VELOCITY = "velocity"
+    WAYPOINT = "waypoint"
+    @staticmethod
+    def prompt_mode():
+        """
+        Prompt the user to get what controller they want, then return the corresponding controller.
+        Does not include position since how are you going to fly that... waypoint is for autonomous flight
+        """
+        while True:
+            response = input("Select Controller (" + Controllers.RATE + "/" + Controllers.ATTITUDE + "/" + Controllers.VELOCITY + "): ").strip().lower() or Controllers.RATE
+            if response in (Controllers.RATE, Controllers.ATTITUDE, Controllers.VELOCITY):
+                break
+        return response
+    @staticmethod
+    def calculate_everything(
+            position_controller : PositionController,
+            velocity_controller : VelocityController,
+            attitude_controller : AttitudeController,
+            rate_controller : RateController,
+            target_position : np.ndarray,
+            target_yaw : np.double,
+            current_state : np.ndarray,
+            dt: float = 0.01,
+    ) -> np.ndarray:
+        """Calculate motor commands for a world-frame position and yaw heading.
+
+        Position uses metres with positive Z down; target_yaw is in radians.
+        dt is the control interval in seconds. Create the rate controller first
+        and keep its altitude-dependent configuration updated at the call site.
+        Reuse the controllers between calls to preserve their PID history.
+        """
+        if not math.isfinite(dt) or dt <= 0:
+            raise ValueError("Control interval must be positive and finite")
+        config = rate_controller.control_config
+        if config is None:
+            raise RuntimeError("Create the rate controller before calculating motor commands")
+
+        current_position = State.get_position(current_state)
+        current_rotation = State.get_rotation(current_state)
+        target_velocity = np.asarray(position_controller.calculate_velocities(
+            target_position, current_position, dt=dt,
+        ))
+        target_rotation, collective_thrust = velocity_controller.calculate_attitudes(
+            target_velocity, State.get_velocity(current_state), dt=dt,
+            yaw_angle=target_yaw,
+            hover_collective=config.hover_collective,
+            gravity_magnitude=config.gravity_magnitude,
+        )
+        roll_rate, pitch_rate, yaw_rate = attitude_controller.calculate_rates(
+            target_rotation, current_rotation, dt=dt,
+        )
+        return rate_controller.calculate_action(
+            collective_thrust=collective_thrust,
+            target_roll_rate=roll_rate,
+            target_pitch_rate=pitch_rate,
+            target_yaw_rate=yaw_rate,
+            angular_velocity=State.get_angular_velocity(current_state),
+            dt=dt,
+        )
