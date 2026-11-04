@@ -1,21 +1,24 @@
 """Config-based rate tuning for the standard ProjectAirSim X quad.
 
-Calculated gains target a slow, damped rate response at nominal air density.
+Calculated gains target a slow, damped rate response at the local air density.
 The model assumes SimulationConfigs.write()'s box frame and point-mass motors.
 Rate control brakes rotation; it does not level the aircraft or hold altitude.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import math
 import json5
 import numpy as np
 from scipy.spatial.transform import Rotation
 from drone.Subsystems.PID import PID
 from drone.Subsystems.data.data import Action
+from drone.simulations.physics_model import atmosphere, ROTOR_BASE_DENSITY, SEA_LEVEL_DENSITY
 
 from enum import Enum
 
 def clamp(value, min_value, max_value):
         return max(min_value, min(max_value, value))
+
+gravity = 9.80665  # m/s^2. Positive because up is negative
 
 class Controllers():
     RATE = "rate"
@@ -56,6 +59,10 @@ class RateThrustConfig:
     hover_collective: float
     recovery_collective: float
     response_time: float
+    air_density: float
+    gravity_magnitude: float
+    altitude_m: float
+    gamepad_thrust_to_weight: float
 
     # Optional multipliers for gamepad inputs AFTER deadzone processing and
     # BEFORE conversion to collective/rad/s. Never applied by RateController.
@@ -63,6 +70,26 @@ class RateThrustConfig:
     roll_rate_sensitivity: float = 1.0
     pitch_rate_sensitivity: float = 1.0
     yaw_rate_sensitivity: float = 1.0
+
+    def at_altitude(self, altitude_m):
+        """Refresh environmental scaling without resetting any PID history."""
+        density, local_gravity = atmosphere(altitude_m)
+        ratio = density / self.air_density
+        thrust = self.max_motor_thrust * ratio
+        hover = self.hover_collective / ratio * local_gravity / self.gravity_magnitude
+        sensitivity = min(1.0, self.gamepad_thrust_to_weight * hover / Action.ASSUMED_MAX_THRUST)
+        return replace(
+            self, pid_configs={axis: replace(pid, kp=pid.kp / ratio,
+                                             ki=pid.ki / ratio, kd=pid.kd / ratio)
+                               for axis, pid in self.pid_configs.items()},
+            max_motor_thrust=thrust, hover_collective=hover,
+            recovery_collective=min(Action.ASSUMED_MAX_THRUST / 2, .5 * hover),
+            air_density=density, gravity_magnitude=local_gravity, altitude_m=altitude_m,
+            throttle_sensitivity=sensitivity,
+            roll_rate_sensitivity=math.sqrt(sensitivity),
+            pitch_rate_sensitivity=math.sqrt(sensitivity),
+            yaw_rate_sensitivity=math.sqrt(sensitivity),
+        )
 
 
 class RateController:
@@ -89,20 +116,29 @@ class RateController:
     MAX_ROLL_RATE = 2.0
     MAX_PITCH_RATE = 2.0
     MAX_YAW_RATE = 2.0
-    
+
     def __init__(self, mode : str):
         self.roll_pid = self.DEFAULT_CONFIGS[self.Gains.ROLL.value].create()
         self.pitch_pid = self.DEFAULT_CONFIGS[self.Gains.PITCH.value].create()
         self.yaw_pid = self.DEFAULT_CONFIGS[self.Gains.YAW.value].create()
         self.mode = mode
         self.control_config: RateThrustConfig | None = None
-    def create(self, configs, dt=0.01, response_time=0.25):
-        self.control_config = self.calculate_control_config(configs, dt, response_time)
+    def create(self, configs, dt=0.01, response_time=0.25, *, altitude_m=0.0):
+        self.control_config = self.calculate_control_config(configs, dt, response_time, altitude_m=altitude_m)
         pid_configs = (self.control_config.pid_configs
                        if self.mode == self.Modes.CALCULATED else self.DEFAULT_CONFIGS)
         self.roll_pid = pid_configs[self.Gains.ROLL.value].create()
         self.pitch_pid = pid_configs[self.Gains.PITCH.value].create()
         self.yaw_pid = pid_configs[self.Gains.YAW.value].create()
+    def update_altitude(self, altitude_m):
+        if self.control_config is None:
+            raise RuntimeError("Create the rate controller before updating altitude")
+        self.control_config = self.control_config.at_altitude(altitude_m)
+        if self.mode == self.Modes.CALCULATED:
+            for axis, pid in (("roll", self.roll_pid), ("pitch", self.pitch_pid), ("yaw", self.yaw_pid)):
+                gain = self.control_config.pid_configs[axis]
+                pid.kp, pid.ki, pid.kd = gain.kp, gain.ki, gain.kd
+
     @property
     def recovery_collective(self):
         return self.control_config.recovery_collective if self.control_config else 0.0
@@ -126,7 +162,7 @@ class RateController:
 
     @staticmethod
     def calculate_control_config(configs, dt=0.01, response_time=0.25,
-                                 *, gamepad_thrust_to_weight=2.0) -> RateThrustConfig:
+                                 *, gamepad_thrust_to_weight=2.0, altitude_m=0.0) -> RateThrustConfig:
         """Tune rate gains and recovery collective from one shared physics model.
 
         Larger response_time gives softer P-only rate control. Recovery thrust
@@ -137,7 +173,7 @@ class RateController:
 
         Optional gamepad multipliers are returned as metadata only. Throttle
         scaling caps full stick at gamepad_thrust_to_weight times weight
-        (nominal density); hover is 1/gamepad_thrust_to_weight stick when enough
+        (local density); hover is 1/gamepad_thrust_to_weight stick when enough
         thrust is available. This intentionally limits accessible top power.
         Rate multipliers use sqrt(throttle_sensitivity), a softer-stick comfort
         heuristic, not compensation for plant gain. Closed-loop rate gains
@@ -171,13 +207,15 @@ class RateController:
         frame_mass = configs.DEFAULT_FRAME_MASS * scale
         motor_mass = configs.DEFAULT_MOTOR_MASS * scale
         positions = np.array(configs.calculate_motor_positions(configs.arm_length))
-        center = motor_mass * positions.sum(axis=0) / configs.mass
+        # FastPhysicsBody::CalculateInertia aggregates diagonal terms about
+        # the root origin, not the combined center of mass.
         inertia = frame_mass / 12 * (np.sum(dimensions**2) - dimensions**2)
-        inertia += frame_mass * (np.dot(center, center) - center**2)
-        offsets = positions - center
-        inertia += motor_mass * (np.sum(offsets**2) - np.sum(offsets**2, axis=0))
+        inertia += motor_mass * (np.sum(positions**2) - np.sum(positions**2, axis=0))
         # ProjectAirSim RotorSettings::CalcMaxThrustAndTorque formulas.
-        rpm_factor = 1.225 * (configs.MAX_RPM / 60)**2
+        density, local_gravity = atmosphere(altitude_m)
+        # RotorSettings uses 1.225 base density; Robot::UpdateActuators then
+        # applies density / EarthUtils::kSeaLevelAirDensity to force AND torque.
+        rpm_factor = ROTOR_BASE_DENSITY * (configs.MAX_RPM / 60)**2 * density / SEA_LEVEL_DENSITY
         thrust = configs.thrust_coef * rpm_factor * diameter**4
         torque = configs.torque_coef * rpm_factor * diameter**5 / (2 * math.pi)
         # Mixer corrections affect all four motors; upward thrust is -Z.
@@ -188,9 +226,15 @@ class RateController:
         gains = 1 / (authority * response)
         pid_configs = {axis: PIDConfig(float(gain), output_limit=Action.ASSUMED_MAX_THRUST / 4)
                 for axis, gain in zip((RateController.Gains.ROLL.value, RateController.Gains.PITCH.value, RateController.Gains.YAW.value), gains)}
-        hover_collective = configs.mass * 9.80665 / (4 * thrust) * Action.ASSUMED_MAX_THRUST
+        # ProjectAirSim FastPhysicsBody initializes translational mass from
+        # the root link ONLY (SetMass(root_link.GetInertial().GetMass())).
+        # SimulationConfigs.mass includes four motors, but their mass is not
+        # accumulated by that backend. Match its root mass for thrust scaling;
+        # keep the full link geometry above for rotational inertia.
+        flight_mass = frame_mass
+        hover_collective = flight_mass * local_gravity / (4 * thrust) * Action.ASSUMED_MAX_THRUST
         recovery_collective = min(Action.ASSUMED_MAX_THRUST / 2, .5 * hover_collective)
-        thrust_to_weight = 4 * thrust / (configs.mass * 9.80665)
+        thrust_to_weight = 4 * thrust / (flight_mass * local_gravity)
         throttle_sensitivity = min(1.0, gamepad_thrust_to_weight / thrust_to_weight)
         rate_sensitivity = math.sqrt(throttle_sensitivity)
         return RateThrustConfig(
@@ -199,13 +243,17 @@ class RateController:
             hover_collective=hover_collective,
             recovery_collective=recovery_collective,
             response_time=response,
+            air_density=density,
+            gravity_magnitude=local_gravity,
+            altitude_m=altitude_m,
+            gamepad_thrust_to_weight=gamepad_thrust_to_weight,
             throttle_sensitivity=throttle_sensitivity,
             roll_rate_sensitivity=rate_sensitivity,
             pitch_rate_sensitivity=rate_sensitivity,
             yaw_rate_sensitivity=rate_sensitivity,
         )
 
-    
+
     @staticmethod
     def allocate_motor_outputs(collective, roll, pitch, yaw, limit, recovery):
         """Prioritize roll/pitch, then fit yaw into remaining motor headroom.
@@ -253,7 +301,7 @@ class RateController:
 
         return collective_thrust, target_roll_vel, target_pitch_vel, target_yaw_vel
 
-    
+
     def calculate_action(
         self,
         collective_thrust : np.double,
@@ -309,7 +357,7 @@ class RateController:
 
 class AttitudeController:
     """
-    This class controls orientation of the drone. 
+    This class controls orientation of the drone.
     Assuming rate control works, there will be no automatic tuning for atitude.
     """
     class Gains(Enum):
@@ -396,3 +444,106 @@ class AttitudeController:
         # Heading of the body X axis in the world horizontal plane.
         yaw = np.arctan2(current_rotation_matrix[1, 0], current_rotation_matrix[0, 0])
         return Rotation.from_euler("z", yaw).as_matrix() @ tilt
+
+
+class VelocityController:
+    """
+    This class controls the velocity of the drone.
+    Assuming attitude control works, there will be no automatic tuning for velocity.
+    """
+    MAX_X_VELOCITY = 8 #m/s
+    MAX_Y_VELOCITY = 8 #m/s
+    MAX_Z_VELOCITY = 3 #m/s -> Vertical
+
+    MAX_ACCELERATION = 3 #m/s^2
+
+    class Gains(Enum):
+        X = "x_velocity"
+        Y = "y_velocity"
+        Z = "z_velocity"
+    CONFIGS = {
+        Gains.X.value: PIDConfig(0.3,output_limit=MAX_ACCELERATION),
+        Gains.Y.value: PIDConfig(0.3,output_limit=MAX_ACCELERATION),
+        # PI trims small mass/thrust/gravity biases; P alone leaves a steady
+        # vertical speed offset. Integral trim is bounded to +/-1 m/s^2.
+        Gains.Z.value: PIDConfig(0.8, ki=0.05, output_limit=MAX_ACCELERATION,
+                                 integral_limit=20.0),
+    }
+
+    def __init__(self):
+        self.x_pid = self.CONFIGS[self.Gains.X.value].create()
+        self.y_pid = self.CONFIGS[self.Gains.Y.value].create()
+        self.z_pid = self.CONFIGS[self.Gains.Z.value].create()
+    def reset(self):
+        self.x_pid.reset()
+        self.y_pid.reset()
+        self.z_pid.reset()
+    @staticmethod
+    def relative_to_world(forward, horizontal, yaw) -> tuple[np.double, np.double]:
+        """Convert heading-relative forward/right velocity to world NED X/Y.
+        yaw is in radians; positive horizontal points to the drone's right.
+        Only heading is used, so roll/pitch do not introduce vertical motion.
+        """
+        cosine, sine = math.cos(yaw), math.sin(yaw)
+        return (np.double(cosine * forward - sine * horizontal),
+                np.double(sine * forward + cosine * horizontal))
+    def calculate_attitudes(
+            self,
+            target_velocity: np.ndarray,
+            current_velocity: np.ndarray,
+            dt: np.double,
+            yaw_angle: np.double = 0.0,
+            *,
+            hover_collective: float,
+            gravity_magnitude: float = gravity,
+    ) -> tuple[np.ndarray, float]:
+        """Return (target rotation matrix, per-motor collective action).
+
+        Velocities are world-frame m/s with positive Z down. yaw_angle
+        is the desired world heading in radians. Pass hover_collective
+        from RateController.control_config; it supplies the vehicle's
+        mass/thrust scaling without treating action units as newtons.
+
+        The thrust magnitude includes gravity, vertical acceleration,
+        and the additional thrust needed for horizontal acceleration.
+        """
+        target = np.asarray(target_velocity, dtype=float)
+        current = np.asarray(current_velocity, dtype=float)
+
+        # Preserve the previous trim so saturation can reject windup below.
+        previous_z_integral = self.z_pid.integral
+        acceleration = np.array([
+            self.x_pid.update(target[0], current[0], dt),
+            self.y_pid.update(target[1], current[1], dt),
+            self.z_pid.update(target[2], current[2], dt),
+        ])
+        # a_world = gravity*e_z - (total_thrust/mass)*R[:, 2].
+        # Rotate the requested horizontal acceleration into heading axes
+        # to solve roll/pitch while preserving the specified Euler yaw.
+        cosine, sine = math.cos(yaw_angle), math.sin(yaw_angle)
+        ax = cosine * acceleration[0] + sine * acceleration[1]
+        ay = -sine * acceleration[0] + cosine * acceleration[1]
+        upward_acceleration = gravity_magnitude - acceleration[2]
+        # With the configured +/-3 m/s^2 limits this is always positive.
+        if upward_acceleration <= 0:
+            upward_acceleration = 1e-6
+        pitch_angle = math.atan2(-ax, upward_acceleration)
+        roll_angle = math.atan2(ay, math.hypot(ax, upward_acceleration))
+        rotation_matrix = Rotation.from_euler(
+            "xyz", [roll_angle, pitch_angle, yaw_angle], degrees=False
+        ).as_matrix()
+        thrust_per_mass = math.sqrt(ax**2 + ay**2 + upward_acceleration**2)
+        requested_collective = hover_collective * thrust_per_mass / gravity_magnitude
+        collective = float(np.clip(requested_collective, 0.0, Action.ASSUMED_MAX_THRUST))
+        z_error = target[2] - current[2]
+        acceleration_saturated = (
+            self.z_pid.output_limit is not None
+            and abs(acceleration[2]) >= self.z_pid.output_limit
+            and z_error * acceleration[2] > 0
+        )
+        # Negative Z error asks for more upward thrust. Do not build up trim
+        # when that request exceeds available thrust; allow unwinding instead.
+        thrust_saturated = requested_collective >= Action.ASSUMED_MAX_THRUST and z_error < 0
+        if acceleration_saturated or thrust_saturated:
+            self.z_pid.integral = previous_z_integral
+        return rotation_matrix, collective

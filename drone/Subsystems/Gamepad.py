@@ -18,14 +18,13 @@ class Gamepad:
         LB = "BTN_TL"
         RB = "BTN_TR"
 
-    THRESHOLD = 0.2 #Deadzone percent threshold for joystick inputs
+    THRESHOLD = 0.12 #Deadzone percent threshold for joystick inputs
     def __init__(self):
         self._buttons = {}
         self._axes = {}
         self._lock = threading.Lock()
         self._running = True
         self.connected = False
-        self.THRESHOLD = 0.2
 
         self._thread = threading.Thread(
             target=self._read_loop,
@@ -123,9 +122,9 @@ class Gamepad:
         return throttle, roll, pitch, yaw_vel
 
     def velocity_control_inputs(self) -> tuple[float, float, float, float]:
-        vertical_vel = self.get_joystick(Gamepad.Inputs.LEFT_Y)
+        vertical_vel = self.get_joystick(Gamepad.Inputs.LEFT_Y) * -1
         horizontal_vel = self.get_joystick(Gamepad.Inputs.LEFT_X)
-        forward_vel   = self.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
+        forward_vel   = self.get_joystick(Gamepad.Inputs.RIGHT_Y)
         yaw_vel      = self.get_joystick(Gamepad.Inputs.RIGHT_X)
 
         # Apply deadzone threshold

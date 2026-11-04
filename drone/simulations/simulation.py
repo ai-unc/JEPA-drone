@@ -30,7 +30,7 @@ class ProjectAirSimSimulation(FlightController):
     SKY_POSE_Z = -80
     SPAWN_POSE_VARIATION = 100
 
-    def set_pose_to_random_in_sky(self, height = SKY_POSE_Z):
+    def set_pose_to_random_in_sky(self, height = SKY_POSE_Z, rnd_pitch_and_roll = True):
         assert self.drone is not None
         import random
         position = {
@@ -39,6 +39,10 @@ class ProjectAirSimSimulation(FlightController):
             "z": height,
         }
         x, y, z, w = Rotation.random().as_quat()
+        if not rnd_pitch_and_roll:
+            # Start level while preserving the sampled heading.
+            yaw = Rotation.from_quat([x, y, z, w]).as_euler("xyz")[2]
+            x, y, z, w = Rotation.from_euler("z", yaw).as_quat()
         orientation = {
             "w": float(w),
             "x": float(x),

@@ -8,7 +8,7 @@ import numpy as np
 from drone.Subsystems.data.data import State
 from simulations.simulation import ProjectAirSimSimulation
 from Subsystems.PID import PID
-from drone.Controllers import Controllers, AttitudeController, RateController, PIDConfig
+from drone.Controllers import Controllers, VelocityController, AttitudeController, RateController, PIDConfig
 
 
 from projectairsim import drone, types
@@ -23,13 +23,12 @@ from scipy.spatial.transform import Rotation
 
 
 """
-The idea: run the simulator at the maximum speed the computer can handle.
-Have the flight last 100 in simulator seconds, which is split into 10, 10 second flight logs.
-Assuming simulation configs are randomized, have an auto tuner for PID controls based on sim configs.
-Since flight is sped up, acro control would be to hard, so rotation and velocity control is ideal.
-So I dont get bored flying, a "target" will spawn within a certain radius of my drone.
-Since I am lazy and there is no way to disable collisions in this python version,
-I will make the target teleport somewhere else whenever you get too close.
+The idea:
+1. Achieve rate control via an autotuner
+2. Achieve altitude control that uses the rate controller and doesn't need to be autotuned
+3. Achieve velocity control that uses attitude control and doesn't need to be autotuned
+Once those 3 steps are achieved, autonomous position control is next.
+With autonomous position control, massive data collection is possible.
 --Ethan
 """
 async def main():
@@ -49,6 +48,7 @@ async def main():
     rate_mode = RateController.prompt_mode()
     rate_controller = RateController(rate_mode)
     attitude_controller = AttitudeController()
+    velocity_controller = VelocityController()
     control_mode = Controllers.prompt_mode()
     gamepad = Gamepad()
     try:
@@ -70,9 +70,16 @@ async def main():
             start_time = time.perf_counter()
             try:
                 simulation.start()
-                simulation.set_pose_to_random_in_sky(height = spawn_height)
-                rate_controller.create(simulation.configs)
+                simulation.set_pose_to_random_in_sky(height = spawn_height,rnd_pitch_and_roll=False)
+                # Environment uses MSL altitude = scene origin altitude - NED Z.
+                home_altitude = float(simulation.world.home_geo_point["altitude"])
+                rate_controller.create(
+                    simulation.configs,
+                    altitude_m=home_altitude - simulation.state[State.PZ],
+                )
                 attitude_controller.reset()
+                velocity_controller.reset()
+
                 start_time = time.perf_counter()
                 for asset in simulation.world.list_assets(
                                 ".*[Ss]phere.*|.*[Cc]ube.*|.*[Cc]one.*|.*[Cc]ylinder.*"
@@ -153,28 +160,48 @@ async def main():
                          target_reached = True
                          score += 1
 
+                    current_rotation = State.get_rotation(drone.state)
+                    current_yaw = np.arctan2(current_rotation[1, 0], current_rotation[0, 0])
+                    
+                    rate_controller.update_altitude(home_altitude - drone.state[State.PZ])
                     throttle,roll_rate,pitch_rate,yaw_rate = 0,0,0,0
-
-                    if control_mode == Controllers.ATTITUDE:
+                    if control_mode == Controllers.VELOCITY:
+                        target_velocitiy_z,relative_horizontal_velocity,relative_forward_velocity,yaw_rate = gamepad.velocity_control_inputs()
+                        target_velocity_x,target_velocity_y = VelocityController.relative_to_world(forward=relative_forward_velocity, horizontal=relative_horizontal_velocity,yaw = current_yaw)
+                        target_velocity_x *= VelocityController.MAX_X_VELOCITY
+                        target_velocity_y *= VelocityController.MAX_Y_VELOCITY
+                        target_velocitiy_z *= VelocityController.MAX_Z_VELOCITY
+                        target_velocity = np.array([target_velocity_x,target_velocity_y,target_velocitiy_z],dtype=float)
+                        # Yaw is commanded separately as a body rate. Preserve
+                        # current heading in the velocity target so the attitude
+                        # error does not couple an uncommanded yaw turn into tilt.
+                        rotation_matrix,collective_thrust = velocity_controller.calculate_attitudes(
+                            target_velocity, State.get_velocity(drone.state), dt=0.01,
+                            yaw_angle=current_yaw,
+                            hover_collective=rate_controller.control_config.hover_collective,
+                            gravity_magnitude=rate_controller.control_config.gravity_magnitude,
+                        )
+                        roll_rate,pitch_rate,_ = attitude_controller.calculate_rates(
+                            rotation_matrix, current_rotation, dt=0.01,
+                        )
+                    elif control_mode == Controllers.ATTITUDE:
                         throttle,roll,pitch,yaw_rate = gamepad.attitude_control_inputs()
+                        collective_thrust = throttle * Action.ASSUMED_MAX_THRUST * rate_controller.control_config.throttle_sensitivity
                         rotation_matrix = attitude_controller.gamepad_to_attitude(roll,pitch,State.get_rotation(drone.state))
                         roll_rate,pitch_rate,_ = attitude_controller.calculate_rates(rotation_matrix,State.get_rotation(drone.state),dt = 0.01)
                     elif control_mode == Controllers.RATE:
                         throttle,roll_rate,pitch_rate,yaw_rate = gamepad.rate_control_inputs()
+                        collective_thrust = throttle * Action.ASSUMED_MAX_THRUST * rate_controller.control_config.throttle_sensitivity
 
-                    if control_mode == Controllers.ATTITUDE:
-                        # Attitude outputs are already rates in rad/s; only yaw is a stick input.
-                        collective_thrust = throttle * Action.ASSUMED_MAX_THRUST
-                        yaw_rate *= RateController.MAX_YAW_RATE
-                    else:
-                        throttle *= rate_controller.control_config.throttle_sensitivity
-                        roll_rate *= rate_controller.control_config.roll_rate_sensitivity
-                        pitch_rate *= rate_controller.control_config.pitch_rate_sensitivity
-                        yaw_rate *= rate_controller.control_config.yaw_rate_sensitivity
-                        collective_thrust,roll_rate,pitch_rate,yaw_rate = rate_controller.gamepad_to_target_rates(
-                            throttle,roll_rate,pitch_rate,yaw_rate
-                        )
 
+                    yaw_rate *= RateController.MAX_YAW_RATE * rate_controller.control_config.yaw_rate_sensitivity
+
+                    #Only apply pitch and roll rate sensitivity when those are directly controlled
+                    if control_mode == Controllers.RATE:
+                        roll_rate = roll_rate * RateController.MAX_ROLL_RATE * rate_controller.control_config.roll_rate_sensitivity
+                        pitch_rate = pitch_rate * RateController.MAX_PITCH_RATE * rate_controller.control_config.pitch_rate_sensitivity
+                    elif control_mode == Controllers.VELOCITY:
+                         yaw_rate *= 0.5 #Control preference since yaw rate seems a lot more powerful than the velocity control
 
                     angular_velocity = State.get_angular_velocity(drone.state)
                     action = rate_controller.calculate_action(
