@@ -54,7 +54,8 @@ class PID:
             )
 
         return output
-
+    def to_string(self):
+        return f"PID(kp={self.kp}, ki={self.ki}, kd={self.kd}, output_limit={self.output_limit}, integral_limit={self.integral_limit})"
     def reset(self):
         self.integral = 0.0
         self.previous_error = 0.0

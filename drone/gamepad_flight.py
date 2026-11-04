@@ -8,147 +8,20 @@ import numpy as np
 from drone.Subsystems.data.data import State
 from simulations.simulation import ProjectAirSimSimulation
 from Subsystems.PID import PID
+from drone.Controllers import Controllers, AttitudeController, RateController, PIDConfig
 
 
-from projectairsim import types
+from projectairsim import drone, types
+from projectairsim.types import Pose, Vector3, Quaternion
 
+from scipy.spatial.transform import Rotation
 
+# Separate gamepad entry point using pid_autotuner.py.
 #There is a bunch of AI Generated code here. This was used to fly around and collect data.
 #To be flyable by a human there needs to be several PID controllers to control rotational velocity
 #Which is why this file is so massive
 
-def clamp(value, min_value, max_value):
-    return max(min_value, min(max_value, value))
 
-def normalize_motor_outputs(outputs, max_thrust):
-    """
-    Fits motor outputs into [0, max_thrust] while preserving
-    the relative differences between motors as much as possible.
-    """
-    outputs = np.array(outputs, dtype=float)
-
-    minimum = np.min(outputs)
-    maximum = np.max(outputs)
-
-    # If the requested differential range is larger than the
-    # physical motor range, scale the differential commands down.
-    span = maximum - minimum
-
-    if span > max_thrust:
-        center = (maximum + minimum) / 2.0
-
-        outputs = center + (
-            outputs - center
-        ) * (max_thrust / span)
-
-    # Recalculate after scaling
-    minimum = np.min(outputs)
-    maximum = np.max(outputs)
-
-    # Shift all motors downward together if any motor exceeds max.
-    if maximum > max_thrust:
-        outputs -= maximum - max_thrust
-
-    # Shift all motors upward together if any motor is below zero.
-    minimum = np.min(outputs)
-
-    if minimum < 0:
-        outputs -= minimum
-
-    return np.clip(outputs, 0.0, max_thrust)
-
-def controller_to_action(
-    throttle,
-    target_roll_vel,
-    target_pitch_vel,
-    target_yaw_vel,
-    angular_velocity: np.ndarray,
-    dt: np.double,
-    roll_pid: PID,
-    pitch_pid: PID,
-    yaw_pid: PID
-) -> np.ndarray:
-    # Maximum commanded rotational velocities in rad/s
-    MAX_ROLL_RATE = 2.0
-    MAX_PITCH_RATE = 2.0
-    MAX_YAW_RATE = 2.0
-
-    max_thrust = Action.ASSUMED_MAX_THRUST
-
-    # Controller input [-1, 1] -> target angular velocity
-    target_roll_vel *= MAX_ROLL_RATE
-    target_pitch_vel *= MAX_PITCH_RATE
-    target_yaw_vel *= MAX_YAW_RATE
-
-    current_roll_rate = angular_velocity[0]
-    current_pitch_rate = angular_velocity[1]
-    current_yaw_rate = angular_velocity[2]
-
-    # Angular velocity PID controllers
-    roll_output = roll_pid.update(
-        target_roll_vel,
-        current_roll_rate,
-        dt
-    )
-
-    pitch_output = pitch_pid.update(
-        target_pitch_vel,
-        current_pitch_rate,
-        dt
-    )
-
-    yaw_output = yaw_pid.update(
-        target_yaw_vel,
-        current_yaw_rate,
-        dt
-    )
-
-    corrections = np.array([
-        -roll_output - pitch_output - yaw_output,
-        roll_output - pitch_output + yaw_output,
-        -roll_output + pitch_output + yaw_output,
-        roll_output + pitch_output - yaw_output
-    ])
-
-    required_headroom = max(0.0, np.max(corrections))
-
-    requested_base = throttle * max_thrust
-
-    base = min(
-        requested_base,
-        max_thrust - required_headroom
-    )
-
-    """ print(
-        "target_roll_vel:", target_roll_vel,
-        "current_roll_vel:", current_roll_rate,
-        "target_pitch_vel:", target_pitch_vel,
-        "current_pitch_vel:", current_pitch_rate,
-        "target_yaw_vel:", target_yaw_vel,
-        "current_yaw_vel:", current_yaw_rate
-    )"""
-
-    # X-quad mixer
-    fl = base - roll_output - pitch_output - yaw_output
-    fr = base + roll_output - pitch_output + yaw_output
-    bl = base - roll_output + pitch_output + yaw_output
-    br = base + roll_output + pitch_output - yaw_output
-
-    # Desaturate while preserving motor differences
-    fl, fr, bl, br = normalize_motor_outputs(
-        [fl, fr, bl, br],
-        max_thrust
-    )
-
-    return Action.generate(
-        np.array([
-            np.double(fl),
-            np.double(fr),
-            np.double(bl),
-            np.double(br),
-        ],
-        dtype=np.double)
-    )
 """
 The idea: run the simulator at the maximum speed the computer can handle.
 Have the flight last 100 in simulator seconds, which is split into 10, 10 second flight logs.
@@ -173,7 +46,10 @@ async def main():
     name = "rnd_gamepad"
     if (not bool_rnd_configs):
         name = "gamepad_sky"
-
+    rate_mode = RateController.prompt_mode()
+    rate_controller = RateController(rate_mode)
+    attitude_controller = AttitudeController()
+    control_mode = Controllers.prompt_mode()
     while iteration < iterations:
         iteration += 1
         simulation = ProjectAirSimSimulation()
@@ -189,43 +65,23 @@ async def main():
 
         action = None
 
-        #Left Stick y is throttle
-        #Left Stick x is roll
-        #Right Stick y is pitch
-        #Right Stick x is yaw
+        score = 0
         start_time = time.perf_counter()
         try:
             simulation.start()
             simulation.set_pose_to_random_in_sky(height = spawn_height)
+            rate_controller.create(simulation.configs)
+            attitude_controller.reset()
+            start_time = time.perf_counter()
             for asset in simulation.world.list_assets(
                             ".*[Ss]phere.*|.*[Cc]ube.*|.*[Cc]one.*|.*[Cc]ylinder.*"
                         ):
                             print(asset)
 
-            roll_pid = PID(
-                kp=-0.13,
-                ki=0,
-                kd=-0.000,
-                output_limit=2,
-                integral_limit=1.0
-            )
+           
 
-            pitch_pid = PID(
-                kp=-0.2,
-                ki=0,
-                kd=0.000,
-                output_limit=2,
-                integral_limit=1.0
-            )
+            rate_controller.print_configs()
 
-            yaw_pid = PID(
-                kp=0.8,
-                ki=0.00,
-                kd=0.0,
-                output_limit=2,
-                integral_limit=1.0
-            )
-            
             drone.data_sequence = None
 
             #Summon the "target" to fly to
@@ -269,7 +125,7 @@ async def main():
                     if target_name is None:
                         target_name = simulation.world.spawn_object(
                             object_name="FlightTarget",
-                            asset_path="Cube",
+                            asset_path="Sphere",
                             object_pose=target_pose,
                             object_scale=[8.0, 8.0, 8.0],
                             enable_physics=False,
@@ -283,42 +139,45 @@ async def main():
                             teleport=True,
                         )
 
+                target_position = np.array([
+                    target_pose["translation"]["x"],
+                    target_pose["translation"]["y"],
+                    target_pose["translation"]["z"],
+                ], dtype=float)
+
                 x,y,z = State.get_position(drone.state)
-                tx,ty,tz = target_pose["translation"]["x"],target_pose["translation"]["y"],target_pose["translation"]["z"]
+                tx,ty,tz = target_position[0],target_position[1],target_position[2]
                 distance_from_target = State.get_distance(x,tx,y,ty,z,tz)
                 if (distance_from_target < 20):
                      target_reached = True
                      score += 1
 
-                throttle = gamepad.get_joystick(Gamepad.Inputs.LEFT_Y)
-                roll     = gamepad.get_joystick(Gamepad.Inputs.LEFT_X)
-                pitch    = gamepad.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
-                yaw      = gamepad.get_joystick(Gamepad.Inputs.RIGHT_X)
-                THRESHOLD = 0.2
+                throttle,roll_rate,pitch_rate,yaw_rate = 0,0,0,0
 
+                if control_mode == Controllers.ATTITUDE:
+                    throttle,roll,pitch,yaw_rate = gamepad.attitude_control_inputs()
+                    rotation_matrix = attitude_controller.gamepad_to_attitude(roll,pitch,State.get_rotation(drone.state))
+                    roll_rate,pitch_rate,_ = attitude_controller.calculate_rates(rotation_matrix,State.get_rotation(drone.state),dt = 0.01)
+                elif control_mode == Controllers.RATE:
+                    throttle,roll_rate,pitch_rate,yaw_rate = gamepad.rate_control_inputs()
+                   
+                if control_mode == Controllers.ATTITUDE:
+                    # Attitude outputs are already rates in rad/s; only yaw is a stick input.
+                    collective_thrust = throttle * Action.ASSUMED_MAX_THRUST
+                    yaw_rate *= RateController.MAX_YAW_RATE
+                else:
+                    collective_thrust,roll_rate,pitch_rate,yaw_rate = rate_controller.gamepad_to_target_rates(
+                        throttle,roll_rate,pitch_rate,yaw_rate
+                    ) 
 
-
-
-                # Apply deadzone threshold
-                if abs(throttle) < THRESHOLD:
-                    throttle = 0.0
-                if abs(roll) < THRESHOLD:
-                    roll = 0.0
-                if abs(pitch) < THRESHOLD:
-                    pitch = 0.0
-                if abs(yaw) < THRESHOLD:
-                    yaw = 0.0
                 angular_velocity = State.get_angular_velocity(drone.state)
-                action = controller_to_action(
-                    throttle,
-                    roll,
-                    pitch,
-                    yaw,
-                    angular_velocity,
-                    drone.flight_controller.CONTROL_PERIOD,
-                    roll_pid,
-                    pitch_pid,
-                    yaw_pid
+                action = rate_controller.calculate_action(
+                    angular_velocity=angular_velocity,
+                    collective_thrust=collective_thrust,
+                    target_roll_rate=roll_rate,
+                    target_pitch_rate=pitch_rate,
+                    target_yaw_rate=yaw_rate,
+                    dt = 0.01
                 )
                 
                 await drone.update(action = action,display=False)

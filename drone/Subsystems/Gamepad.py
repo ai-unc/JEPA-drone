@@ -18,13 +18,14 @@ class Gamepad:
         LB = "BTN_TL"
         RB = "BTN_TR"
 
-
+    THRESHOLD = 0.2 #Deadzone percent threshold for joystick inputs
     def __init__(self):
         self._buttons = {}
         self._axes = {}
         self._lock = threading.Lock()
         self._running = True
         self.connected = False
+        self.THRESHOLD = 0.2
 
         self._thread = threading.Thread(
             target=self._read_loop,
@@ -72,3 +73,54 @@ class Gamepad:
         if (self.connected):
             self._thread.join()
         self.connected = False
+
+    def rate_control_inputs(self) -> tuple[float, float, float, float]:
+        throttle = self.get_joystick(Gamepad.Inputs.LEFT_Y)
+        roll_vel     = self.get_joystick(Gamepad.Inputs.LEFT_X)
+        pitch_vel    = self.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
+        yaw_vel      = self.get_joystick(Gamepad.Inputs.RIGHT_X)
+
+        # Apply deadzone threshold
+        if abs(throttle) < self.THRESHOLD:
+            throttle = 0.0
+        if abs(roll_vel) < self.THRESHOLD:
+            roll_vel = 0.0
+        if abs(pitch_vel) < self.THRESHOLD:
+            pitch_vel = 0.0
+        if abs(yaw_vel) < self.THRESHOLD:
+            yaw_vel = 0.0
+        return throttle, roll_vel, pitch_vel, yaw_vel
+
+    def attitude_control_inputs(self) -> tuple[float, float, float, float]:
+        throttle = self.get_joystick(Gamepad.Inputs.LEFT_Y)
+        roll     = self.get_joystick(Gamepad.Inputs.LEFT_X)
+        pitch    = self.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
+        yaw_vel      = self.get_joystick(Gamepad.Inputs.RIGHT_X)
+
+        # Apply deadzone threshold
+        if abs(throttle) < self.THRESHOLD:
+            throttle = 0.0
+        if abs(roll) < self.THRESHOLD:
+            roll = 0.0
+        if abs(pitch) < self.THRESHOLD:
+            pitch = 0.0
+        if abs(yaw_vel) < self.THRESHOLD:
+            yaw_vel = 0.0
+        return throttle, roll, pitch, yaw_vel
+
+    def velocity_control_inputs(self) -> tuple[float, float, float, float]:
+        vertical_vel = self.get_joystick(Gamepad.Inputs.LEFT_Y)
+        horizontal_vel = self.get_joystick(Gamepad.Inputs.LEFT_X)
+        forward_vel   = self.get_joystick(Gamepad.Inputs.RIGHT_Y) * -1
+        yaw_vel      = self.get_joystick(Gamepad.Inputs.RIGHT_X)
+
+        # Apply deadzone threshold
+        if abs(vertical_vel) < self.THRESHOLD:
+            vertical_vel = 0.0
+        if abs(horizontal_vel) < self.THRESHOLD:
+            horizontal_vel = 0.0
+        if abs(forward_vel) < self.THRESHOLD:
+            forward_vel = 0.0
+        if abs(yaw_vel) < self.THRESHOLD:
+            yaw_vel = 0.0
+        return vertical_vel, horizontal_vel, forward_vel, yaw_vel
