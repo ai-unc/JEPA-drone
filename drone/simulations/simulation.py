@@ -81,7 +81,7 @@ class ProjectAirSimSimulation(FlightController):
                 raise RuntimeError("Failed to spawn FlightTarget.")
         else:
             self.world.set_object_pose(
-                object_name=self.TARGET_NAME,
+                object_name=self.target_name,
                 object_pose=target_pose,
                 teleport=True,
             )
@@ -118,7 +118,7 @@ class ProjectAirSimSimulation(FlightController):
         }))
 
         self.state, self.time = self.read()
-        return [[position["x"],position["y"],position["y"]],orientation]
+        return np.array([position["x"], position["y"], position["z"]], dtype=float), orientation
     def config_prompt(self) -> None:
         #CONFIGS MUST BE SET BEFORE THE SIMULATION STARTS!!!
         user_input = input("Random Configs? (y/n): ")
