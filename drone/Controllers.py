@@ -99,26 +99,45 @@ class RateController:
         Gains.YAW.value: PIDConfig(0.8),
     }
 
+    # Fixed nominal 1 kg frame and 4.18 N motors for baseline comparisons.
+    # These values deliberately do not depend on the active simulation config.
+    DEFAULT_CONTROL_CONFIG = RateThrustConfig(
+        pid_configs=DEFAULT_CONFIGS,
+        max_motor_thrust=Action.ASSUMED_MAX_THRUST,
+        hover_collective=gravity / 4,
+        recovery_collective=gravity / 8,
+        response_time=0.25,
+        air_density=atmosphere(0.0)[0],
+        gravity_magnitude=gravity,
+        altitude_m=0.0,
+        gamepad_thrust_to_weight=2.0,
+    )
+
     MAX_ROLL_RATE = 2.0
     MAX_PITCH_RATE = 2.0
     MAX_YAW_RATE = 2.0
 
-    def __init__(self, mode : str):
+    def __init__(self, mode: str = Modes.DEFAULT):
         self.roll_pid = self.DEFAULT_CONFIGS[self.Gains.ROLL.value].create()
         self.pitch_pid = self.DEFAULT_CONFIGS[self.Gains.PITCH.value].create()
         self.yaw_pid = self.DEFAULT_CONFIGS[self.Gains.YAW.value].create()
         self.mode = mode
-        self.control_config: RateThrustConfig | None = None
-    def create(self, configs, dt=0.01, response_time=0.25, *, altitude_m=0.0):
-        self.control_config = self.calculate_control_config(configs, dt, response_time, altitude_m=altitude_m)
-        pid_configs = (self.control_config.pid_configs
-                       if self.mode == self.Modes.CALCULATED else self.DEFAULT_CONFIGS)
+        self.control_config = replace(self.DEFAULT_CONTROL_CONFIG, pid_configs=dict(self.DEFAULT_CONFIGS))
+    def create(self, configs=None, dt=0.01, response_time=0.25, *, altitude_m=0.0):
+        if (self.mode == RateController.Modes.CALCULATED):
+            if configs is None:
+                raise ValueError("Calculated mode requires simulation configs")
+            self.control_config = self.calculate_control_config(configs, dt, response_time, altitude_m=altitude_m)
+            pid_configs = self.control_config.pid_configs
+        else:
+            self.control_config = self.DEFAULT_CONTROL_CONFIG.at_altitude(altitude_m)
+            # Keep the baseline PID gains fixed at every altitude.
+            self.control_config = replace(self.control_config, pid_configs=dict(self.DEFAULT_CONFIGS))
+            pid_configs = self.control_config.pid_configs
         self.roll_pid = pid_configs[self.Gains.ROLL.value].create()
         self.pitch_pid = pid_configs[self.Gains.PITCH.value].create()
         self.yaw_pid = pid_configs[self.Gains.YAW.value].create()
     def update_altitude(self, altitude_m):
-        if self.control_config is None:
-            raise RuntimeError("Create the rate controller before updating altitude")
         self.control_config = self.control_config.at_altitude(altitude_m)
         if self.mode == self.Modes.CALCULATED:
             for axis, pid in (("roll", self.roll_pid), ("pitch", self.pitch_pid), ("yaw", self.yaw_pid)):
@@ -127,7 +146,7 @@ class RateController:
 
     @property
     def recovery_collective(self):
-        return self.control_config.recovery_collective if self.control_config else 0.0
+        return self.control_config.recovery_collective
 
     def print_configs(self):
         print("Rate PID settings:")
@@ -607,15 +626,13 @@ class Controllers():
         """Calculate motor commands for a world-frame position and yaw heading.
 
         Position uses metres with positive Z down; target_yaw is in radians.
-        dt is the control interval in seconds. Create the rate controller first
-        and keep its altitude-dependent configuration updated at the call site.
+        dt is the control interval in seconds. Keep the rate controller's
+        altitude-dependent configuration updated at the call site.
         Reuse the controllers between calls to preserve their PID history.
         """
         if not math.isfinite(dt) or dt <= 0:
             raise ValueError("Control interval must be positive and finite")
         config = rate_controller.control_config
-        if config is None:
-            raise RuntimeError("Create the rate controller before calculating motor commands")
 
         current_position = State.get_position(current_state)
         current_rotation = State.get_rotation(current_state)

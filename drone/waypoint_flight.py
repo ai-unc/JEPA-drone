@@ -49,7 +49,6 @@ async def main():
     attitude_controller = AttitudeController()
     velocity_controller = VelocityController()
     position_controller = PositionController()
-    control_mode = Controllers.WAYPOINT
     gamepad = Gamepad()
     try:
         while iteration < iterations:

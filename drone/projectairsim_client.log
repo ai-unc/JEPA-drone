@@ -1,17 +1,34 @@
-21:36:06:880 [INFO] Connecting to simulation server at 127.0.0.1
-21:36:06:890 [INFO] Connection opened.
-21:36:06:891 [INFO] Loading scene config: scene_basic_drone.jsonc
-21:36:08:476 [INFO] Getting the list of available topic info from the sim server...
-21:36:08:489 [INFO] Successfully received topic info list.
-21:36:10:490 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-21:36:10:492 [INFO] Trajectory 'null_trajectory' imported successfully.
-21:36:10:493 [INFO] Initalizing Drone 'Drone1'...
-21:36:10:493 [INFO] -------------------------------------------------
-21:36:10:494 [INFO] The following topics can be subscribed to for robot 'Drone1':
-21:36:10:494 [INFO]     robot_info["actual_pose"]
-21:36:10:495 [INFO]     robot_info["collision_info"]
-21:36:10:495 [INFO]     robot_info["rotor_info"]
-21:36:10:495 [INFO] -------------------------------------------------
-21:36:10:496 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-21:38:10:666 [INFO] Disconnecting from simulation server...
-21:38:10:765 [INFO] Disconnected.
+22:51:47:446 [INFO] Connecting to simulation server at 127.0.0.1
+22:51:47:454 [INFO] Connection opened.
+22:51:47:454 [INFO] Loading scene config: scene_basic_drone.jsonc
+22:51:49:008 [INFO] Getting the list of available topic info from the sim server...
+22:51:49:021 [INFO] Successfully received topic info list.
+22:51:51:022 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+22:51:51:024 [INFO] Trajectory 'null_trajectory' imported successfully.
+22:51:51:025 [INFO] Initalizing Drone 'Drone1'...
+22:51:51:025 [INFO] -------------------------------------------------
+22:51:51:026 [INFO] The following topics can be subscribed to for robot 'Drone1':
+22:51:51:026 [INFO]     robot_info["actual_pose"]
+22:51:51:027 [INFO]     robot_info["collision_info"]
+22:51:51:028 [INFO]     robot_info["rotor_info"]
+22:51:51:028 [INFO] -------------------------------------------------
+22:51:51:029 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+22:52:21:198 [INFO] Disconnecting from simulation server...
+22:52:21:325 [INFO] Disconnected.
+22:52:21:504 [INFO] Connecting to simulation server at 127.0.0.1
+22:52:21:509 [INFO] Connection opened.
+22:52:21:511 [INFO] Loading scene config: scene_basic_drone.jsonc
+22:52:23:421 [INFO] Getting the list of available topic info from the sim server...
+22:52:23:433 [INFO] Successfully received topic info list.
+22:52:25:442 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+22:52:25:446 [INFO] Trajectory 'null_trajectory' imported successfully.
+22:52:25:446 [INFO] Initalizing Drone 'Drone1'...
+22:52:25:447 [INFO] -------------------------------------------------
+22:52:25:448 [INFO] The following topics can be subscribed to for robot 'Drone1':
+22:52:25:449 [INFO]     robot_info["actual_pose"]
+22:52:25:450 [INFO]     robot_info["collision_info"]
+22:52:25:451 [INFO]     robot_info["rotor_info"]
+22:52:25:451 [INFO] -------------------------------------------------
+22:52:25:452 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+22:52:55:690 [INFO] Disconnecting from simulation server...
+22:52:55:763 [INFO] Disconnected.

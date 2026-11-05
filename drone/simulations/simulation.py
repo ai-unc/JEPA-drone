@@ -30,7 +30,7 @@ class ProjectAirSimSimulation(FlightController):
     SKY_POSE_Z = -80
     SPAWN_POSE_VARIATION = 100
 
-    TARGET_POSE_VARIATION = [[100,200],[100,200],[-30,30]]
+    TARGET_POSE_VARIATION = [[-100,100],[-100,100],[-30,30]]
     TARGET_NAME="FlightTarget"
     TARGET_ASSET="Sphere"
     TARGET_SIZE = [8,8,8]
