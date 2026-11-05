@@ -70,7 +70,7 @@ async def main():
             start_time = time.perf_counter()
             try:
                 simulation.start()
-                simulation.set_pose_to_random_in_sky(height = spawn_height,rnd_pitch_and_roll=False)
+                start_pose,start_orientation = simulation.set_pose_to_random_in_sky(height = spawn_height,rnd_pitch_and_roll=False)
                 # Environment uses MSL altitude = scene origin altitude - NED Z.
                 home_altitude = float(simulation.world.home_geo_point["altitude"])
                 rate_controller.create(
@@ -79,6 +79,7 @@ async def main():
                 )
                 attitude_controller.reset()
                 velocity_controller.reset()
+                position_controller.reset()
 
                 start_time = time.perf_counter()
                 for asset in simulation.world.list_assets(
@@ -94,78 +95,27 @@ async def main():
 
                 #Summon the "target" to fly to
                 drone.state, drone.time_stamp = drone.flight_controller.state,drone.flight_controller.time
-                rng = np.random.default_rng()
                 target_reached = True
-                target_name = None
-                target_pose = None
                 target_yaw = None
                 score = 0
 
                 while (drone.time_stamp < max_time):
 
                     if target_reached or gamepad.get_button(Gamepad.Inputs.B):
+                        target_position = simulation.generate_target(start_pose)
                         target_reached = False
-                        angle = rng.uniform(0, 2 * np.pi)
-                        distance = rng.uniform(50, 100)
-
-                        # World position in metres. Negative Z is above ground.
-                        target_pose = types.Transform({
-                            "translation": {
-                                "x": float(
-                                    drone.state[State.PX] + distance * np.cos(angle)
-                                ),
-                                "y": float(
-                                    drone.state[State.PY] + distance * np.sin(angle)
-                                ),
-                                "z": float(min(
-                                    -5.0,
-                                    drone.state[State.PZ] + rng.uniform(-10, 10),
-                                )),
-                            },
-                            # Identity quaternion: no rotation.
-                            "rotation": {
-                                "w": 1.0,
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0,
-                            },
-                        })                        
-
-                        if target_name is None:
-                            target_name = simulation.world.spawn_object(
-                                object_name="FlightTarget",
-                                asset_path="Sphere",
-                                object_pose=target_pose,
-                                object_scale=[8.0, 8.0, 8.0],
-                                enable_physics=False,
-                            )
-                            if not target_name:
-                                raise RuntimeError("Failed to spawn FlightTarget.")
-                        else:
-                            simulation.world.set_object_pose(
-                                object_name=target_name,
-                                object_pose=target_pose,
-                                teleport=True,
-                            )
-
-                    target_position = np.array([
-                        target_pose["translation"]["x"],
-                        target_pose["translation"]["y"],
-                        target_pose["translation"]["z"],
-                    ], dtype=float)
 
                     target_yaw = np.arctan2(
-                        target_pose["translation"]["y"] - drone.state[State.PY],
-                        target_pose["translation"]["x"] - drone.state[State.PX],
+                        target_position[State.PY] - drone.state[State.PY],
+                        target_position[State.PX] - drone.state[State.PX],
                     )
 
-                    x,y,z = State.get_position(drone.state)
-                    tx,ty,tz = target_position[0],target_position[1],target_position[2]
-                    distance_from_target = State.get_distance(x,tx,y,ty,z,tz)
-                    if (distance_from_target < 20):
+                    position = State.get_position(drone.state)
+                    if (simulation.target_reached(target_position,position)):
                          target_reached = True
                          score += 1
                  
+                    rate_controller.update_altitude(home_altitude - drone.state[State.PZ])
                     action = Controllers.calculate_everything(
                         position_controller=position_controller,
                         velocity_controller=velocity_controller,
@@ -174,6 +124,7 @@ async def main():
                         target_position=target_position,
                         target_yaw=target_yaw,
                         current_state=drone.state,
+                        dt=0.01,
                     )
 
                     await drone.update(action = action,display=False)

@@ -533,53 +533,49 @@ class VelocityController:
         return rotation_matrix, collective
 class PositionController:
     class Gains(Enum):
-        X = "x"
-        Y = "y"
-        Z = "z"
-    MAX_VELOCITY = 7 #m/s
+        HORIZONTAL = "horizontal"
+        FORWARD = "forward"
+        VERTICAL = "vertical"
+    MAX_FORWARD_VELOCITY = 7 #m/s
+    MAX_HORIZONTAL_VELOCITY = 9
+    MAX_VERTICAL_VELOCITY = 5
     CONFIGS = {
-            Gains.X.value: PIDConfig(0.5,output_limit=MAX_VELOCITY),
-            Gains.Y.value: PIDConfig(0.5,output_limit=MAX_VELOCITY),
-            Gains.Z.value: PIDConfig(0.5,output_limit=MAX_VELOCITY),
+            Gains.HORIZONTAL.value: PIDConfig(0.8,output_limit=MAX_HORIZONTAL_VELOCITY),
+            Gains.FORWARD.value: PIDConfig(0.2,output_limit=MAX_FORWARD_VELOCITY),
+            Gains.VERTICAL.value: PIDConfig(0.7,output_limit=MAX_VERTICAL_VELOCITY),
         }
     def __init__(self):
-        self.x_pid = self.CONFIGS[self.Gains.X.value].create()
-        self.y_pid = self.CONFIGS[self.Gains.Y.value].create()
-        self.z_pid = self.CONFIGS[self.Gains.Z.value].create()
+        self.horizontal_pid = self.CONFIGS[self.Gains.HORIZONTAL.value].create()
+        self.forward_pid = self.CONFIGS[self.Gains.FORWARD.value].create()
+        self.vertical_pid = self.CONFIGS[self.Gains.VERTICAL.value].create()
     def reset(self):
-        self.x_pid.reset()
-        self.y_pid.reset()
-        self.z_pid.reset()
+        self.horizontal_pid.reset()
+        self.forward_pid.reset()
+        self.vertical_pid.reset()
     def calculate_velocities(
             self,
             target_position : np.ndarray,
             current_position : np.ndarray,
+            current_yaw : np.double,
             dt = 0.01
     ) -> tuple[np.double,np.double,np.double]:
-        """
-        Input target position, outputs target velocities
-        """
-        x0,y0,z0 = current_position
-        x1,y1,z1 = target_position
-        x_error,y_error,z_error = x1-x0,y1-y0,z1-z0
-        x_velocity = self.x_pid.update(
-            x_error,
-            0.0,
-            dt
-        )
+        """Return heading-relative (right, forward, down) velocities in m/s.
 
-        y_velocity = self.y_pid.update(
-            y_error,
-            0.0,
-            dt
-        )
+        Positions are world-frame meters; current_yaw is in radians. Only
+        yaw is used so vertical control stays aligned with world Z.
+        """
+        x0, y0, z0 = current_position
+        x1, y1, z1 = target_position
+        x_error, y_error, z_error = x1 - x0, y1 - y0, z1 - z0
+        cosine, sine = math.cos(current_yaw), math.sin(current_yaw)
+        forward_error = cosine * x_error + sine * y_error
+        horizontal_error = -sine * x_error + cosine * y_error
 
-        z_velocity = self.z_pid.update(
-            z_error,
-            0.0,
-            dt
-        )
-        return x_velocity,y_velocity,z_velocity
+        horizontal_velocity = self.horizontal_pid.update(horizontal_error, 0.0, dt)
+        forward_velocity = self.forward_pid.update(forward_error, 0.0, dt)
+        vertical_velocity = self.vertical_pid.update(z_error, 0.0, dt)
+        return horizontal_velocity, forward_velocity, vertical_velocity
+
 
 class Controllers():
     RATE = "rate"
@@ -623,9 +619,15 @@ class Controllers():
 
         current_position = State.get_position(current_state)
         current_rotation = State.get_rotation(current_state)
-        target_velocity = np.asarray(position_controller.calculate_velocities(
-            target_position, current_position, dt=dt,
-        ))
+        current_yaw = np.arctan2(current_rotation[1, 0], current_rotation[0, 0])
+        horizontal_velocity, forward_velocity, vertical_velocity = position_controller.calculate_velocities(
+            target_position, current_position, current_yaw=current_yaw, dt=dt,
+        )
+        # The velocity controller consumes world-frame velocities.
+        world_x, world_y = VelocityController.relative_to_world(
+            forward_velocity, horizontal_velocity, current_yaw,
+        )
+        target_velocity = np.array([world_x, world_y, vertical_velocity], dtype=float)
         target_rotation, collective_thrust = velocity_controller.calculate_attitudes(
             target_velocity, State.get_velocity(current_state), dt=dt,
             yaw_angle=target_yaw,

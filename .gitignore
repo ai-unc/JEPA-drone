@@ -9,3 +9,4 @@ mise.toml
 *.pt
 artifacts/
 .venv/
+./tests
