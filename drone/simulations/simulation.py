@@ -226,13 +226,16 @@ class ProjectAirSimSimulation(FlightController):
 
         kinematics = self.drone.get_ground_truth_kinematics()
 
+        time_stamp = self.world.get_sim_time() / FlightController.NANO_SECOND
+        return self._state_from_kinematics(kinematics), time_stamp
+
+    @staticmethod
+    def _state_from_kinematics(kinematics: dict) -> np.ndarray:
+        """Use the same state layout for direct reads and bundled step results."""
         pose = kinematics["pose"]
         twist = kinematics["twist"]
-
         position = pose["position"]
         orientation = pose["orientation"]
-
-        time_stamp= self.world.get_sim_time() / FlightController.NANO_SECOND
 
         state = State.generate(
             position=np.array([
@@ -258,7 +261,7 @@ class ProjectAirSimSimulation(FlightController):
             ])
         )
 
-        return state,time_stamp
+        return state
     @override
     def send(self, actions: np.ndarray) -> None:
 
@@ -280,17 +283,28 @@ class ProjectAirSimSimulation(FlightController):
         prev_state,prev_time_stamp = self.state,self.time
         if (action is not None):
             self.send(actions=action)
-        self.world.continue_for_n_steps(
-            FlightController.CONTROL_STEPS_PER_MILLISECOND,
-            wait_until_complete=True,
-        )
+        result = self.world.step(dt_ns=FlightController.CONTROL_NS)
+        robot_state = result["robots"][self.DEFAULT_DRONE_NAME]["state"]
+        next_state = self._state_from_kinematics({
+            "pose": {
+                "position": robot_state["position"],
+                "orientation": robot_state["orientation"],
+            },
+            "twist": {
+                "linear": robot_state["linear_velocity"],
+                "angular": robot_state["angular_velocity"],
+            },
+        })
+        next_time = result["sim_time_ns"] / FlightController.NANO_SECOND
+        # Each CSV row remains (t, action_t, state_t), before this step.
+        # The bundled state becomes state_{t+1}, used by the next update.
         if self.log_data:
             self.action_data.append(action)
             self.state_data.append(prev_state)
             self.time_data.append(prev_time_stamp)
         if (self.local_data):
             self.database.update_history(prev_state, action, prev_time_stamp)
-        self.state,self.time = self.read()
+        self.state, self.time = next_state, next_time
         return self.state,self.time
     @override
     def csv_header(self) -> str:
