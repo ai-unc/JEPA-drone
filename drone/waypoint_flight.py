@@ -55,10 +55,12 @@ async def main():
         while iteration < iterations:
             iteration += 1
             simulation = ProjectAirSimSimulation()
+            simulation.DATA_PATH = "data_sequences/rnd_waypoint_training/"
             simulation.configs.render = bool_render
             simulation.log_data = log_data
             simulation.local_data = False
             simulation.data_name = str(simulation.DATA_PATH + (name + str(iteration)))
+            simulation.split_logs = True
             if (bool_rnd_configs):
                 simulation.configs.randomize()
             simulation.configs.write()
@@ -83,14 +85,6 @@ async def main():
                 position_controller.reset()
 
                 start_time = time.perf_counter()
-                for asset in simulation.world.list_assets(
-                                ".*[Ss]phere.*|.*[Cc]ube.*|.*[Cc]one.*|.*[Cc]ylinder.*"
-                            ):
-                                print(asset)
-
-
-
-                rate_controller.print_configs()
 
                 drone.data_sequence = None
 

@@ -148,10 +148,6 @@ class ProjectAirSimSimulation(FlightController):
         self.client = ProjectAirSimClient()
         self.client.connect()
 
-        print("Starting simulation with config path:", self.configs.path)
-        print("CONFIGS: ", self.configs.to_string())
-
-
         self.world = World(
             self.client,
             self.SCENE,
@@ -296,8 +292,7 @@ class ProjectAirSimSimulation(FlightController):
             },
         })
         next_time = result["sim_time_ns"] / FlightController.NANO_SECOND
-        # Each CSV row remains (t, action_t, state_t), before this step.
-        # The bundled state becomes state_{t+1}, used by the next update.
+
         if self.log_data:
             self.action_data.append(action)
             self.state_data.append(prev_state)
