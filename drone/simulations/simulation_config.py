@@ -56,6 +56,9 @@ class SimulationConfigs():
         self.drag_coef = self.DEFAULT_DRAG_COEF
 
         self.motor_positions = self.calculate_motor_positions(self.arm_length)
+
+        self.render : bool = True
+
         self.path = self.CONFIG_PATH
         self.file = self.CONFIG_FILE
 
@@ -119,9 +122,10 @@ class SimulationConfigs():
 
     def write(self) -> None:
         """
-        Apply physics parameters to a Project AirSim robot JSONC file.
+        Apply physics parameters and camera rendering to the robot JSONC file.
 
         Must be called before the robot is loaded into the simulation.
+        Disabling Unreal viewport rendering requires the -nullrhi launch flag.
         """
         print("Writing Configs: ", self.to_string())
 
@@ -197,10 +201,22 @@ class SimulationConfigs():
                 self.motor_time_constant
             )
             settings["max-rpm"] = float(self.MAX_RPM)
+
+        # Toggle camera rendering without affecting non-camera sensors.
+        for sensor in config.get("sensors", []):
+            if sensor.get("type") != "camera":
+                continue
+            sensor["enabled"] = self.render
+            for settings in sensor.get("capture-settings", []):
+                settings["streaming-enabled"] = self.render
+
+        """
+        IMPORTANT! For absolutely no rendering, run the blocks environment with:
+        ./Blocks.exe -nullrhi -nosound -unattended tags
+        """
+
         print("SUCCESSFULLY WROTE CONFIG TO", config_file)
 
         # Save as JSON (also valid JSONC)
         with config_file.open("w", encoding="utf-8") as f:
             json.dump(config, f, indent=4)
-
-        

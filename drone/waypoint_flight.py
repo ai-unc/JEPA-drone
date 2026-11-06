@@ -37,6 +37,7 @@ async def main():
     iterations = input("How many times do you want to run this sequence? ")
     iterations = int(iterations) + iteration
     bool_rnd_configs = input("Do you want to use random configurations? (y/n): ").lower() == "y"
+    bool_render = input("Do you want to render the scene (it runs faster without the visuals)? (y/n)").lower() == "y"
     frequency = 0
     spawn_height = input("Enter the spawn height (negative value, default is -650): ")
     spawn_height = float(spawn_height)
@@ -54,6 +55,7 @@ async def main():
         while iteration < iterations:
             iteration += 1
             simulation = ProjectAirSimSimulation()
+            simulation.configs.render = bool_render
             simulation.log_data = log_data
             simulation.local_data = False
             simulation.data_name = str(simulation.DATA_PATH + (name + str(iteration)))

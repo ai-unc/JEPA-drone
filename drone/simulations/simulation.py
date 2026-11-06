@@ -25,7 +25,7 @@ class ProjectAirSimSimulation(FlightController):
     }
     SCENE = "scene_basic_drone.jsonc"
     DEFAULT_DRONE_NAME = "Drone1"
-    LOAD_DELAY = 2
+    LOAD_DELAY = 0.1
 
     SKY_POSE_Z = -80
     SPAWN_POSE_VARIATION = 100
@@ -69,22 +69,23 @@ class ProjectAirSimSimulation(FlightController):
                 "z": 0.0,
             },
         })
-        if self.target_name is None:
-            self.target_name = self.world.spawn_object(
-                object_name=self.TARGET_NAME,
-                asset_path=self.TARGET_ASSET,
-                object_pose=target_pose,
-                object_scale=self.TARGET_SIZE,
-                enable_physics=False,
-            )
-            if not self.target_name:
-                raise RuntimeError("Failed to spawn FlightTarget.")
-        else:
-            self.world.set_object_pose(
-                object_name=self.target_name,
-                object_pose=target_pose,
-                teleport=True,
-            )
+        if (self.configs.render):
+            if self.target_name is None:
+                self.target_name = self.world.spawn_object(
+                    object_name=self.TARGET_NAME,
+                    asset_path=self.TARGET_ASSET,
+                    object_pose=target_pose,
+                    object_scale=self.TARGET_SIZE,
+                    enable_physics=False,
+                )
+                if not self.target_name:
+                    raise RuntimeError("Failed to spawn FlightTarget.")
+            else:
+                self.world.set_object_pose(
+                    object_name=self.target_name,
+                    object_pose=target_pose,
+                    teleport=True,
+                )
         target_position = np.array([
             target_pose["translation"]["x"],
             target_pose["translation"]["y"],

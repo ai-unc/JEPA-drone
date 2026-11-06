@@ -119,18 +119,22 @@ The drone has the following flight modes:
 - Inputs: Target Position, Current Position
 - Outputs: Velocity
 
-
+-> See Controllers.py for the control logic
+-> See Gamepad.py for the manual controls for each
 
 Everything is in ascending order of abstraction where:
 Position control needs velocity control which needs attitude control which needs rate control which needs motor control
 
 All the controllers utilize a series of PID controllers + some physics to generate output
 
+![Controllers Visualization](../images/Controllers_visualization.png)
+
 # Autotuner (11/6/26)
 Codex generated a physics model that automatically creates the gains (P in PID) for the rate controller. The layers above the rate controller do not need to change assuming the rate controller works.
 
 See a video on it here:
 https://www.youtube.com/watch?v=E7-F3rcVzWI
+
 
 # Autonomous Flight & Data Collection (11/6/26)
 Since the drone can be running random configurations and, using the autotuner, can fly to a target point, this is useful for data collection.
