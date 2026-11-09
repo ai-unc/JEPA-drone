@@ -30,6 +30,8 @@ Contains image files, including visualizations of the project and model structur
   Turns simulator CSVs into the four window tensors the models train on (`state_history`, `action_history`, `future_states`, `future_actions`).
   - **dataset.py**
     Slides a history window of length H and a future horizon of length T along every trajectory and stacks the windows.
+  -**validate_input_data,py**
+   This script checks the validity of the CSVs being used to train the JEPA dynamics model. At a high level, it rejects any files (outright) that have unacceptable, unrealistic dynamics (ex. numerical blowups, upside down positions, inversions > 60deg). Call it with a required INPUT directory (where it will check all files ending in *.csv), and an optional OUTPUT directory (which can be skipped using --dry-run). By default, it will skip over files that we've already checked, but --force will recheck everything. For custom config limits, these are configurable: run -h to see full list in the terminal. 
   - **trajectory_loader.py**
     Reads the 100 Hz flight CSVs (default: `drone/data_sequences/rnd_sky_training`), downsamples to the model `dt`, and can hold out whole trajectories for evaluation.
 - **/logging**
