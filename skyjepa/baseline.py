@@ -9,7 +9,7 @@ and a T-step forecast feeds each prediction back in as the newest state:
 
     x_t -> x̂_{t+1} -> x̂_{t+2} -> ... -> x̂_{t+T}.
 
-It reads the same four window tensors as the JEPA (`build_dataset` output) and
+It reads the same three window tensors as the JEPA (`build_dataset` output) and
 uses the same history length H and horizon T from `Config`, so the two models
 are compared on the same data over the same rollout.
 """
@@ -25,7 +25,6 @@ from torch.utils.data import DataLoader
 
 from skyjepa.config import Config
 from skyjepa.logging.logger import _LOG, _ms, _sync
-from skyjepa.windows import sliding_windows
 
 # Categorical slots 1-8 of the reference chart palette, in fixed order.
 _SERIES_COLORS = (
@@ -75,7 +74,7 @@ class DirectStatePredictor(nn.Module):
     def fit_normalizer(self, windows: Mapping[str, np.ndarray | torch.Tensor]) -> None:
         """Set input and output statistics from training windows.
 
-        `windows` holds `state_history`, `action_history` and `future_states`
+        `windows` holds `state_history`, `actions` and `future_states`
         as laid out in docs/tensor_shapes.md.
         """
 
@@ -83,11 +82,11 @@ class DirectStatePredictor(nn.Module):
             return torch.as_tensor(np.asarray(windows[key]), dtype=torch.float32)
 
         state_history = tensor("state_history")
-        action_history = tensor("action_history")
+        actions = tensor("actions")
         delta = tensor("future_states")[:, 0] - state_history[:, -1]
         for name, values in (
             ("state", state_history.reshape(-1, state_history.shape[-1])),
-            ("action", action_history.reshape(-1, action_history.shape[-1])),
+            ("action", actions.reshape(-1, actions.shape[-1])),
             ("delta", delta),
         ):
             getattr(self, f"{name}_mean").copy_(values.mean(dim=0))
@@ -108,27 +107,25 @@ class DirectStatePredictor(nn.Module):
     def rollout(
         self,
         state_history: torch.Tensor,
-        action_history: torch.Tensor,
-        future_actions: torch.Tensor,
+        actions: torch.Tensor,
         steps: int | None = None,
     ) -> torch.Tensor:
         """Predict x̂_{t+1} .. x̂_{t+steps} by feeding each prediction back in.
 
+        actions: (B, H + T - 1, action_dim), from a_{t-H+1} through a_{t+T-1}.
         Returns (B, steps, state_dim). `steps` defaults to the full horizon.
         """
 
-        horizon = future_actions.shape[1]
+        history_len = state_history.shape[1]
+        horizon = actions.shape[1] - history_len + 1
         steps = horizon if steps is None else steps
         if not 1 <= steps <= horizon:
             raise ValueError(f"steps={steps} must be in [1, {horizon}]")
-        # Index k ends at a_{t+k}. future_actions[:, 0] repeats a_t, so drop it.
-        actions = torch.cat([action_history, future_actions[:, 1:steps]], dim=1)
-        action_windows = sliding_windows(actions, action_history.shape[1])
 
         state_window = state_history
         predictions = []
         for k in range(steps):
-            next_state = self.step(state_window, action_windows[:, k])
+            next_state = self.step(state_window, actions[:, k:k + history_len])
             predictions.append(next_state)
             state_window = torch.cat([state_window[:, 1:], next_state.unsqueeze(1)], dim=1)
         return torch.stack(predictions, dim=1)
@@ -136,12 +133,11 @@ class DirectStatePredictor(nn.Module):
     def forward(
         self,
         state_history: torch.Tensor,
-        action_history: torch.Tensor,
-        future_actions: torch.Tensor,
+        actions: torch.Tensor,
     ) -> torch.Tensor:
         """Recursive rollout over the full horizon. Returns (B, T, state_dim)."""
 
-        return self.rollout(state_history, action_history, future_actions)
+        return self.rollout(state_history, actions)
 
 
 def rollout_loss(
@@ -157,8 +153,7 @@ def rollout_loss(
 
     predicted = model.rollout(
         batch["state_history"],
-        batch["action_history"],
-        batch["future_actions"],
+        batch["actions"],
         steps=steps,
     )
     error = (predicted - batch["future_states"][:, :steps]) / model.delta_std
@@ -279,8 +274,7 @@ def prediction_error_vs_horizon(
             started = time.perf_counter()
             predicted = model(
                 batch["state_history"],
-                batch["action_history"],
-                batch["future_actions"],
+                batch["actions"],
             )
             _sync(device)
             forward = time.perf_counter() - started

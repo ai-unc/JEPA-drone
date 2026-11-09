@@ -9,19 +9,14 @@ import numpy as np
 import argparse
 import torch
 
-from skyjepa.data import dataset, trajectory_loader
+from skyjepa.data import trajectory_loader
+from skyjepa.data.dataset import Data
 from skyjepa.logging.logger import _LOG, _ensure_logging
 from skyjepa.models import encoders, predictor
-from skyjepa.windows import rollout_windows
 from skyjepa import baseline, losses
 from skyjepa.config import Config
+from skyjepa.windows import sliding_windows
 
-_WINDOW_KEYS = (
-    "state_history",
-    "action_history",
-    "future_states",
-    "future_actions",
-)
 
 
 def _param_count(module: nn.Module) -> int:
@@ -31,7 +26,7 @@ class WindowDataset(Dataset):
     def __init__(self, arrays: dict[str, np.ndarray]) -> None:
         self.tensors = {
             key: torch.from_numpy(np.ascontiguousarray(arrays[key], dtype=np.float32))
-            for key in _WINDOW_KEYS
+            for key in Data.KEYS
         }
         counts = {key: int(tensor.shape[0]) for key, tensor in self.tensors.items()}
         if len(set(counts.values())) != 1:
@@ -48,10 +43,9 @@ class WindowDataset(Dataset):
 def _require_shapes(arrays: dict[str, np.ndarray], config: Config) -> None:
     count = int(arrays["state_history"].shape[0])
     expected = {
-        "state_history": (count, config.history_len, config.state_dim),
-        "action_history": (count, config.history_len, config.action_dim),
-        "future_states": (count, config.horizon, config.state_dim),
-        "future_actions": (count, config.horizon, config.action_dim),
+        Data.STATE_HISTORY: (count, config.history_len, config.state_dim),
+        Data.ACTIONS: (count, config.history_len + config.horizon - 1, config.action_dim),
+        Data.FUTURE_STATES: (count, config.horizon, config.state_dim),
     }
     for key, shape in expected.items():
         actual = tuple(arrays[key].shape)
@@ -80,8 +74,8 @@ def _fit_normalizer(tensors: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]
     s.d. per feature."""
 
 
-    states = torch.cat([tensors["state_history"], tensors["future_states"]], dim=1)
-    actions = torch.cat([tensors["action_history"], tensors["future_actions"]], dim=1)
+    states = torch.cat([tensors[Data.STATE_HISTORY], tensors[Data.FUTURE_STATES]], dim=1)
+    actions = tensors[Data.ACTIONS]
     states = states.reshape(-1, states.shape[-1])
     actions = actions.reshape(-1, actions.shape[-1])
     return {
@@ -98,28 +92,44 @@ def _normalize(batch, norm):
 
 def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module, config: Config,) -> tuple[torch.Tensor, dict[str, float], torch.Tensor]:
     # call rollout windows to cut these tensors into overlapping 10-step clips
-    state_windows, action_windows = rollout_windows(
-        batch["state_history"],
-        batch["action_history"],
-        batch["future_states"],
-        batch["future_actions"],
-    )
-    s_t = state_encoder(state_windows[:, 0]) # turn the "now" clip into s_t
-    targets = _encode_sequence(state_encoder, state_windows[:, 1:]) # turn the future clips into targets
-    z_seq = _encode_sequence(action_encoder, action_windows) # turn action clips into z_seq
-    predicted = latent_predictor.rollout(s_t, z_seq.transpose(0, 1)).transpose(0, 1) # guess the next 10 state summaries from s_t and z_seq
-    if predicted.shape != targets.shape:
-        _LOG.error(
-            "rollout shape %s != targets %s",
-            tuple(predicted.shape),
-            tuple(targets.shape),
+
+    state_history = batch[Data.STATE_HISTORY]
+    actions = batch[Data.ACTIONS]
+    future_states = batch[Data.FUTURE_STATES]
+
+    history_len = state_history.shape[1]
+
+    action_windows = sliding_windows(actions, history_len)
+    latent_actions = _encode_sequence(action_encoder, action_windows)
+
+    states = torch.cat([state_history, future_states], dim=1)
+    state_windows = sliding_windows(states, history_len)
+
+    initial_state = state_windows[:, 0]
+    targets = state_windows[:, 1:] # the next 10 windows of states are the targets for the predictor
+
+
+    latent_initial_state = state_encoder(initial_state)
+    latent_targets = _encode_sequence(state_encoder, targets)
+
+    predicted_latent_state = latent_initial_state
+    predictions = []
+
+    #Important! This uses recursion to predict the next latent state based on the previous latent state and the next action. This is done for the entire horizon of 10 steps.
+    #Important because the model must be trained to work over the entire horizon, not just one step.
+    for i in range(config.horizon):
+        latent_action = latent_actions[:, i]
+        predicted_latent_state = latent_predictor(
+            predicted_latent_state,
+            latent_action
         )
-        raise ValueError(
-            f"rollout shape {tuple(predicted.shape)} != targets {tuple(targets.shape)}"
-        )
+
+        predictions.append(predicted_latent_state)
+
+    predicted = torch.stack(predictions, dim=1)
     # returns a weighted sum of the MSE (invariance), variance and covariance as a penalty
-    loss, parts = losses.vicreg_loss(predicted, targets, s_t, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
-    return loss, parts, s_t
+    loss, parts = losses.vicreg_loss(predicted, latent_targets, latent_initial_state, lam=config.vicreg_lam, mu=config.vicreg_mu, nu=config.vicreg_nu,)
+    return loss, parts, latent_initial_state
 
 def train_jepa(loader: DataLoader, config: Config) -> None:
     _ensure_logging()
@@ -196,7 +206,7 @@ def train_jepa(loader: DataLoader, config: Config) -> None:
                 epoch + 1,
                 batch_index,
                 n_batches,
-                batch["state_history"].shape[0],
+                batch[Data.STATE_HISTORY].shape[0],
                 loss_value,
                 parts["pred"],
                 parts["var"],
@@ -256,7 +266,7 @@ def train_baseline(loader: DataLoader, config: Config) -> None:
     _LOG.info("fitting baseline normalizer")
     model.fit_normalizer(loader.dataset.tensors)
     _LOG.info("running baseline training loop")
-    history = baseline.train_direct_predictor(model, loader, config)
+    history = baseline.train_direct_predictor(model, loader, config, train_steps=config.horizon)
     if history:
         _LOG.info("baseline training done: final loss=%.6f over %d epochs", history[-1], len(history))
     else:
@@ -297,7 +307,7 @@ def main() -> None:
         "building dataset windows (history=%d, horizon=%d)",
         config.history_len, config.horizon,
     )
-    arrays = dataset.build_dataset(trajectories, history_len=config.history_len, horizon=config.horizon)
+    arrays = Data.build_dataset(trajectories, history_len=config.history_len, horizon=config.horizon)
     _LOG.info(
         "built %d windows %s",
         int(arrays["state_history"].shape[0]),

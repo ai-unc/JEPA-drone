@@ -82,7 +82,7 @@ class LatentPredictor(nn.Module):
 if __name__ == "__main__":
     torch.manual_seed(0)
     B, T, D, DZ = 32, 20, 16, 8
-    pred = GRUPredictor(latent_dim=D, action_dim=DZ, hidden_dim=24)
+    pred = LatentPredictor(latent_dim=D, action_dim=DZ, hidden_dim=24)
     print("parameters:", sum(p.numel() for p in pred.parameters()))
 
     # 1. Shapes.

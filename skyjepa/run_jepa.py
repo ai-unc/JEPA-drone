@@ -29,7 +29,8 @@ def load_jepa(path: Path, device: str = "cpu"):
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    
+    parser = argparse.ArgumentParser(description="Load a trained JEPA checkpoint.")
     parser.add_argument("--checkpoint", type=Path, default=Path("artifacts/jepa.pt"))
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
