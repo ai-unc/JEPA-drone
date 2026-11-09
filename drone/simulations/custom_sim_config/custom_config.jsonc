@@ -4,7 +4,7 @@
         {
             "name": "Frame",
             "inertial": {
-                "mass": 1.0,
+                "mass": 0.8195809836065574,
                 "inertia": {
                     "type": "geometry",
                     "geometry": {
@@ -14,7 +14,7 @@
                     }
                 },
                 "aerodynamics": {
-                    "drag-coefficient": 0.325,
+                    "drag-coefficient": 0.237298,
                     "type": "geometry",
                     "geometry": {
                         "box": {
@@ -38,15 +38,15 @@
             "name": "Prop_FL",
             "inertial": {
                 "origin": {
-                    "xyz": "0.2530028 -0.2530028 -0.01",
+                    "xyz": "0.1440722 -0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
-                "mass": 0.055,
+                "mass": 0.045076954098360655,
                 "inertia": {
                     "type": "point-mass"
                 },
                 "aerodynamics": {
-                    "drag-coefficient": 0.325,
+                    "drag-coefficient": 0.237298,
                     "type": "geometry",
                     "geometry": {
                         "cylinder": {
@@ -58,7 +58,7 @@
             },
             "visual": {
                 "origin": {
-                    "xyz": "0.2530028 -0.2530028 -0.01",
+                    "xyz": "0.1440722 -0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
                 "geometry": {
@@ -71,15 +71,15 @@
             "name": "Prop_FR",
             "inertial": {
                 "origin": {
-                    "xyz": "0.2530028 0.2530028 -0.01",
+                    "xyz": "0.1440722 0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
-                "mass": 0.055,
+                "mass": 0.045076954098360655,
                 "inertia": {
                     "type": "point-mass"
                 },
                 "aerodynamics": {
-                    "drag-coefficient": 0.325,
+                    "drag-coefficient": 0.237298,
                     "type": "geometry",
                     "geometry": {
                         "cylinder": {
@@ -91,7 +91,7 @@
             },
             "visual": {
                 "origin": {
-                    "xyz": "0.2530028 0.2530028 -0.01",
+                    "xyz": "0.1440722 0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
                 "geometry": {
@@ -104,15 +104,15 @@
             "name": "Prop_RL",
             "inertial": {
                 "origin": {
-                    "xyz": "-0.2530028 -0.2530028 -0.01",
+                    "xyz": "-0.1440722 -0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
-                "mass": 0.055,
+                "mass": 0.045076954098360655,
                 "inertia": {
                     "type": "point-mass"
                 },
                 "aerodynamics": {
-                    "drag-coefficient": 0.325,
+                    "drag-coefficient": 0.237298,
                     "type": "geometry",
                     "geometry": {
                         "cylinder": {
@@ -124,7 +124,7 @@
             },
             "visual": {
                 "origin": {
-                    "xyz": "-0.2530028 -0.2530028 -0.01",
+                    "xyz": "-0.1440722 -0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
                 "geometry": {
@@ -137,15 +137,15 @@
             "name": "Prop_RR",
             "inertial": {
                 "origin": {
-                    "xyz": "-0.2530028 0.2530028 -0.01",
+                    "xyz": "-0.1440722 0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
-                "mass": 0.055,
+                "mass": 0.045076954098360655,
                 "inertia": {
                     "type": "point-mass"
                 },
                 "aerodynamics": {
-                    "drag-coefficient": 0.325,
+                    "drag-coefficient": 0.237298,
                     "type": "geometry",
                     "geometry": {
                         "cylinder": {
@@ -157,7 +157,7 @@
             },
             "visual": {
                 "origin": {
-                    "xyz": "-0.2530028 0.2530028 -0.01",
+                    "xyz": "-0.1440722 0.1440722 -0.01",
                     "rpy-deg": "0 0 0"
                 },
                 "geometry": {
@@ -229,17 +229,17 @@
             "parent-link": "Frame",
             "child-link": "Prop_FL",
             "origin": {
-                "xyz": "0.2530028 -0.2530028 -0.01",
+                "xyz": "0.1440722 -0.1440722 -0.01",
                 "rpy-deg": "0 0 0"
             },
             "rotor-settings": {
                 "turning-direction": "clock-wise",
                 "normal-vector": "0.0 0.0 -1.0",
-                "coeff-of-thrust": 0.109919,
-                "coeff-of-torque": 0.040164,
+                "coeff-of-thrust": 0.1943394,
+                "coeff-of-torque": 0.047525,
                 "max-rpm": 6396.667,
                 "propeller-diameter": 0.2286,
-                "smoothing-tc": 0.005
+                "smoothing-tc": 0.0038942
             }
         },
         {
@@ -249,17 +249,17 @@
             "parent-link": "Frame",
             "child-link": "Prop_FR",
             "origin": {
-                "xyz": "0.2530028 0.2530028 -0.01",
+                "xyz": "0.1440722 0.1440722 -0.01",
                 "rpy-deg": "0 0 0"
             },
             "rotor-settings": {
                 "turning-direction": "counter-clock-wise",
                 "normal-vector": "0.0 0.0 -1.0",
-                "coeff-of-thrust": 0.109919,
-                "coeff-of-torque": 0.040164,
+                "coeff-of-thrust": 0.1943394,
+                "coeff-of-torque": 0.047525,
                 "max-rpm": 6396.667,
                 "propeller-diameter": 0.2286,
-                "smoothing-tc": 0.005
+                "smoothing-tc": 0.0038942
             }
         },
         {
@@ -269,17 +269,17 @@
             "parent-link": "Frame",
             "child-link": "Prop_RL",
             "origin": {
-                "xyz": "-0.2530028 -0.2530028 -0.01",
+                "xyz": "-0.1440722 -0.1440722 -0.01",
                 "rpy-deg": "0 0 0"
             },
             "rotor-settings": {
                 "turning-direction": "counter-clock-wise",
                 "normal-vector": "0.0 0.0 -1.0",
-                "coeff-of-thrust": 0.109919,
-                "coeff-of-torque": 0.040164,
+                "coeff-of-thrust": 0.1943394,
+                "coeff-of-torque": 0.047525,
                 "max-rpm": 6396.667,
                 "propeller-diameter": 0.2286,
-                "smoothing-tc": 0.005
+                "smoothing-tc": 0.0038942
             }
         },
         {
@@ -289,17 +289,17 @@
             "parent-link": "Frame",
             "child-link": "Prop_RR",
             "origin": {
-                "xyz": "-0.2530028 0.2530028 -0.01",
+                "xyz": "-0.1440722 0.1440722 -0.01",
                 "rpy-deg": "0 0 0"
             },
             "rotor-settings": {
                 "turning-direction": "clock-wise",
                 "normal-vector": "0.0 0.0 -1.0",
-                "coeff-of-thrust": 0.109919,
-                "coeff-of-torque": 0.040164,
+                "coeff-of-thrust": 0.1943394,
+                "coeff-of-torque": 0.047525,
                 "max-rpm": 6396.667,
                 "propeller-diameter": 0.2286,
-                "smoothing-tc": 0.005
+                "smoothing-tc": 0.0038942
             }
         }
     ],
@@ -307,171 +307,31 @@
         {
             "id": "Chase",
             "type": "camera",
-            "enabled": true,
+            "enabled": false,
             "parent-link": "Frame",
-            "capture-interval": 0.03,
+            "capture-interval": 0.1,
             "capture-settings": [
                 {
                     "image-type": 0,
                     "width": 1280,
-                    "height": 720,
+                    "height": 640,
                     "fov-degrees": 90,
-                    "capture-enabled": true,
-                    "streaming-enabled": true,
+                    "capture-enabled": false,
+                    "streaming-enabled": false,
                     "pixels-as-float": false,
                     "compress": false,
                     "target-gamma": 2.5
                 }
             ],
             "gimbal": {
-                "lock-roll": true,
-                "lock-pitch": true,
+                "lock-roll": false,
+                "lock-pitch": false,
                 "lock-yaw": false
             },
             "origin": {
-                "xyz": "-10.0 0.0 -1.0",
+                "xyz": "-6 0.0 -3",
                 "rpy-deg": "0 -11.46 0"
             }
-        },
-        {
-            "id": "DownCamera",
-            "type": "camera",
-            "enabled": true,
-            "parent-link": "Frame",
-            "capture-interval": 0.02,
-            "capture-settings": [
-                {
-                    "image-type": 0,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": true,
-                    "streaming-enabled": false,
-                    "pixels-as-float": false,
-                    "compress": false,
-                    "target-gamma": 2.5
-                },
-                {
-                    "image-type": 1,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": false,
-                    "streaming-enabled": false,
-                    "pixels-as-float": true,
-                    "compress": false
-                },
-                {
-                    "image-type": 2,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": true,
-                    "streaming-enabled": false,
-                    "pixels-as-float": true,
-                    "compress": false
-                },
-                {
-                    "image-type": 3,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": false,
-                    "streaming-enabled": false,
-                    "pixels-as-float": false,
-                    "compress": false
-                },
-                {
-                    "image-type": 4,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": false,
-                    "streaming-enabled": false,
-                    "pixels-as-float": false,
-                    "compress": false,
-                    "max-depth-meters": 100
-                },
-                {
-                    "image-type": 5,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": false,
-                    "streaming-enabled": false,
-                    "pixels-as-float": false,
-                    "compress": false
-                },
-                {
-                    "image-type": 6,
-                    "width": 400,
-                    "height": 225,
-                    "fov-degrees": 90,
-                    "capture-enabled": false,
-                    "streaming-enabled": false,
-                    "pixels-as-float": false,
-                    "compress": false
-                }
-            ],
-            "noise-settings": [
-                {
-                    "enabled": false,
-                    "image-type": 1,
-                    "rand-contrib": 0.2,
-                    "rand-speed": 100000.0,
-                    "rand-size": 500.0,
-                    "rand-density": 2,
-                    "horz-wave-contrib": 0.03,
-                    "horz-wave-strength": 0.08,
-                    "horz-wave-vert-size": 1.0,
-                    "horz-wave-screen-size": 1.0,
-                    "horz-noise-lines-contrib": 1.0,
-                    "horz-noise-lines-density-y": 0.01,
-                    "horz-noise-lines-density-xy": 0.5,
-                    "horz-distortion-contrib": 1.0,
-                    "horz-distortion-strength": 0.002
-                }
-            ],
-            "origin": {
-                "xyz": "0 0.0 0.0",
-                "rpy-deg": "0 -90 0"
-            }
-        },
-        {
-            "id": "IMU1",
-            "type": "imu",
-            "enabled": true,
-            "parent-link": "Frame",
-            "accelerometer": {
-                "velocity-random-walk": 0.002353,
-                "tau": 800,
-                "bias-stability": 0.000353,
-                "turn-on-bias": "0 0 0"
-            },
-            "gyroscope": {
-                "angle-random-walk": 8.72644e-05,
-                "tau": 500,
-                "bias-stability": 2.23014e-05,
-                "turn-on-bias": "0 0 0"
-            }
-        },
-        {
-            "id": "GPS",
-            "type": "gps",
-            "enabled": false,
-            "parent-link": "Frame"
-        },
-        {
-            "id": "Barometer",
-            "type": "barometer",
-            "enabled": false,
-            "parent-link": "Frame"
-        },
-        {
-            "id": "Magnetometer",
-            "type": "magnetometer",
-            "enabled": false,
-            "parent-link": "Frame"
         }
     ]
 }

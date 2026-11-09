@@ -1,27 +1,34 @@
-22:35:56:275 [INFO] Connecting to simulation server at 127.0.0.1
-22:35:56:292 [INFO] Connection opened.
-22:35:56:293 [INFO] Loading scene config: scene_basic_drone.jsonc
-22:35:57:900 [INFO] Getting the list of available topic info from the sim server...
-22:35:57:913 [INFO] Successfully received topic info list.
-22:35:59:914 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
-22:35:59:916 [INFO] Trajectory 'null_trajectory' imported successfully.
-22:35:59:916 [INFO] Initalizing Drone 'Drone1'...
-22:35:59:917 [INFO] -------------------------------------------------
-22:35:59:917 [INFO] The following topics can be subscribed to for robot 'Drone1':
-22:35:59:917 [INFO]     sensors["Chase"]["scene_camera"]
-22:35:59:917 [INFO]     sensors["Chase"]["scene_camera_info"]
-22:35:59:918 [INFO]     sensors["DownCamera"]["scene_camera"]
-22:35:59:918 [INFO]     sensors["DownCamera"]["scene_camera_info"]
-22:35:59:918 [INFO]     sensors["DownCamera"]["depth_camera"]
-22:35:59:919 [INFO]     sensors["DownCamera"]["depth_camera_info"]
-22:35:59:919 [INFO]     sensors["IMU1"]["imu_kinematics"]
-22:35:59:919 [INFO]     sensors["GPS"]["gps"]
-22:35:59:919 [INFO]     sensors["Barometer"]["barometer"]
-22:35:59:920 [INFO]     sensors["Magnetometer"]["magnetometer"]
-22:35:59:920 [INFO]     robot_info["actual_pose"]
-22:35:59:920 [INFO]     robot_info["collision_info"]
-22:35:59:920 [INFO]     robot_info["rotor_info"]
-22:35:59:921 [INFO] -------------------------------------------------
-22:35:59:921 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
-22:36:29:286 [INFO] Disconnecting from simulation server...
-22:36:29:418 [INFO] Disconnected.
+17:44:02:113 [INFO] Connecting to simulation server at 127.0.0.1
+17:44:02:116 [INFO] Connection opened.
+17:44:02:117 [INFO] Loading scene config: scene_basic_drone.jsonc
+17:44:02:714 [INFO] Getting the list of available topic info from the sim server...
+17:44:02:725 [INFO] Successfully received topic info list.
+17:44:02:826 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+17:44:02:827 [INFO] Trajectory 'null_trajectory' imported successfully.
+17:44:02:827 [INFO] Initalizing Drone 'Drone1'...
+17:44:02:827 [INFO] -------------------------------------------------
+17:44:02:827 [INFO] The following topics can be subscribed to for robot 'Drone1':
+17:44:02:827 [INFO]     robot_info["actual_pose"]
+17:44:02:827 [INFO]     robot_info["collision_info"]
+17:44:02:827 [INFO]     robot_info["rotor_info"]
+17:44:02:828 [INFO] -------------------------------------------------
+17:44:02:828 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+17:44:13:721 [INFO] Disconnecting from simulation server...
+17:44:13:829 [INFO] Disconnected.
+17:44:13:922 [INFO] Connecting to simulation server at 127.0.0.1
+17:44:13:924 [INFO] Connection opened.
+17:44:13:924 [INFO] Loading scene config: scene_basic_drone.jsonc
+17:44:14:449 [INFO] Getting the list of available topic info from the sim server...
+17:44:14:460 [INFO] Successfully received topic info list.
+17:44:14:561 [INFO] World object updated for the loaded scene '/Sim/SceneBasicDrone'. Note: Any previous Drone object instances may no longer be valid.
+17:44:14:562 [INFO] Trajectory 'null_trajectory' imported successfully.
+17:44:14:562 [INFO] Initalizing Drone 'Drone1'...
+17:44:14:562 [INFO] -------------------------------------------------
+17:44:14:562 [INFO] The following topics can be subscribed to for robot 'Drone1':
+17:44:14:562 [INFO]     robot_info["actual_pose"]
+17:44:14:562 [INFO]     robot_info["collision_info"]
+17:44:14:563 [INFO]     robot_info["rotor_info"]
+17:44:14:563 [INFO] -------------------------------------------------
+17:44:14:563 [INFO] Drone 'Drone1' initialized for World scene '/Sim/SceneBasicDrone'
+17:44:25:613 [INFO] Disconnecting from simulation server...
+17:44:25:653 [INFO] Disconnected.

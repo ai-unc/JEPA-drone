@@ -85,6 +85,10 @@ class State():
             f"angular_velocity=({state[State.WX]:+7.3f}, {state[State.WY]:+7.3f}, {state[State.WZ]:+7.3f}) rad/s"
         )
     @staticmethod
+    def get_distance(x1,x2,y1,y2,z1,z2) -> np.double:
+        dx,dy,dz = x2 - x1, y2 - y1, z2 - z1
+        return ((dx ** 2) + (dy ** 2) + (dz ** 2)) ** 0.5
+    @staticmethod
     def get_position(state: np.ndarray) -> np.ndarray:
         return state[State.PX:State.PZ+1]
 
