@@ -66,6 +66,7 @@ Contains image files, including visualizations of the project and model structur
 NOTE: you can check out Ethan's README inside of the drone directory, please check that out for a more detailed description on use. This part also requires a download of additional server software and packages through uv, so please refer to that walkthrough for the most up to date instructions.
 
 OUTSTANDING QUESTIONS: What actions are acceptable in the random-thrust flights? In about 50% of them, the drone goes upside down (is the drone physically capable of flying upside down in the real world and/or sim, and should that be something that we're training on?)
+ANSWER: We dont want the drone to be upside down! Created a physics based autotuner that uses the simulations configs to calculate gains for a rate controller. This rate controller is then access by an attitude controller, which is used by a velocity controller, and finally a position controller (autonomous only). Attitude, velocity, and position controllers do not need to be tuned in accordance with the simulation configs since the rate controller already does that. For collecting data, position control is used on drones of various configs which then fly to a waypoint, which, once reached, will fly to another waypoint.
 
 **CSV write spec** (N, 23): (time(s), FL(N), FR(N), BL(N), BR(N), x(m), y(m), z(m), vx(m/s), vy(m/s), vz(m/s), r1x, r1y, r1z, r2x, r2y, r2z, r3x, r3y, r3z, wx(rad/s), wy(rad/s), wz(rad/s))
 
