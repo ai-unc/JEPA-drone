@@ -10,3 +10,4 @@ mise.toml
 artifacts/
 .venv/
 ./tests
+drone/flight_logs/
