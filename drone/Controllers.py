@@ -370,8 +370,8 @@ class AttitudeController:
         PITCH = "pitch"
         YAW = "yaw"
     CONFIGS = {
-        Gains.ROLL.value: PIDConfig(3,output_limit=20.0),
-        Gains.PITCH.value: PIDConfig(2,output_limit=12.0),
+        Gains.ROLL.value: PIDConfig(1,output_limit=5),
+        Gains.PITCH.value: PIDConfig(1,output_limit=5),
         Gains.YAW.value: PIDConfig(0.5,output_limit=8.0),
     }
     MAX_ROLL_ANGLE = 30 #degrees
@@ -458,20 +458,20 @@ class VelocityController:
     """
     MAX_X_VELOCITY = 8 #m/s
     MAX_Y_VELOCITY = 8 #m/s
-    MAX_Z_VELOCITY = 3 #m/s -> Vertical
+    MAX_Z_VELOCITY = 4 #m/s -> Vertical
 
-    MAX_ACCELERATION = 3 #m/s^2
+    MAX_ACCELERATION = 4 #m/s^2
 
     class Gains(Enum):
         X = "x_velocity"
         Y = "y_velocity"
         Z = "z_velocity"
     CONFIGS = {
-        Gains.X.value: PIDConfig(0.3,output_limit=MAX_ACCELERATION),
-        Gains.Y.value: PIDConfig(0.3,output_limit=MAX_ACCELERATION),
+        Gains.X.value: PIDConfig(0.5,output_limit=MAX_ACCELERATION),
+        Gains.Y.value: PIDConfig(0.5,output_limit=MAX_ACCELERATION),
         # PI trims small mass/thrust/gravity biases; P alone leaves a steady
         # vertical speed offset. Integral trim is bounded to +/-1 m/s^2.
-        Gains.Z.value: PIDConfig(0.8, ki=0.05, output_limit=MAX_ACCELERATION,
+        Gains.Z.value: PIDConfig(0.8, ki=0.0, output_limit=MAX_ACCELERATION,
                                  integral_limit=20.0),
     }
 

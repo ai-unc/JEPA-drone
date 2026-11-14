@@ -7,6 +7,7 @@ from sympy import Quaternion
 from Subsystems.flight_controller import FlightController, Rotation
 from drone.Subsystems.data.data import Action, State
 from simulations.simulation_config import SimulationConfigs
+from simulations.obstacle_course import ObstacleCourse
 
 import numpy as np
 from pathlib import Path
@@ -140,6 +141,7 @@ class ProjectAirSimSimulation(FlightController):
         self.world: World | None = None
         self.drone: Drone | None = None
         self.configs = SimulationConfigs()
+        self.obstacle_course : ObstacleCourse | None  = None
         self.local_data = True
         self.target_name = None
 
@@ -165,6 +167,10 @@ class ProjectAirSimSimulation(FlightController):
             self.set_state(initial_state, time=0)
 
         self.state,self.time = self.read()
+
+        if (self.obstacle_course is not None):
+            self.generate_obstacle_course()
+    
     @override
     def set_state(self, state: np.ndarray,time : np.double = 0) -> None:
         rotation_matrix = state[State.R1x:State.R3z+1].reshape(3,3)
@@ -301,11 +307,38 @@ class ProjectAirSimSimulation(FlightController):
             self.database.update_history(prev_state, action, prev_time_stamp)
         self.state, self.time = next_state, next_time
         return self.state,self.time
+
+    def generate_obstacle_course(self) -> None:
+        """Spawn the attached course's stored geometry into the current world."""
+        if self.obstacle_course is None:
+            return
+        if self.world is None:
+            raise RuntimeError("Start the simulation before generating obstacles.")
+
+        for index, obstacle in enumerate(self.obstacle_course.shapes):
+            x, y, z, w = Rotation.from_euler(
+                "xyz", obstacle.rotation, degrees=True
+            ).as_quat()
+            pose = types.Transform({
+                "translation": dict(zip(("x", "y", "z"), obstacle.position.tolist())),
+                "rotation": {"w": float(w), "x": float(x), "y": float(y), "z": float(z)},
+            })
+            name = self.world.spawn_object(
+                object_name=f"ObstacleCourse_{index}",
+                asset_path=obstacle.shape.value,
+                object_pose=pose,
+                object_scale=obstacle.size.tolist(),
+                enable_physics=False,
+            )
+            if not name:
+                raise RuntimeError(f"Failed to spawn obstacle {index} ({obstacle.shape.value}).")
+    
     @override
     def csv_header(self) -> str:
-        if (self.configs is None):
-            return ""
-        return self.configs.config_to_csv() + "\n"
+        header = self.configs.config_to_csv() + "\n" if self.configs is not None else ""
+        if self.obstacle_course is not None:
+            header += self.obstacle_course.csv_header()
+        return header
     
     @override
     def close(self) -> None:
