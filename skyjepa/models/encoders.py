@@ -95,3 +95,34 @@ class ProprioceptiveEncoder(nn.Module):
 
         return latent
 
+
+class ImageEncoder(nn.Module):
+
+    def __init__(self, latent_dim: int = 32):
+        super().__init__()
+
+        self.cnn = nn.Sequential(
+            nn.Conv2d(1, 16, 3, stride=2, padding=1),
+            nn.GELU(),
+
+            nn.Conv2d(16, 32, 3, stride=2, padding=1),
+            nn.GELU(),
+
+            nn.Conv2d(32, 32, 3, stride=2, padding=1),
+            nn.GELU()
+            )
+
+        self.projection = nn.Sequential(
+            nn.Flatten(start_dim=1),
+            nn.Linear(32 * 8 * 8, latent_dim)
+            )
+
+    def forward(self, images: torch.Tensor):
+
+        if images.ndim != 4 or images.shape[1:] != (1, 64, 64):
+            raise ValueError("Expected shape (B, 1, 64, 64)")
+
+        features = self.cnn(images)
+        latent = self.projection(features)
+
+        return latent
