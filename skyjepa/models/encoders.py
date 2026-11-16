@@ -97,6 +97,7 @@ class ProprioceptiveEncoder(nn.Module):
 
 
 class ImageEncoder(nn.Module):
+    """image encoder for AirSim only (not to be used for IRL testing)"""
 
     def __init__(self, latent_dim: int = 32):
         super().__init__()
