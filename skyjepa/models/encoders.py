@@ -1,8 +1,3 @@
-"""History encoders.
-
-Two MLPs. Each maps a history window to a latent_dim vector.
-"""
-
 import torch
 from torch import nn
 
@@ -53,5 +48,50 @@ class ActionHistoryEncoder(nn.Module):
         return self.projection(x)
 
 
+class ProprioceptiveEncoder(nn.Module):
 
+    def __init__(self, state_dim: int = 18, feature_dim: int = 32, hidden_dim: int = 64, latent_dim: int = 32, history_length: int = 10,):
+        super().__init__()
+
+        self.state_dim = state_dim
+        self.history_length = history_length
+
+        # extract features from individual timesteps
+        self.mlp = nn.Sequential(
+            nn.Linear(state_dim, 64),
+            nn.GELU(),
+            nn.Linear(64, feature_dim),
+            nn.GELU(),
+        )
+
+        # capture temporal movement dynamics
+        self.gru = nn.GRU(
+            input_size=feature_dim,
+            hidden_size=hidden_dim,
+            batch_first=True,
+        )
+
+        # project into proprioceptive latent space
+        self.projection = nn.Linear(hidden_dim, latent_dim)
+
+    def forward(self, states: torch.Tensor) -> torch.Tensor:
+
+        if states.ndim != 3 or states.shape[1:] != (self.history_length, self.state_dim):
+            raise ValueError("Invalid state history shape")
+
+        # express positions relative to the latest position
+        relative_pos = states[:, :, :3] - states[:, -1:, :3]
+
+        states = torch.cat([relative_pos, states[:, :, 3:]], dim=-1)
+
+        # per-timestep feature extraction
+        features = self.mlp(states)
+
+        # temporal encoding
+        _, hidden = self.gru(features)
+
+        # project final hidden state
+        latent = self.projection(hidden[-1])
+
+        return latent
 
