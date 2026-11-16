@@ -241,13 +241,10 @@ Rules:
             messages,
             tokenize=False,
             add_generation_prompt=True,
-            enable_thinking=False,
+            enable_thinking=False
         )
 
-        inputs = self.tokenizer(
-            text,
-            return_tensors="pt"
-        ).to(self.model.device)
+        inputs = self.tokenizer(text, return_tensors="pt").to(self.model.device)
 
         output = self.model.generate(
             **inputs,
@@ -260,12 +257,17 @@ Rules:
 
         generated = output[0, inputs.input_ids.shape[1]:]
 
-        response = self.tokenizer.decode(
-            generated,
-            skip_special_tokens=True,
-        )
+        response = self.tokenizer.decode(generated, skip_special_tokens=False)
+        if "</think>" in response:
+            response = response.split("</think>")[-1]
+        response = response.replace("<|im_end|>", "").strip()
 
-        return json.loads(response.strip())
+        start = response.find("{")
+        end = response.rfind("}")
+        if start == -1 or end <= start:
+            raise ValueError(f"Model did not return JSON:\n{response}")
+        
+        return json.loads(response[start:end + 1])
 
     def encode_structured_goal(self, goal):
 
@@ -294,7 +296,7 @@ Rules:
         # One-hot encode object
         tensor[8 + self.OBJECTS.index(obj)] = 1.0
 
-        # Encode coordinates when available
+        # encode coordinates when available
         if target is not None:
             if (
                 not isinstance(target, list)
@@ -320,7 +322,7 @@ Rules:
         tensor[20] = float(preference == "nearest")
         tensor[21] = float(preference == "farthest")
 
-        # cefault position tolerance
+        # default position tolerance
         tensor[22] = 0.2
 
         return tensor.unsqueeze(0)
@@ -365,14 +367,7 @@ Rules:
 
         return goal_tensor, parsed
 
-
-encoder = TextEncoder()
-
-tensor, parsed = encoder(
-    "Exit the room through the nearest door"
-)
-
+tencoder = TextEncoder()
+tensor, parsed = tencoder("Exit the room through the nearest door")
+print(tensor)
 print(parsed)
-print(tensor.shape)
-
-assert tensor.shape == (1, 1047)
