@@ -99,31 +99,49 @@ class ProprioceptiveEncoder(nn.Module):
 class ImageEncoder(nn.Module):
     """image encoder for AirSim only (not to be used for IRL testing)"""
 
-    def __init__(self, latent_dim: int = 32):
+    def __init__(self, latent_dim=32, num_classes=8):
         super().__init__()
 
+        self.num_classes = num_classes
+
         self.cnn = nn.Sequential(
-            nn.Conv2d(1, 16, 3, stride=2, padding=1),
+            nn.Conv2d(1 + num_classes, 16, 3, 2, 1),
             nn.GELU(),
 
-            nn.Conv2d(16, 32, 3, stride=2, padding=1),
+            nn.Conv2d(16, 32, 3, 2, 1),
             nn.GELU(),
 
-            nn.Conv2d(32, 32, 3, stride=2, padding=1),
+            nn.Conv2d(32, 32, 3, 2, 1),
             nn.GELU()
             )
 
         self.projection = nn.Sequential(
             nn.Flatten(start_dim=1),
-            nn.Linear(32 * 8 * 8, latent_dim)
-            )
+            nn.Linear(32 * 8 * 8, latent_dim),
+        )
 
-    def forward(self, images: torch.Tensor):
+    def forward(self, depth, segmentation):
 
-        if images.ndim != 4 or images.shape[1:] != (1, 64, 64):
-            raise ValueError("Expected shape (B, 1, 64, 64)")
+        # depth: (B, 1, 64, 64)
+        # segmentation: (B, 64, 64)
 
+        # convert labels to binary channels
+        semantic = F.one_hot(
+            segmentation.long(),
+            num_classes=self.num_classes,)
+
+        semantic = semantic.permute(0, 3, 1, 2)
+        semantic = semantic.to(depth.dtype)
+
+        # combine depth and semantic information
+        images = torch.cat(
+            [depth, semantic],
+            dim=1)
+
+        # CNN feature extraction
         features = self.cnn(images)
+
+        # project into latent space
         latent = self.projection(features)
 
         return latent
