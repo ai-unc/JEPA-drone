@@ -3,6 +3,16 @@ from torch import nn
 
 from skyjepa.config import Config
 
+CLASSES = {
+    "unknown": 0,
+    "wall": 1,
+    "floor": 2,
+    "ceiling": 3,
+    "door": 4,
+    "window": 5,
+    "furniture": 6,
+    "obstacle": 7,
+}
 
 class StateHistoryEncoder(nn.Module):
     def __init__(self, config: Config) -> None:
@@ -145,3 +155,5 @@ class ImageEncoder(nn.Module):
         latent = self.projection(features)
 
         return latent
+
+
