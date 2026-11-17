@@ -163,8 +163,8 @@ class ImageEncoder(nn.Module):
         return latent
 
 
-class TextEncoder(nn.Module):
-
+class TextEncoder(nn.Module): 
+    
     INTENTS = [
         "move_relative",
         "move_absolute",
@@ -206,31 +206,31 @@ class TextEncoder(nn.Module):
     def parse_goal(self, command):
 
         prompt = f"""
-Parse the natural language drone command.
+        Parse the natural language drone command.
 
-Available intents: {self.INTENTS}
-Available objects: {self.OBJECTS}
+        Available intents: {self.INTENTS}
+        Available objects: {self.OBJECTS}
 
-Return only a JSON object with these fields:
+        Return only a JSON object with these fields:
 
-{{
-    "intent": "intent_name",
-    "object": "object_name",
-    "target": null,
-    "preference": "none"
-}}
+        {{
+            "intent": "intent_name",
+            "object": "object_name",
+            "target": null,
+            "preference": "none"
+        }}
 
-Rules:
-- Target is [x, y, z] in meters or null.
-- Do not invent spatial coordinates.
-- Relative coordinates: X forward, Y right, Z down.
-- Absolute coordinates: AirSim world NED frame.
-- Preference must be nearest, farthest, or none.
-- Use unknown when no object is specified.
-- Use other for unsupported or compound objectives.
-- For exiting a room, the target object is door.
-- Do not generate intermediate waypoints.
-"""
+        Rules:
+        - Target is [x, y, z] in meters or null.
+        - Do not invent spatial coordinates.
+        - Relative coordinates: X forward, Y right, Z down.
+        - Absolute coordinates: AirSim world NED frame.
+        - Preference must be nearest, farthest, or none.
+        - Use unknown when no object is specified.
+        - Use other for unsupported or compound objectives.
+        - For exiting a room, the target object is door.
+        - Do not generate intermediate waypoints.
+        """
 
         messages = [
             {"role": "system", "content": prompt},
@@ -367,7 +367,19 @@ Rules:
 
         return goal_tensor, parsed
 
-tencoder = TextEncoder()
-tensor, parsed = tencoder("Exit the room through the nearest door")
-print(tensor)
-print(parsed)
+
+class MultimodalEncoder(nn.Module):
+
+    def __init__(self, input_dim: int = 96):
+        super().__init__()
+
+        self.mlp = nn.Sequential(
+            nn.Linear(input_dim, 256),
+            nn.GELU(),
+            nn.Linear(256, 128)
+        )
+
+    def forward(self, image_tensor: torch.Tensor, proprioceptive_tensor: torch.Tensor, state_history: torch.Tensor):
+        combined = torch.cat([image_tensor, proprioceptive_tensor, state_history], dim=-1)
+
+        return self.mlp(combined)
