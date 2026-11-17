@@ -208,7 +208,10 @@ class SimulationConfigs():
                 continue
             sensor["enabled"] = self.render
             for settings in sensor.get("capture-settings", []):
-                settings["streaming-enabled"] = self.render
+                selected = self.render and (sensor.get("id") != "Vision" or
+                    getattr(self, "vision_modes", {}).get(settings["image-type"], False))
+                settings["capture-enabled"] = selected if sensor.get("id") == "Vision" else settings["capture-enabled"]
+                settings["streaming-enabled"] = selected
 
         """
         IMPORTANT! For absolutely no rendering, run the blocks environment with:

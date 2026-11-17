@@ -38,6 +38,7 @@ uv add projectairsim==1.0.2
 uv add pandas
 uv add sciPy
 uv add json5
+uv add opencv-python
 ```
 # Step 3. Run the client
 -> Go to the drone

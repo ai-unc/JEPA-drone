@@ -10,6 +10,7 @@ from Subsystems.flight_controller import FlightController, Rotation
 from drone.Subsystems.data.data import Action, State
 from simulations.simulation_config import SimulationConfigs
 from simulations.obstacle_course import ObstacleCourse
+from simulations.SimCam import SimCamera
 
 import numpy as np
 from pathlib import Path
@@ -91,6 +92,8 @@ class ProjectAirSimSimulation(FlightController):
                 )
                 if not self.target_name:
                     raise RuntimeError("Failed to spawn FlightTarget.")
+                if self.vision_enabled:
+                    self.world.set_segmentation_id_by_name(self.target_name, 3, False, True)
             else:
                 self.world.set_object_pose(
                     object_name=self.target_name,
@@ -108,22 +111,24 @@ class ProjectAirSimSimulation(FlightController):
     def set_pose_to_random_in_sky(self, height = SKY_POSE_Z, rnd_pitch_and_roll = True) -> tuple[np.ndarray,dict]:
         assert self.drone is not None
         import random
-        position = {
-            "x": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
-            "y": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
-            "z": random.uniform(height - self.SPAWN_HEIGHT_VARIATION, height + self.SPAWN_HEIGHT_VARIATION),
-        }
+        
         if self.obstacle_course is not None:
             self.obstacle_course.validate_drone_spawn()
             position = dict(zip(("x", "y", "z"), self.obstacle_course.drone_spawn.tolist()))
-        x, y, z, w = Rotation.random().as_quat()
-        if not rnd_pitch_and_roll:
-            # Start level while preserving the sampled heading.
-            yaw = Rotation.from_quat([x, y, z, w]).as_euler("xyz")[2]
-            x, y, z, w = Rotation.from_euler("z", yaw).as_quat()
-        if self.obstacle_course is not None:
             direction = self.obstacle_course.goal - self.obstacle_course.drone_spawn
             x, y, z, w = Rotation.from_euler("z", np.arctan2(direction[1], direction[0])).as_quat()
+        else:
+            position = {
+                        "x": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
+                        "y": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
+                        "z": random.uniform(height - self.SPAWN_HEIGHT_VARIATION, height + self.SPAWN_HEIGHT_VARIATION),
+                    }
+            x, y, z, w = Rotation.random().as_quat()
+            if not rnd_pitch_and_roll:
+                # Start level while preserving the sampled heading.
+                yaw = Rotation.from_quat([x, y, z, w]).as_euler("xyz")[2]
+                x, y, z, w = Rotation.from_euler("z", yaw).as_quat()
+       
         orientation = {
             "w": float(w),
             "x": float(x),
@@ -182,6 +187,8 @@ class ProjectAirSimSimulation(FlightController):
         self.obstacle_course : ObstacleCourse | None  = None
         self.local_data = True
         self.target_name = None
+        self.camera = SimCamera()
+        self.vision_enabled = False
 
     @override
     def start(self, initial_state: np.ndarray | None = None) -> None:
@@ -228,6 +235,13 @@ class ProjectAirSimSimulation(FlightController):
             if initial_state is None:
                 self.set_pose_to_random_in_sky(rnd_pitch_and_roll=False)
             self.generate_obstacle_course()
+        if self.vision_enabled:
+            # Baseplate ground and all default environment geometry are walls.
+            self.world.set_segmentation_id_by_name(".*", 1, True, True)
+            self.world.set_segmentation_id_by_name("obstacle_.*", 2, True, True)
+            self.world.set_segmentation_id_by_name("FlightTarget.*|goal_.*", 3, True, True)
+            self.world.set_segmentation_id_by_name("Drone1.*|ceiling_light_.*", 0, True, True)
+            self.camera.attach(self)
     
     @override
     def set_state(self, state: np.ndarray,time : np.double = 0) -> None:
@@ -460,6 +474,7 @@ class ProjectAirSimSimulation(FlightController):
     
     @override
     def close(self) -> None:
+        self.camera.close()
         self.write_data_log()
         if self.client is not None:
             self.client.disconnect()

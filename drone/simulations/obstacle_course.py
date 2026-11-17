@@ -106,7 +106,7 @@ class ObstacleCourse:
 
         self.walls = 4
         self.wall_width = 20
-        self.room_height = 12
+        self.room_height = 14
         self.drone_clearance = 2
 
         self.goal = np.array([0., 0., -5.])
