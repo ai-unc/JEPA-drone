@@ -7,6 +7,7 @@ from drone.Subsystems.data.data import Action
 import numpy as np
 from drone.Subsystems.data.data import State
 from simulations.simulation import ProjectAirSimSimulation
+from simulations.obstacle_course import ObstacleCourse
 from drone.Controllers import Controllers, VelocityController, AttitudeController, RateController
 
 
@@ -34,9 +35,13 @@ async def main():
     bool_rnd_configs = input("Do you want to use random configurations? (y/n): ").lower() == "y"
     frequency = input("Enter the update frequency in seconds (real time is 100, as fast as possible is 0, 50 percent is 50): ")
     frequency = float(frequency)
-    spawn_height = input("Enter the spawn height (negative value, default is -650): ")
-    spawn_height = float(spawn_height)
+    bool_obstacles = input("Do you want to generate an obstacle course (Baseplate map only!) (y/n): ").lower() == "y"
+    spawn_height = None
+    if not bool_obstacles:
+        spawn_height = float(input("Enter the spawn height (negative value, default is -650): "))
     log_data = input("Do you want to log data? (y/n): ").lower() == "y"
+    #bool_vision = input("Do you want to log vision? (y/n): ").lower() == "y"
+    #bool_targets = input("Do you want to have flight targets? (y/n): ").lower() == "y"
     name = "rnd_gamepad"
     if (not bool_rnd_configs):
         name = "gamepad_sky"
@@ -50,6 +55,10 @@ async def main():
         while iteration < iterations:
             iteration += 1
             simulation = ProjectAirSimSimulation()
+            if (bool_obstacles):
+                obstacle_course = ObstacleCourse()
+                obstacle_course.randomize()
+                simulation.obstacle_course = obstacle_course
             simulation.log_data = log_data
             simulation.local_data = False
             simulation.data_name = str(simulation.DATA_PATH + (name + str(iteration)))

@@ -219,6 +219,7 @@ class DataSequence():
                 start_time + i * dt,
                 state
             )
+        sequence.source_path = file_path
         return sequence, sim_configs
             
     @staticmethod
