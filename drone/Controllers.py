@@ -113,7 +113,7 @@ class RateController:
 
     MAX_ROLL_RATE = 2.0
     MAX_PITCH_RATE = 2.0
-    MAX_YAW_RATE = 2.0
+    MAX_YAW_RATE = 1.8
 
     def __init__(self, mode: str = Modes.DEFAULT):
         self.roll_pid = self.DEFAULT_CONFIGS[self.Gains.ROLL.value].create()

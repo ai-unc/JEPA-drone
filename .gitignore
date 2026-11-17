@@ -11,3 +11,4 @@ artifacts/
 .venv/
 ./tests
 ./drone/flight_logs
+./drone/projectairsim_client.log

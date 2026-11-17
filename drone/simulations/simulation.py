@@ -10,6 +10,7 @@ from Subsystems.flight_controller import FlightController, Rotation
 from drone.Subsystems.data.data import Action, State
 from simulations.simulation_config import SimulationConfigs
 from simulations.obstacle_course import ObstacleCourse
+from simulations.APF import APF
 from simulations.SimCam import SimCamera
 
 import numpy as np
@@ -185,6 +186,7 @@ class ProjectAirSimSimulation(FlightController):
         self.drone: Drone | None = None
         self.configs = SimulationConfigs()
         self.obstacle_course : ObstacleCourse | None  = None
+        self.apf = APF()
         self.local_data = True
         self.target_name = None
         self.camera = SimCamera()
@@ -379,6 +381,13 @@ class ProjectAirSimSimulation(FlightController):
             self.database.update_history(prev_state, action, prev_time_stamp)
         self.state, self.time = next_state, next_time
         return self.state,self.time
+
+    def obstacle_avoidance_velocity(self) -> tuple[np.ndarray, float]:
+        """Target world velocity and travel heading from known course geometry."""
+        if self.obstacle_course is None:
+            raise RuntimeError("Obstacle avoidance requires an obstacle course")
+        velocity = self.apf.run(State.get_position(self.state), self.obstacle_course)
+        return velocity, self.apf.yaw
 
     def generate_obstacle_course(self) -> None:
         """Spawn the attached course's stored geometry into the current world."""
