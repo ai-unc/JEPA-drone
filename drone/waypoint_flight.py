@@ -29,6 +29,7 @@ The idea:
 3. Achieve velocity control that uses attitude control and doesn't need to be autotuned
 Once those 3 steps are achieved, autonomous position control is next.
 With autonomous position control, massive data collection is possible.
+- Done!
 --Ethan
 """
 async def main():
@@ -37,10 +38,13 @@ async def main():
     iterations = input("How many times do you want to run this sequence? ")
     iterations = int(iterations) + iteration
     bool_rnd_configs = input("Do you want to use random configurations? (y/n): ").lower() == "y"
-    bool_render = input("Do you want to render the scene (it runs faster without the visuals)? (y/n)").lower() == "y"
+    bool_render = input("Do you want to render the scene (it runs faster without the visuals)? (y/n): ").lower() == "y"
     frequency = 0
-    spawn_height = input("Enter the spawn height (negative value, default is -650): ")
-    spawn_height = float(spawn_height)
+    if (bool_render):
+        spawn_height = input("Enter the spawn height (negative value, default is -650): ")
+        spawn_height = float(spawn_height)
+    else:
+        spawn_height = -2000
     log_data = input("Do you want to log data? (y/n): ").lower() == "y"
     name = "rnd_waypoint"
     if (not bool_rnd_configs):
@@ -51,11 +55,13 @@ async def main():
     velocity_controller = VelocityController()
     position_controller = PositionController()
     gamepad = Gamepad()
+    full_start_time = time.perf_counter()
     try:
         while iteration < iterations:
             iteration += 1
             simulation = ProjectAirSimSimulation()
-            simulation.DATA_PATH = "data_sequences/rnd_waypoint_training/"
+            simulation.SPAWN_POSE_VARIATION = 500
+            #simulation.DATA_PATH = "data_sequences/rnd_waypoint_training/"
             simulation.configs.render = bool_render
             simulation.log_data = log_data
             simulation.local_data = False
@@ -73,6 +79,8 @@ async def main():
             start_time = time.perf_counter()
             try:
                 simulation.start()
+                if (not bool_render):
+                    simulation.SPAWN_HEIGHT_VARIATION = 500
                 start_pose,start_orientation = simulation.set_pose_to_random_in_sky(height = spawn_height,rnd_pitch_and_roll=False)
                 # Environment uses MSL altitude = scene origin altitude - NED Z.
                 home_altitude = float(simulation.world.home_geo_point["altitude"])
@@ -129,6 +137,7 @@ async def main():
                 print("REAL TIME PASSED: ", time.perf_counter() - start_time)
     finally:
         gamepad.stop()
+        print("FULL TIME PASSED: ",(time.perf_counter() - full_start_time))
 
 
 if __name__ == "__main__":

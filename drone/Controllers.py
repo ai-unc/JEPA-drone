@@ -370,8 +370,8 @@ class AttitudeController:
         PITCH = "pitch"
         YAW = "yaw"
     CONFIGS = {
-        Gains.ROLL.value: PIDConfig(3,output_limit=20.0),
-        Gains.PITCH.value: PIDConfig(2,output_limit=12.0),
+        Gains.ROLL.value: PIDConfig(0.8,output_limit=1),
+        Gains.PITCH.value: PIDConfig(0.8,output_limit=1),
         Gains.YAW.value: PIDConfig(0.5,output_limit=8.0),
     }
     MAX_ROLL_ANGLE = 30 #degrees
@@ -471,7 +471,7 @@ class VelocityController:
         Gains.Y.value: PIDConfig(0.3,output_limit=MAX_ACCELERATION),
         # PI trims small mass/thrust/gravity biases; P alone leaves a steady
         # vertical speed offset. Integral trim is bounded to +/-1 m/s^2.
-        Gains.Z.value: PIDConfig(0.8, ki=0.05, output_limit=MAX_ACCELERATION,
+        Gains.Z.value: PIDConfig(0.8, ki=0.0, output_limit=MAX_ACCELERATION,
                                  integral_limit=20.0),
     }
 
@@ -556,10 +556,10 @@ class PositionController:
         FORWARD = "forward"
         VERTICAL = "vertical"
     MAX_FORWARD_VELOCITY = 7 #m/s
-    MAX_HORIZONTAL_VELOCITY = 9
+    MAX_HORIZONTAL_VELOCITY = 5
     MAX_VERTICAL_VELOCITY = 5
     CONFIGS = {
-            Gains.HORIZONTAL.value: PIDConfig(0.8,output_limit=MAX_HORIZONTAL_VELOCITY),
+            Gains.HORIZONTAL.value: PIDConfig(0.5,output_limit=MAX_HORIZONTAL_VELOCITY),
             Gains.FORWARD.value: PIDConfig(0.2,output_limit=MAX_FORWARD_VELOCITY),
             Gains.VERTICAL.value: PIDConfig(0.7,output_limit=MAX_VERTICAL_VELOCITY),
         }
