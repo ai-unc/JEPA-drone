@@ -1,6 +1,8 @@
 from __future__ import annotations
 import math
 import asyncio
+import time
+import copy
 
 from sympy import Quaternion
 
@@ -70,6 +72,13 @@ class ProjectAirSimSimulation(FlightController):
                 "z": 0.0,
             },
         })
+        if self.obstacle_course is not None:
+            goal_shape = next((shape for shape in self.obstacle_course.shapes
+                               if shape.shape == ObstacleCourse.Shape.GOAL), None)
+            if goal_shape is not None:
+                target_pose["translation"] = dict(zip(("x", "y", "z"), goal_shape.position.tolist()))
+            else:
+                target_pose["translation"] = dict(zip(("x", "y", "z"), self.obstacle_course.goal.tolist()))
         if (self.configs.render):
             if self.target_name is None:
                 self.target_name = self.world.spawn_object(
@@ -103,23 +112,51 @@ class ProjectAirSimSimulation(FlightController):
             "y": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
             "z": height,
         }
+        if self.obstacle_course is not None:
+            self.obstacle_course.validate_drone_spawn()
+            position = dict(zip(("x", "y", "z"), self.obstacle_course.drone_spawn.tolist()))
         x, y, z, w = Rotation.random().as_quat()
         if not rnd_pitch_and_roll:
             # Start level while preserving the sampled heading.
             yaw = Rotation.from_quat([x, y, z, w]).as_euler("xyz")[2]
             x, y, z, w = Rotation.from_euler("z", yaw).as_quat()
+        if self.obstacle_course is not None:
+            direction = self.obstacle_course.goal - self.obstacle_course.drone_spawn
+            x, y, z, w = Rotation.from_euler("z", np.arctan2(direction[1], direction[0])).as_quat()
         orientation = {
             "w": float(w),
             "x": float(x),
             "y": float(y),
             "z": float(z),
         }
-        self.drone.set_pose(types.Transform({
+        pose_set = self.drone.set_pose(types.Transform({
             "translation": position,
             "rotation": orientation,
         }))
 
         self.state, self.time = self.read()
+        if self.obstacle_course is not None:
+            actual_position = State.get_position(self.state)
+            if not pose_set or not np.allclose(actual_position, self.obstacle_course.drone_spawn, atol=0.1, rtol=0):
+                raise RuntimeError(f"Course spawn failed: requested {self.obstacle_course.drone_spawn}, got {actual_position}")
+            self.obstacle_course.validate_drone_spawn(actual_position)
+            # SetPose updates the physics state before Unreal moves its mesh.
+            # Wait for the rendered drone, which can be stopped by a sweep.
+            deadline = time.monotonic() + 3.0
+            while True:
+                bounds = self.world.get_3d_bounding_box(
+                    self.DEFAULT_DRONE_NAME, types.BoxAlignment.WORLD_AXIS
+                )
+                rendered = np.array([bounds["center"][k] for k in ("x", "y", "z")])
+                if np.linalg.norm(rendered - actual_position) < 1.0:
+                    self.obstacle_course.validate_drone_spawn(rendered)
+                    break
+                if time.monotonic() >= deadline:
+                    raise RuntimeError(
+                        f"Rendered drone did not reach course spawn: requested {actual_position}, "
+                        f"rendered {rendered}. Movement may have been blocked by a collision."
+                    )
+                time.sleep(0.02)
         return np.array([position["x"], position["y"], position["z"]], dtype=float), orientation
     def config_prompt(self) -> None:
         #CONFIGS MUST BE SET BEFORE THE SIMULATION STARTS!!!
@@ -157,6 +194,23 @@ class ProjectAirSimSimulation(FlightController):
             sim_config_path=str(self.configs.path),
         )
 
+        if self.obstacle_course is not None:
+            spawn_position = (self.obstacle_course.drone_spawn if initial_state is None
+                              else State.get_position(initial_state))
+            self.obstacle_course.validate_drone_spawn(spawn_position)
+            # FastPhysics can report SetPose while Unreal still displays the
+            # initial scene origin. Create the robot at the course spawn so
+            # no paused teleport or collision sweep is needed to get there.
+            scene = copy.deepcopy(self.world.get_configuration())
+            direction = self.obstacle_course.goal - spawn_position
+            yaw = float(np.degrees(np.arctan2(direction[1], direction[0])))
+            actor = next(a for a in scene["actors"] if a["name"] == self.DEFAULT_DRONE_NAME)
+            actor["origin"] = {
+                "xyz": " ".join(str(float(v)) for v in spawn_position),
+                "rpy-deg": f"0 0 {yaw}",
+            }
+            self.world.load_scene(scene, delay_after_load_sec=self.LOAD_DELAY)
+
         self.drone = Drone(
             self.client,
             self.world,
@@ -169,6 +223,9 @@ class ProjectAirSimSimulation(FlightController):
         self.state,self.time = self.read()
 
         if (self.obstacle_course is not None):
+            # Move out of the obstacle region before creating collision meshes.
+            if initial_state is None:
+                self.set_pose_to_random_in_sky(rnd_pitch_and_roll=False)
             self.generate_obstacle_course()
     
     @override
@@ -315,7 +372,10 @@ class ProjectAirSimSimulation(FlightController):
         if self.world is None:
             raise RuntimeError("Start the simulation before generating obstacles.")
 
+        self.generate_target(self.obstacle_course.goal)
         for index, obstacle in enumerate(self.obstacle_course.shapes):
+            if obstacle.shape == ObstacleCourse.Shape.GOAL:
+                continue  # FlightTarget is spawned by generate_target above.
             x, y, z, w = Rotation.from_euler(
                 "xyz", obstacle.rotation, degrees=True
             ).as_quat()
@@ -324,14 +384,71 @@ class ProjectAirSimSimulation(FlightController):
                 "rotation": {"w": float(w), "x": float(x), "y": float(y), "z": float(z)},
             })
             name = self.world.spawn_object(
-                object_name=f"ObstacleCourse_{index}",
+                object_name=f"{obstacle.name}_{index}",
                 asset_path=obstacle.shape.value,
-                object_pose=pose,
-                object_scale=obstacle.size.tolist(),
+                object_pose=types.Transform({
+                    "translation": {"x": 0., "y": 0., "z": 0.},
+                    "rotation": {"w": 1., "x": 0., "y": 0., "z": 0.},
+                }),
+                object_scale=[1., 1., 1.],
                 enable_physics=False,
             )
             if not name:
                 raise RuntimeError(f"Failed to spawn obstacle {index} ({obstacle.shape.value}).")
+            # Scale is a mesh multiplier, not a dimension in metres. Measure
+            # the actual asset at identity, including any off-centre pivot.
+            bounds = self.world.get_3d_bounding_box(name, types.BoxAlignment.WORLD_AXIS)
+            native_size = np.array([bounds["size"][k] for k in ("x", "y", "z")])
+            native_center = np.array([bounds["center"][k] for k in ("x", "y", "z")])
+            if not np.all(np.isfinite(native_size)) or np.any(native_size <= 0):
+                raise RuntimeError(f"Invalid mesh bounds for {name}: {bounds}")
+            scale = obstacle.size / native_size
+            self.world.set_object_scale(name, scale.tolist())
+            rotation = Rotation.from_euler("xyz", obstacle.rotation, degrees=True)
+            origin = obstacle.position - rotation.apply(native_center * scale)
+            pose["translation"] = dict(zip(("x", "y", "z"), origin.tolist()))
+            self.world.set_object_pose(name, pose, teleport=True)
+            actual = self.world.get_3d_bounding_box(name, types.BoxAlignment.WORLD_AXIS)
+            center = np.array([actual["center"][k] for k in ("x", "y", "z")])
+            extent = np.array([actual["size"][k] for k in ("x", "y", "z")]) / 2
+            if (not np.allclose(center, obstacle.position, atol=0.05, rtol=0)
+                    or np.any(extent > obstacle.bounding_extent() + 0.05)):
+                raise RuntimeError(f"Rendered geometry does not match course record for {name}: {actual}")
+
+        # Four quadrant lights and one central light hang below the ceiling.
+        # Lights are scene fixtures, so they are not part of the course log.
+        ceiling = self.obstacle_course.shapes[4]
+        ceiling_bottom = ceiling.position[2] + ceiling.size[2] / 2
+        x_edges = (self.obstacle_course.min_x - self.obstacle_course.spawn_radius,
+                   self.obstacle_course.max_x + self.obstacle_course.spawn_radius)
+        y_edges = (self.obstacle_course.min_y - self.obstacle_course.spawn_radius,
+                   self.obstacle_course.max_y + self.obstacle_course.spawn_radius)
+        x_mid = (x_edges[0] + x_edges[1]) / 2
+        y_mid = (y_edges[0] + y_edges[1]) / 2
+        x_quarters = ((x_edges[0] + x_mid) / 2, (x_mid + x_edges[1]) / 2)
+        y_quarters = ((y_edges[0] + y_mid) / 2, (y_mid + y_edges[1]) / 2)
+        light_positions = [(x, y) for y in y_quarters for x in x_quarters]
+        light_positions.append((x_mid, y_mid))
+        for index, (x, y) in enumerate(light_positions):
+                name = self.world.spawn_object(
+                    object_name=f"ceiling_light_{index}",
+                    asset_path="PointLightActor",
+                    object_pose=types.Transform({
+                        "translation": {"x": float(x), "y": float(y),
+                                        "z": float(ceiling_bottom + 2)},
+                        "rotation": {"w": 1., "x": 0., "y": 0., "z": 0.},
+                    }),
+                    object_scale=[1., 1., 1.],
+                    enable_physics=False,
+                )
+                if not name:
+                    raise RuntimeError(f"Failed to spawn ceiling light {index}")
+                # Unreal's SetAttenuationRadius takes centimetres, despite the
+                # Python API describing this value as metres.
+                if not self.world.set_light_object_radius(name, 55000000.):
+                    raise RuntimeError(f"Failed to set radius for {name}")
+                if not self.world.set_light_object_intensity(name, 5000000.):
+                    raise RuntimeError(f"Failed to set intensity for {name}")
     
     @override
     def csv_header(self) -> str:

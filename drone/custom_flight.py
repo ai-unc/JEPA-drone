@@ -5,6 +5,7 @@ from Subsystems.drone import Drone
 import asyncio
 
 from simulations.simulation import ProjectAirSimSimulation
+from simulations.obstacle_course import ObstacleCourse
 from drone.Subsystems.data.data import DataSequence, Action, State
 
 #Plays back csv flights from action_sequences
@@ -15,6 +16,9 @@ async def main() -> None:
     drone.prompt_update_frequency()
     data_sequence, sim_configs = DataSequence.generate_from_csv()
     simulation.set_configs(sim_configs)
+    course = ObstacleCourse()
+    if course.read_csv(data_sequence.source_path):
+        simulation.obstacle_course = course
 
     drone.data_sequence = data_sequence
     simulation.log_prompt()
