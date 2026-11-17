@@ -370,8 +370,13 @@ class AttitudeController:
         PITCH = "pitch"
         YAW = "yaw"
     CONFIGS = {
+<<<<<<< HEAD
         Gains.ROLL.value: PIDConfig(1,output_limit=5),
         Gains.PITCH.value: PIDConfig(1,output_limit=5),
+=======
+        Gains.ROLL.value: PIDConfig(0.8,output_limit=1),
+        Gains.PITCH.value: PIDConfig(0.8,output_limit=1),
+>>>>>>> main
         Gains.YAW.value: PIDConfig(0.5,output_limit=8.0),
     }
     MAX_ROLL_ANGLE = 30 #degrees
@@ -556,10 +561,10 @@ class PositionController:
         FORWARD = "forward"
         VERTICAL = "vertical"
     MAX_FORWARD_VELOCITY = 7 #m/s
-    MAX_HORIZONTAL_VELOCITY = 9
+    MAX_HORIZONTAL_VELOCITY = 5
     MAX_VERTICAL_VELOCITY = 5
     CONFIGS = {
-            Gains.HORIZONTAL.value: PIDConfig(0.8,output_limit=MAX_HORIZONTAL_VELOCITY),
+            Gains.HORIZONTAL.value: PIDConfig(0.5,output_limit=MAX_HORIZONTAL_VELOCITY),
             Gains.FORWARD.value: PIDConfig(0.2,output_limit=MAX_FORWARD_VELOCITY),
             Gains.VERTICAL.value: PIDConfig(0.7,output_limit=MAX_VERTICAL_VELOCITY),
         }

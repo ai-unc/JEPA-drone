@@ -32,6 +32,7 @@ class ProjectAirSimSimulation(FlightController):
 
     SKY_POSE_Z = -80
     SPAWN_POSE_VARIATION = 100
+    SPAWN_HEIGHT_VARIATION = 50
 
     TARGET_POSE_VARIATION = [[-100,100],[-100,100],[-30,30]]
     TARGET_NAME="FlightTarget"
@@ -110,7 +111,7 @@ class ProjectAirSimSimulation(FlightController):
         position = {
             "x": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
             "y": random.uniform(-self.SPAWN_POSE_VARIATION, self.SPAWN_POSE_VARIATION),
-            "z": height,
+            "z": random.uniform(height - self.SPAWN_HEIGHT_VARIATION, height + self.SPAWN_HEIGHT_VARIATION),
         }
         if self.obstacle_course is not None:
             self.obstacle_course.validate_drone_spawn()

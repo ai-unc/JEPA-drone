@@ -93,9 +93,9 @@ def _normalize(batch, norm):
 def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_encoder: nn.Module, latent_predictor: nn.Module, config: Config,) -> tuple[torch.Tensor, dict[str, float], torch.Tensor]:
     # call rollout windows to cut these tensors into overlapping 10-step clips
 
-    state_history = batch[Data.STATE_HISTORY]
+    state_history = batch[Data.STATE_HISTORY] # clip that the model is shown: last 10 frams until "now"
     actions = batch[Data.ACTIONS]
-    future_states = batch[Data.FUTURE_STATES]
+    future_states = batch[Data.FUTURE_STATES] # real answer key from "now" + 0.05 until 0.5 seconds ahead
 
     history_len = state_history.shape[1]
 
@@ -103,11 +103,10 @@ def _jepa_step(batch: dict[str, torch.Tensor], state_encoder: nn.Module, action_
     latent_actions = _encode_sequence(action_encoder, action_windows)
 
     states = torch.cat([state_history, future_states], dim=1)
-    state_windows = sliding_windows(states, history_len)
+    state_windows = sliding_windows(states, history_len) # strip states into 10-frank chunks
 
     initial_state = state_windows[:, 0]
     targets = state_windows[:, 1:] # the next 10 windows of states are the targets for the predictor
-
 
     latent_initial_state = state_encoder(initial_state)
     latent_targets = _encode_sequence(state_encoder, targets)
