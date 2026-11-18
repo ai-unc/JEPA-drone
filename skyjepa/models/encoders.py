@@ -163,8 +163,8 @@ class ImageEncoder(nn.Module):
         return latent
 
 
-class TextEncoder(nn.Module):
-
+class TextEncoder(nn.Module): 
+    
     INTENTS = [
         "move_relative",
         "move_absolute",
@@ -206,31 +206,31 @@ class TextEncoder(nn.Module):
     def parse_goal(self, command):
 
         prompt = f"""
-Parse the natural language drone command.
+        Parse the natural language drone command.
 
-Available intents: {self.INTENTS}
-Available objects: {self.OBJECTS}
+        Available intents: {self.INTENTS}
+        Available objects: {self.OBJECTS}
 
-Return only a JSON object with these fields:
+        Return only a JSON object with these fields:
 
-{{
-    "intent": "intent_name",
-    "object": "object_name",
-    "target": null,
-    "preference": "none"
-}}
+        {{
+            "intent": "intent_name",
+            "object": "object_name",
+            "target": null,
+            "preference": "none"
+        }}
 
-Rules:
-- Target is [x, y, z] in meters or null.
-- Do not invent spatial coordinates.
-- Relative coordinates: X forward, Y right, Z down.
-- Absolute coordinates: AirSim world NED frame.
-- Preference must be nearest, farthest, or none.
-- Use unknown when no object is specified.
-- Use other for unsupported or compound objectives.
-- For exiting a room, the target object is door.
-- Do not generate intermediate waypoints.
-"""
+        Rules:
+        - Target is [x, y, z] in meters or null.
+        - Do not invent spatial coordinates.
+        - Relative coordinates: X forward, Y right, Z down.
+        - Absolute coordinates: AirSim world NED frame.
+        - Preference must be nearest, farthest, or none.
+        - Use unknown when no object is specified.
+        - Use other for unsupported or compound objectives.
+        - For exiting a room, the target object is door.
+        - Do not generate intermediate waypoints.
+        """
 
         messages = [
             {"role": "system", "content": prompt},
@@ -241,13 +241,10 @@ Rules:
             messages,
             tokenize=False,
             add_generation_prompt=True,
-            enable_thinking=False,
+            enable_thinking=False
         )
 
-        inputs = self.tokenizer(
-            text,
-            return_tensors="pt"
-        ).to(self.model.device)
+        inputs = self.tokenizer(text, return_tensors="pt").to(self.model.device)
 
         output = self.model.generate(
             **inputs,
@@ -260,12 +257,17 @@ Rules:
 
         generated = output[0, inputs.input_ids.shape[1]:]
 
-        response = self.tokenizer.decode(
-            generated,
-            skip_special_tokens=True,
-        )
+        response = self.tokenizer.decode(generated, skip_special_tokens=False)
+        if "</think>" in response:
+            response = response.split("</think>")[-1]
+        response = response.replace("<|im_end|>", "").strip()
 
-        return json.loads(response.strip())
+        start = response.find("{")
+        end = response.rfind("}")
+        if start == -1 or end <= start:
+            raise ValueError(f"Model did not return JSON:\n{response}")
+        
+        return json.loads(response[start:end + 1])
 
     def encode_structured_goal(self, goal):
 
@@ -294,7 +296,7 @@ Rules:
         # One-hot encode object
         tensor[8 + self.OBJECTS.index(obj)] = 1.0
 
-        # Encode coordinates when available
+        # encode coordinates when available
         if target is not None:
             if (
                 not isinstance(target, list)
@@ -320,7 +322,7 @@ Rules:
         tensor[20] = float(preference == "nearest")
         tensor[21] = float(preference == "farthest")
 
-        # cefault position tolerance
+        # default position tolerance
         tensor[22] = 0.2
 
         return tensor.unsqueeze(0)
@@ -366,13 +368,18 @@ Rules:
         return goal_tensor, parsed
 
 
-encoder = TextEncoder()
+class MultimodalEncoder(nn.Module):
 
-tensor, parsed = encoder(
-    "Exit the room through the nearest door"
-)
+    def __init__(self, input_dim: int = 96):
+        super().__init__()
 
-print(parsed)
-print(tensor.shape)
+        self.mlp = nn.Sequential(
+            nn.Linear(input_dim, 256),
+            nn.GELU(),
+            nn.Linear(256, 128)
+        )
 
-assert tensor.shape == (1, 1047)
+    def forward(self, image_tensor: torch.Tensor, proprioceptive_tensor: torch.Tensor, state_history: torch.Tensor):
+        combined = torch.cat([image_tensor, proprioceptive_tensor, state_history], dim=-1)
+
+        return self.mlp(combined)
