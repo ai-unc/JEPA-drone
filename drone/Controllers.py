@@ -99,8 +99,6 @@ class RateController:
         Gains.YAW.value: PIDConfig(0.8),
     }
 
-    # Fixed nominal 1 kg frame and 4.18 N motors for baseline comparisons.
-    # These values deliberately do not depend on the active simulation config.
     DEFAULT_CONTROL_CONFIG = RateThrustConfig(
         pid_configs=DEFAULT_CONFIGS,
         max_motor_thrust=Action.ASSUMED_MAX_THRUST,
@@ -115,7 +113,7 @@ class RateController:
 
     MAX_ROLL_RATE = 2.0
     MAX_PITCH_RATE = 2.0
-    MAX_YAW_RATE = 2.0
+    MAX_YAW_RATE = 1.8
 
     def __init__(self, mode: str = Modes.DEFAULT):
         self.roll_pid = self.DEFAULT_CONFIGS[self.Gains.ROLL.value].create()
@@ -370,13 +368,8 @@ class AttitudeController:
         PITCH = "pitch"
         YAW = "yaw"
     CONFIGS = {
-<<<<<<< HEAD
         Gains.ROLL.value: PIDConfig(1,output_limit=5),
         Gains.PITCH.value: PIDConfig(1,output_limit=5),
-=======
-        Gains.ROLL.value: PIDConfig(0.8,output_limit=1),
-        Gains.PITCH.value: PIDConfig(0.8,output_limit=1),
->>>>>>> main
         Gains.YAW.value: PIDConfig(0.5,output_limit=8.0),
     }
     MAX_ROLL_ANGLE = 30 #degrees
@@ -461,11 +454,11 @@ class VelocityController:
     This class controls the velocity of the drone.
     Assuming attitude control works, there will be no automatic tuning for velocity.
     """
-    MAX_X_VELOCITY = 8 #m/s
-    MAX_Y_VELOCITY = 8 #m/s
-    MAX_Z_VELOCITY = 4 #m/s -> Vertical
+    MAX_X_VELOCITY = 5 #m/s
+    MAX_Y_VELOCITY = 5 #m/s
+    MAX_Z_VELOCITY = 3 #m/s -> Vertical
 
-    MAX_ACCELERATION = 4 #m/s^2
+    MAX_ACCELERATION = 3 #m/s^2
 
     class Gains(Enum):
         X = "x_velocity"
@@ -476,8 +469,7 @@ class VelocityController:
         Gains.Y.value: PIDConfig(0.5,output_limit=MAX_ACCELERATION),
         # PI trims small mass/thrust/gravity biases; P alone leaves a steady
         # vertical speed offset. Integral trim is bounded to +/-1 m/s^2.
-        Gains.Z.value: PIDConfig(0.8, ki=0.0, output_limit=MAX_ACCELERATION,
-                                 integral_limit=20.0),
+        Gains.Z.value: PIDConfig(0.8, ki=0.0, output_limit=MAX_ACCELERATION),
     }
 
     def __init__(self):

@@ -10,8 +10,5 @@ mise.toml
 artifacts/
 .venv/
 ./tests
-<<<<<<< HEAD
 ./drone/flight_logs
-=======
-drone/flight_logs/
->>>>>>> main
+./drone/projectairsim_client.log

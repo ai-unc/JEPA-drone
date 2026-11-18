@@ -29,7 +29,6 @@ import tempfile
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-
 class ObstacleCourse:
     class Shape(Enum):
         RECTANGLE = "Cube"
@@ -47,6 +46,7 @@ class ObstacleCourse:
         position: np.ndarray
         rotation: np.ndarray
         name: str = "obstacle"
+        id : str = 0
 
         def __post_init__(self):
             self.shape = ObstacleCourse.Shape(self.shape)
@@ -89,25 +89,106 @@ class ObstacleCourse:
             # Cylinder's elliptical radial cross section plus axial extent.
             return float(np.linalg.norm(projected[:2]) + abs(projected[2]))
 
+        def get_closest_point(self, position):
+            """Nearest point on the rotated primitive's surface in NED metres."""
+            point = np.asarray(position, dtype=float)
+            rotation = Rotation.from_euler("xyz", self.rotation, degrees=True)
+            local = rotation.inv().apply(point - self.position)
+            half = self.size / 2
+            if self.shape == ObstacleCourse.Shape.SPHERE:
+                radius = half[0]
+                length = np.linalg.norm(local)
+                closest = local * radius / length if length else np.array([radius, 0., 0.])
+            elif self.shape == ObstacleCourse.Shape.DISK:
+                radius, height = half[0], half[2]
+                radial = np.linalg.norm(local[:2])
+                closest = local.copy()
+                if radial > radius:
+                    closest[:2] *= radius / radial
+                closest[2] = np.clip(local[2], -height, height)
+                if radial <= radius and abs(local[2]) <= height:
+                    if radius - radial < height - abs(local[2]):
+                        closest[:2] = local[:2] * radius / radial if radial else [radius, 0.]
+                    else:
+                        closest[2] = height if local[2] >= 0 else -height
+            else:
+                closest = np.clip(local, -half, half)
+                if np.all(np.abs(local) <= half):
+                    axis = int(np.argmin(half - np.abs(local)))
+                    closest[axis] = half[axis] if local[axis] >= 0 else -half[axis]
+            return self.position + rotation.apply(closest)
+
+        def contains(self, position):
+            local = Rotation.from_euler("xyz", self.rotation, degrees=True).inv().apply(
+                np.asarray(position, dtype=float) - self.position)
+            half = self.size / 2
+            if self.shape == ObstacleCourse.Shape.SPHERE:
+                return np.linalg.norm(local) < half[0]
+            if self.shape == ObstacleCourse.Shape.DISK:
+                return np.linalg.norm(local[:2]) < half[0] and abs(local[2]) < half[2]
+            return bool(np.all(np.abs(local) < half))
+
+        def horizontal_section(self, height):
+            """XY boundary of the primitive at one NED height, or None."""
+            half = self.size / 2
+            if self.shape == ObstacleCourse.Shape.SPHERE:
+                dz = height - self.position[2]
+                if abs(dz) >= half[0]:
+                    return None
+                radius = np.sqrt(half[0]**2 - dz**2)
+                angles = np.linspace(0, 2*np.pi, 48, endpoint=False)
+                return self.position[:2] + radius * np.column_stack((np.cos(angles), np.sin(angles)))
+            rotation = Rotation.from_euler("xyz", self.rotation, degrees=True)
+            if self.shape == ObstacleCourse.Shape.DISK:
+                angles = np.linspace(0, 2*np.pi, 48, endpoint=False)
+                ring = np.column_stack((half[0]*np.cos(angles), half[0]*np.sin(angles)))
+                local = np.array([[x,y,z] for z in (-half[2],half[2]) for x,y in ring])
+                edges = [(i,(i+1)%48) for i in range(48)] + [(i+48,48+(i+1)%48) for i in range(48)] + [(i,i+48) for i in range(48)]
+            else:
+                local = np.array([[x,y,z] for x in (-half[0],half[0]) for y in (-half[1],half[1]) for z in (-half[2],half[2])])
+                edges = [(i,j) for i in range(8) for j in range(i+1,8) if (i^j) in (1,2,4)]
+            vertices = rotation.apply(local) + self.position
+            points = []
+            for i,j in edges:
+                a,b = vertices[i],vertices[j]
+                if abs(b[2]-a[2]) < 1e-9:
+                    if abs(height-a[2]) < 1e-9:
+                        points.extend((a[:2],b[:2]))
+                else:
+                    t = (height-a[2])/(b[2]-a[2])
+                    if 0 <= t <= 1:
+                        points.append(a[:2]+t*(b[:2]-a[:2]))
+            if len(points) < 3:
+                return None
+            from scipy.spatial import ConvexHull
+            points = np.unique(np.round(points, 8),axis=0)
+            if len(points) < 3:
+                return None
+            return points[ConvexHull(points).vertices]
+
     HEADER = "OBSTACLE_COURSE"
     CSV_PREFIX = "# " + HEADER + ": "
 
     def __init__(self):
         self.shapes: list[ObstacleCourse.Obstacle] = []
+        self.occupancy_map = None  # [y][x] -> list of Obstacle references
+        self.occupancy_origin = None
+        self.occupancy_cell_size = 5,5 # 5 x 5 meters
         self.min_angles = -90
         self.max_angles = 90
         self.min_x, self.max_x = -150, 150
         self.min_y, self.max_y = -150, 150
         self.ground_level = 0
         self.min_size, self.max_size = 10, 20
-        self.rectangles = 20
-        self.spheres = 10
-        self.disks = 10
+        self.rectangles = 10
+        self.spheres = 5
+        self.disks = 5
 
         self.walls = 4
         self.wall_width = 20
-        self.room_height = 12
+        self.room_height = 14
         self.drone_clearance = 2
+        self.obstacle_to_obstacle_clearance = 10 # meters
 
         self.goal = np.array([0., 0., -5.])
         self.goal_variation = np.array([50., 50., 0.])
@@ -119,6 +200,31 @@ class ObstacleCourse:
 
         self.drone_spawn = np.array([0., 0., -5.])
 
+    def rebuild_occupancy_map(self) -> None:
+        """Index obstacle footprints across 5 m ground cells."""
+        cell = np.asarray(self.occupancy_cell_size, dtype=float)
+        if cell.shape != (2,) or not np.all(np.isfinite(cell)) or np.any(cell <= 0):
+            raise ValueError("Occupancy cell sizes must be two positive finite numbers")
+        origin = np.array([self.min_x, self.min_y], dtype=float)
+        end = np.array([self.max_x, self.max_y], dtype=float)
+        dimensions = np.ceil((end - origin) / cell).astype(int)
+        if np.any(dimensions <= 0):
+            raise ValueError("Occupancy map bounds must be ordered")
+        grid = [[[] for _ in range(dimensions[0])] for _ in range(dimensions[1])]
+        for shape in self.shapes:
+            if shape.name != "obstacle":
+                continue
+            extent = shape.bounding_extent()[:2]
+            lower = np.floor((shape.position[:2] - extent - origin) / cell).astype(int)
+            upper = np.floor((shape.position[:2] + extent - origin) / cell).astype(int)
+            lower = np.maximum(lower, 0)
+            upper = np.minimum(upper, dimensions - 1)
+            for y in range(lower[1], upper[1] + 1):
+                for x in range(lower[0], upper[0] + 1):
+                    grid[y][x].append(shape)
+        self.occupancy_origin = origin
+        self.occupancy_map = grid
+
 
     def randomize(self) -> None:
         """Replace geometry with random sizes, positions, and roll/pitch/yaw.
@@ -126,27 +232,18 @@ class ObstacleCourse:
         Centers range from ground level to half the rotated vertical extent
         above ground, allowing partially buried obstacles without floating.
 
-        Placement is independent: overlaps are permitted. A local random
-        generator leaves the flight's random action sequence untouched.
+        Obstacles retain clearance from one another. A local random generator
+        leaves the flight's random action sequence untouched.
         Spheres use equal diameters; cylinders use equal x/y diameters.
         """
         ranges = ((self.min_x, self.max_x), (self.min_y, self.max_y),
                   (self.min_size, self.max_size), (self.min_angles, self.max_angles))
-        if any(not np.all(np.isfinite(pair)) or pair[0] > pair[1] for pair in ranges):
-            raise ValueError("Randomization bounds must be finite and ordered")
-        if self.min_size <= 0 or not np.isfinite(self.ground_level):
-            raise ValueError("Sizes must be positive and ground_level finite")
         counts = (self.rectangles, self.spheres, self.disks)
-        if any(not isinstance(n, (int, np.integer)) or n < 0 for n in counts):
-            raise ValueError("Shape counts must be nonnegative integers")
+        if not np.isfinite(self.obstacle_to_obstacle_clearance) or self.obstacle_to_obstacle_clearance < 0:
+            raise ValueError("Obstacle clearance must be nonnegative and finite")
         rng = np.random.default_rng()
         low = np.array([self.min_x, self.min_y], dtype=float) - self.spawn_radius
         high = np.array([self.max_x, self.max_y], dtype=float) + self.spawn_radius
-        if (self.wall_width <= 0 or self.room_height <= 1
-                or self.spawn_radius <= 2 * self.drone_clearance
-                or not self.drone_clearance < self.spawn_wall_distance < self.spawn_radius - self.drone_clearance
-                or np.any(high - low <= 2 * self.spawn_radius + self.max_size * 2)):
-            raise ValueError("Room is too small for obstacles and a safe spawn corridor")
         self.goal = np.array([0., 0., -1.]) + rng.uniform(-self.goal_variation, self.goal_variation)
         # Choose a point in the clear perimeter strip, inset from both faces.
         self.drone_spawn = np.r_[rng.uniform(low + self.drone_clearance,
@@ -167,6 +264,7 @@ class ObstacleCourse:
             ([width + 2*t, depth + 2*t, t], [cx, cy, g-h-t/2]),
         ):
             shapes.append(self.Obstacle(self.Shape.RECTANGLE, size, position, [0,0,0], name="wall"))
+        placed_obstacles = []
         for kind, count in zip((self.Shape.RECTANGLE, self.Shape.SPHERE, self.Shape.DISK), counts):
             for _ in range(count):
                 size = rng.uniform(self.min_size, self.max_size, 3)
@@ -183,15 +281,23 @@ class ObstacleCourse:
                 for attempt in range(10000):
                     xy = rng.uniform(lower, upper)
                     distance = np.linalg.norm(np.maximum(np.abs(xy - self.goal[:2]) - extent[:2], 0))
-                    if distance >= self.goal_radius:
+                    separated = all(
+                        np.linalg.norm(np.maximum(
+                            np.abs(xy - other.position[:2]) - extent[:2] - other.bounding_extent()[:2], 0
+                        )) >= self.obstacle_to_obstacle_clearance
+                        for other in placed_obstacles
+                    )
+                    if distance >= self.goal_radius and separated:
                         break
                 else:
-                    raise ValueError("Cannot place obstacles outside goal clearance")
+                    raise ValueError("Cannot place obstacles with goal and obstacle clearance")
                 obstacle.position[:] = [*xy, rng.uniform(g - obstacle.relative_height()/2, g)]
                 shapes.append(obstacle)
+                placed_obstacles.append(obstacle)
         shapes.append(self.Obstacle(self.Shape.GOAL, [8, 8, 8], self.goal,
                                     [0, 0, 0], name="goal"))
         self.shapes = shapes
+        self.rebuild_occupancy_map()
         self.validate_drone_spawn()
 
     def validate_drone_spawn(self, position=None) -> None:
@@ -230,6 +336,7 @@ class ObstacleCourse:
     def clear(self) -> None:
         """Clear stored geometry; world objects must be removed by simulation code."""
         self.shapes.clear()
+        self.rebuild_occupancy_map()
 
     def to_string(self) -> str:
         """Serialize exact geometry for replay."""
@@ -302,6 +409,7 @@ class ObstacleCourse:
                         shapes.append(self.Obstacle(self.Shape.GOAL, [8, 8, 8],
                                                     self.goal, [0, 0, 0], name="goal"))
                     self.shapes = shapes
+                    self.rebuild_occupancy_map()
                     self.drone_spawn = np.array(payload.get("drone_spawn", [0,0,-10]), dtype=float)
                     return True
                 if not line.startswith("#"):
