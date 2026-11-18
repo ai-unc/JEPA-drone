@@ -128,6 +128,44 @@ class ObstacleCourse:
                 return np.linalg.norm(local[:2]) < half[0] and abs(local[2]) < half[2]
             return bool(np.all(np.abs(local) < half))
 
+        def horizontal_section(self, height):
+            """XY boundary of the primitive at one NED height, or None."""
+            half = self.size / 2
+            if self.shape == ObstacleCourse.Shape.SPHERE:
+                dz = height - self.position[2]
+                if abs(dz) >= half[0]:
+                    return None
+                radius = np.sqrt(half[0]**2 - dz**2)
+                angles = np.linspace(0, 2*np.pi, 48, endpoint=False)
+                return self.position[:2] + radius * np.column_stack((np.cos(angles), np.sin(angles)))
+            rotation = Rotation.from_euler("xyz", self.rotation, degrees=True)
+            if self.shape == ObstacleCourse.Shape.DISK:
+                angles = np.linspace(0, 2*np.pi, 48, endpoint=False)
+                ring = np.column_stack((half[0]*np.cos(angles), half[0]*np.sin(angles)))
+                local = np.array([[x,y,z] for z in (-half[2],half[2]) for x,y in ring])
+                edges = [(i,(i+1)%48) for i in range(48)] + [(i+48,48+(i+1)%48) for i in range(48)] + [(i,i+48) for i in range(48)]
+            else:
+                local = np.array([[x,y,z] for x in (-half[0],half[0]) for y in (-half[1],half[1]) for z in (-half[2],half[2])])
+                edges = [(i,j) for i in range(8) for j in range(i+1,8) if (i^j) in (1,2,4)]
+            vertices = rotation.apply(local) + self.position
+            points = []
+            for i,j in edges:
+                a,b = vertices[i],vertices[j]
+                if abs(b[2]-a[2]) < 1e-9:
+                    if abs(height-a[2]) < 1e-9:
+                        points.extend((a[:2],b[:2]))
+                else:
+                    t = (height-a[2])/(b[2]-a[2])
+                    if 0 <= t <= 1:
+                        points.append(a[:2]+t*(b[:2]-a[:2]))
+            if len(points) < 3:
+                return None
+            from scipy.spatial import ConvexHull
+            points = np.unique(np.round(points, 8),axis=0)
+            if len(points) < 3:
+                return None
+            return points[ConvexHull(points).vertices]
+
     HEADER = "OBSTACLE_COURSE"
     CSV_PREFIX = "# " + HEADER + ": "
 
@@ -150,7 +188,7 @@ class ObstacleCourse:
         self.wall_width = 20
         self.room_height = 14
         self.drone_clearance = 2
-        self.obstacle_to_obstacle_clearance = 10 #meters
+        self.obstacle_to_obstacle_clearance = 10 # meters
 
         self.goal = np.array([0., 0., -5.])
         self.goal_variation = np.array([50., 50., 0.])
@@ -194,8 +232,8 @@ class ObstacleCourse:
         Centers range from ground level to half the rotated vertical extent
         above ground, allowing partially buried obstacles without floating.
 
-        Placement respects a size-aware horizontal gap. A local random
-        generator leaves the flight's random action sequence untouched.
+        Obstacles retain clearance from one another. A local random generator
+        leaves the flight's random action sequence untouched.
         Spheres use equal diameters; cylinders use equal x/y diameters.
         """
         ranges = ((self.min_x, self.max_x), (self.min_y, self.max_y),
@@ -214,7 +252,6 @@ class ObstacleCourse:
         inset = self.spawn_wall_distance
         self.drone_spawn[axis] = (low[axis] + inset if rng.integers(2) else high[axis] - inset)
         shapes = []
-        placed_obstacles = []
         # Bounds describe the inner wall faces; adjoining slabs overlap.
         width, depth = high - low
         cx, cy = (low + high) / 2
@@ -227,6 +264,7 @@ class ObstacleCourse:
             ([width + 2*t, depth + 2*t, t], [cx, cy, g-h-t/2]),
         ):
             shapes.append(self.Obstacle(self.Shape.RECTANGLE, size, position, [0,0,0], name="wall"))
+        placed_obstacles = []
         for kind, count in zip((self.Shape.RECTANGLE, self.Shape.SPHERE, self.Shape.DISK), counts):
             for _ in range(count):
                 size = rng.uniform(self.min_size, self.max_size, 3)

@@ -386,7 +386,8 @@ class ProjectAirSimSimulation(FlightController):
         """Target world velocity and travel heading from known course geometry."""
         if self.obstacle_course is None:
             raise RuntimeError("Obstacle avoidance requires an obstacle course")
-        velocity = self.apf.run(State.get_position(self.state), self.obstacle_course)
+        velocity = self.apf.run(State.get_position(self.state), self.obstacle_course,
+                                State.get_velocity(self.state))
         return velocity, self.apf.yaw
 
     def generate_obstacle_course(self) -> None:
@@ -484,6 +485,17 @@ class ProjectAirSimSimulation(FlightController):
     @override
     def close(self) -> None:
         self.camera.close()
-        self.write_data_log()
+        if self.camera.log_vision and self.log_data:
+            original_name = self.data_name
+            flight_folder = Path(original_name)
+            flight_folder.mkdir(parents=True, exist_ok=True)
+            try:
+                self.data_name = str(flight_folder / flight_folder.name)
+                self.write_data_log()
+                self.camera.save_vision(flight_folder)
+            finally:
+                self.data_name = original_name
+        else:
+            self.write_data_log()
         if self.client is not None:
             self.client.disconnect()

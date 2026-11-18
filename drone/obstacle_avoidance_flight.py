@@ -25,7 +25,10 @@ async def main():
     frequency = float(frequency)
     spawn_height = None
     log_data = input("Do you want to log data? (y/n): ").lower() == "y"
+    log_vision = log_data and input("Log compact depth and classification vision? (y/n): ").lower() == "y"
+    display_grayscale = input("Display grayscale? (y/n): ").lower() == "y"
     display_tensor = input("Display Vision (depth + class)? (y/n): ").lower() == "y"
+
     bool_vision = True
     name = "rnd_vision_obstacle"
     if (not bool_rnd_configs):
@@ -40,12 +43,14 @@ async def main():
             iteration += 1
             simulation = ProjectAirSimSimulation()
             simulation.vision_enabled = bool_vision
-            simulation.camera.display_raw = False
+            simulation.camera.display_raw = display_grayscale
             simulation.camera.display_depth = False
             simulation.camera.display_tensorized = display_tensor
-            simulation.configs.vision_modes = {0: False,
-                                               1:  display_tensor,
-                                               3: display_tensor}
+            simulation.camera.tensor_enabled = True
+            simulation.camera.log_vision = log_vision
+            simulation.configs.vision_modes = {0: display_grayscale,
+                                               1: True,
+                                               3: True}
             simulation.configs.render = True
             obstacle_course = ObstacleCourse()
             obstacle_course.randomize()
@@ -88,7 +93,7 @@ async def main():
                 target_reached = False
                 score = 0
 
-                target_position = simulation.obstacle_course.goal #TODO VERIFY
+                target_position = simulation.obstacle_course.goal
 
                 while (drone.time_stamp < max_time and not target_reached):
 

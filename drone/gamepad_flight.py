@@ -40,10 +40,11 @@ async def main():
     if not bool_obstacles:
         spawn_height = float(input("Enter the spawn height (negative value, default is -650): "))
     log_data = input("Do you want to log data? (y/n): ").lower() == "y"
+    log_vision = log_data and input("Log compact depth and classification vision? (y/n): ").lower() == "y"
     display_grayscale = input("Display grayscale camera? (y/n): ").lower() == "y"
     display_depth = input("Display depth camera? (y/n): ").lower() == "y"
     display_tensor = input("Display depth + class tensor? (y/n): ").lower() == "y"
-    bool_vision = display_grayscale or display_depth or display_tensor
+    bool_vision = display_grayscale or display_depth or display_tensor or log_vision
     #bool_targets = input("Do you want to have flight targets? (y/n): ").lower() == "y"
     name = "rnd_gamepad"
     if (not bool_rnd_configs):
@@ -62,9 +63,10 @@ async def main():
             simulation.camera.display_raw = display_grayscale
             simulation.camera.display_depth = display_depth
             simulation.camera.display_tensorized = display_tensor
+            simulation.camera.log_vision = log_vision
             simulation.configs.vision_modes = {0: display_grayscale,
-                                               1: display_depth or display_tensor,
-                                               3: display_tensor}
+                                               1: display_depth or display_tensor or log_vision,
+                                               3: display_tensor or log_vision}
             if bool_vision:
                 simulation.configs.render = True
             if (bool_obstacles):
