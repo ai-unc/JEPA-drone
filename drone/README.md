@@ -145,3 +145,65 @@ On my Computer (Ethan) collecting data with the simulation rendering is about 2x
 1. Since reloading the simulation takes about 5 seconds, I am making the flights 100 seconds long and doing 2k flights, that way it has to reload less. This then gets split up into 10 second flights.
 2. I am disabling rendering for increased simulation speed.
 
+# Randomized Obstacle Course (11/17)
+For the drone to learn about vision, it needs to actually see and interact with objects.
+To prevent the drone from simply flying above all obstacles, the drone will be in an obstacle course with a ceiling and walls.
+The goal position is known and has a 50 meter clearance around it with no obstacles, that way it is always possible to reach.
+- 3 Obstacle Shapes: Sphere, rectangle, and disk
+- The obstacles can be various sizes and quantity (as of writing 10 rectangles, 5 spheres, and 5 disks)
+These shapes were chosen because they already exist in the map and are geometrically easy to use.
+
+![Obstacle Course Visualization](../images/ObstacleCourseSketch.png)
+
+![Obstacle View](../images/ObstacleCourseView.jpg)
+
+To avoid conglomerations of shapes, sparsity is forced.
+
+The obstacle course is logged in the csv for replayability
+
+
+# Vision Data formatting and Collection (11/17)
+To base the simulator cam off of the Oak d lite the camera has a resolution of 640x480 with a max framerate of 117 fps. In simulation I make it match 100 fps along with state and action update frequency. 10 meters of reliable depth. 20 meters depth max. 0.5 meters of depth min.
+
+2 data streams exist from the simulator:
+1. grayscale
+2. depth
+
+These will eventually be fed into an image encoder to turn into the following tensor:
+
+## Vision Tensor
+The vision tensor is a 32x32x2 tensor.
+Each "cell" in the 32x32 grid represents 20x15 pixels. Inside each cell are 2 values:
+1. Depth (uint8) -> Stored as integer but represents a float. Checkout SimCam.py for process of conversion. uint8 takes less space.
+2. Classification (uint8) -> Represents the type of object the cell is looking at (ex. "door", "obstacle", "wall") etc. This is represented as an integer to save space. The integer key to values can be seen in both SimCam.py and encoders.py (CLASSES)
+
+Checkout this video to see some gamepad flight footage in the obstacle course including the drones tensor vision:
+https://www.youtube.com/watch?v=nQfX8dcBXx0
+*NOTE: The green arrow in the video is added after the tensor is generated. The drone will not "see" the goal until it is actually within 10 meters.
+
+The data is logged NOT IN A CSV but seperatly as a depth.npz and classification.npz
+The flight log will be a folder containing the flight log (csv) and the previous 2 .npz mentioned.
+
+# Autonomous Obstacle Avoidance for data collection (11/17)
+
+The drone will try to fly at about 2 m/s since that is cautious enough to brake and actually react when an obstacle approaches.
+
+Used Artificial Potential Field (APF) algorithm for obstacle avoidance.
+- Pros: Obstacle locations are known, computationally cheap
+- Cons: Local minima.
+
+
+![APF Visualization](../images/APF.jpg)
+
+To overcome local minima implemented a modified bug2 algorithm whenever the drone's speed drops too low near obstacles.
+
+![Bug2 Visualization](../images/BugAlgorithm.png)
+
+
+Each flight will be up to 100 seconds with it ending if the goal is reached or 100 seconds pass.
+
+Watch the video here to see it in action:
+https://www.youtube.com/watch?v=XcqVbPQu19E
+
+Here is the architecture:
+![Vision Data Collection Diagram](../images/VisionDataArchitecture.png)
